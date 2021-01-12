@@ -12,6 +12,9 @@ import Foundation
 
 public struct TAF: Codable {
     
+    /// The raw text of the TAF.
+    public let text: String?
+    
     /// The reason for this TAF's issuance.
     public let issuance: Issuance
     

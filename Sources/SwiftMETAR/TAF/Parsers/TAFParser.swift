@@ -28,7 +28,8 @@ func parseTAF(_ codedTAF: String, on referenceDate: Date? = nil, lenientRemarks:
     
     let remarks = try parseRemarks(&parts, lenientRemarks: lenientRemarks)
     
-    return TAF(issuance: issuance,
+    return TAF(text: codedTAF,
+               issuance: issuance,
                airportID: locationID,
                originCalendarDate: date,
                groups: groups,

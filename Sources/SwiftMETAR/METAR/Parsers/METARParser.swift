@@ -15,7 +15,8 @@ func parseMETAR(_ codedMETAR: String, on referenceDate: Date? = nil, lenientRema
     let altimeter = try parseMETARAltimeter(&parts)
     let remarks = try parseRemarks(&parts, lenientRemarks: lenientRemarks)
     
-    return METAR(issuance: issuance,
+    return METAR(text: codedMETAR,
+                 issuance: issuance,
                  stationID: stationID,
                  calendarDate: date,
                  observer: observer,

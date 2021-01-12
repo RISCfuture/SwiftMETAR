@@ -10,7 +10,7 @@ METARs.enumerateLines { line, stop in
     guard string.starts(with: "K") else { return }
     
     do {
-        try METAR.from(string: string)
+        _ = try METAR.from(string: string)
     } catch (let error) {
         print(string)
         print(" -- \(error.localizedDescription)")
@@ -26,7 +26,7 @@ TAFs.enumerateLines { line, stop in
     guard string.starts(with: "TAF K") else { return }
     
     do {
-        try TAF.from(string: string)
+        _ = try TAF.from(string: string)
     } catch let error as SwiftMETAR.Error {
         print(string)
         print(" -- \(error.description)")

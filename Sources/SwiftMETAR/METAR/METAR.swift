@@ -11,6 +11,9 @@ import Foundation
 
 public struct METAR: Codable {
     
+    /// The raw text of the METAR.
+    public let text: String?
+    
     /// The nature of this METAR's publivation.
     public let issuance: Issuance
     
