@@ -85,7 +85,7 @@ fileprivate func parseProbabilityPeriod(_ parts: inout Array<String.SubSequence>
     }
     
     guard let range = try parseRangePeriod(&parts, referenceDate: referenceDate) else {
-        throw Error.invalidPeriod(String(parts[0]))
+        throw Error.invalidPeriod(probStr)
     }
     
     switch range {
