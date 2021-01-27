@@ -8,8 +8,9 @@ public enum Wind: Codable, Equatable {
      Wind direction is variable.
      
      - Parameter speed: The average wind speed.
+     - Parameter headingRange: The range of headings the wind is coming from.
      */
-    case variable(speed: Speed)
+    case variable(speed: Speed, headingRange: (UInt16, UInt16)? = nil)
     
     /**
      Wind has a definite heading and speed.
@@ -41,7 +42,13 @@ public enum Wind: Codable, Equatable {
                 self = .calm
             case "variable":
                 let speed = try container.decode(Speed.self, forKey: .speed)
-                self = .variable(speed: speed)
+                let headingLow = try container.decode(Optional<UInt16>.self, forKey: .headingLow)
+                let headingHigh = try container.decode(Optional<UInt16>.self, forKey: .headingHigh)
+                if let low = headingLow, let high = headingHigh {
+                    self = .variable(speed: speed, headingRange: (low, high))
+                } else {
+                    self = .variable(speed: speed)
+                }
             case "direction":
                 let speed = try container.decode(Speed.self, forKey: .speed)
                 let gust = try container.decode(Optional<Speed>.self, forKey: .gust)
@@ -64,9 +71,13 @@ public enum Wind: Codable, Equatable {
         switch self {
             case .calm:
                 try container.encode("calm", forKey: .type)
-            case .variable(let speed):
+            case .variable(let speed, let headingRange):
                 try container.encode("variable", forKey: .type)
                 try container.encode(speed, forKey: .speed)
+                if let range = headingRange {
+                    try container.encode(range.0, forKey: .headingLow)
+                    try container.encode(range.1, forKey: .headingHigh)
+                }
             case .direction(let heading, let speed, let gust):
                 try container.encode("direction", forKey: .type)
                 try container.encode(speed, forKey: .speed)
@@ -89,9 +100,20 @@ public enum Wind: Codable, Equatable {
                     case .calm: return true
                     default: return false
                 }
-            case .variable(let lhsSpeed):
+            case .variable(let lhsSpeed, let lhsRange):
                 switch rhs {
-                    case .variable(let rhsSpeed): return lhsSpeed == rhsSpeed
+                    case .variable(let rhsSpeed, let rhsRange):
+                        if let lhsRange = lhsRange {
+                            if let rhsRange = rhsRange {
+                                // both not nil
+                                return lhsSpeed == rhsSpeed
+                                    && lhsRange.0 == rhsRange.0 && lhsRange.1 == rhsRange.1
+                            }
+                            else { return false } // one nil, one not
+                        } else {
+                            if let _ = rhsRange { return false } // one nil, one not
+                            else { return lhsSpeed == rhsSpeed } // both nil
+                        }
                     default: return false
                 }
             case .direction(let lhsHeading, let lhsSpeed, let lhsGust):

@@ -38,7 +38,9 @@ func parseTAF(_ codedTAF: String, on referenceDate: Date? = nil, lenientRemarks:
 
 fileprivate func parseIssuance(_ parts: inout Array<String.SubSequence>) throws -> TAF.Issuance {
     guard !parts.isEmpty else { throw Error.badFormat }
-    guard parts.removeFirst() == "TAF" else { return .routine }
+
+    if parts[0] != "TAF" { return .routine }
+    parts.removeFirst()
     guard !parts.isEmpty else { throw Error.badFormat }
     
     switch parts[0] {
@@ -48,6 +50,7 @@ fileprivate func parseIssuance(_ parts: inout Array<String.SubSequence>) throws 
         case "COR":
             parts.removeFirst()
             return .corrected
-        default: return .routine
+        default:
+            return .routine
     }
 }

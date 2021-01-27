@@ -73,7 +73,6 @@ public struct TAF: Codable {
             switch group.period {
                 case .from(let from):
                     guard let fromDate = zuluCal.date(from: from) else { continue }
-                    print(date, fromDate)
                     if date < fromDate { continue }
                 case .range(let period):
                     if !period.contains(date) { continue }

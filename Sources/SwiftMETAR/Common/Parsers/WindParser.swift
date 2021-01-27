@@ -25,7 +25,13 @@ func parseWind(_ parts: inout Array<String.SubSequence>) throws -> Wind? {
     }
     
     let dirStr = dirAndSpeed.substring(with: match.range(at: 1))
-    if dirStr == "VRB" { return .variable(speed: speed) }
+    if dirStr == "VRB" {
+        guard let rangeSeq = parts.first else {
+            return .variable(speed: speed)
+        }
+        let range = try parseDirectionRange(&parts, rangeSeq: rangeSeq)
+        return .variable(speed: speed, headingRange: range)    }
+    
     guard let heading = UInt16(dirStr) else {
         throw Error.invalidWinds(String(dirAndSpeed))
     }
@@ -35,23 +41,27 @@ func parseWind(_ parts: inout Array<String.SubSequence>) throws -> Wind? {
     guard let rangeSeq = parts.first else {
         return .direction(heading, speed: speed, gust: gust)
     }
-    let rangeStr = String(rangeSeq)
     
-    if let variableMatch = variableRx.firstMatch(in: rangeStr, options: [], range: rangeStr.nsRange) {
-        parts.removeFirst()
-        
-        let dir1Str = rangeStr.substring(with: variableMatch.range(at: 1))
-        let dir2Str = rangeStr.substring(with: variableMatch.range(at: 2))
-        
-        guard let dir1 = UInt16(dir1Str) else { throw Error.invalidWinds(rangeStr) }
-        guard let dir2 = UInt16(dir2Str) else { throw Error.invalidWinds(rangeStr) }
-        
-        let range = (dir1, dir2)
-        
+    if let range = try parseDirectionRange(&parts, rangeSeq: rangeSeq) {
         return .directionRange(heading, headingRange: range, speed: speed, gust: gust)
     } else {
         return .direction(heading, speed: speed, gust: gust)
     }
+}
+
+fileprivate func parseDirectionRange(_ parts: inout Array<String.SubSequence>, rangeSeq: String.SubSequence) throws -> (UInt16, UInt16)? {
+    let rangeStr = String(rangeSeq)
+    
+    guard let variableMatch = variableRx.firstMatch(in: rangeStr, options: [], range: rangeStr.nsRange) else { return nil }
+    parts.removeFirst()
+    
+    let dir1Str = rangeStr.substring(with: variableMatch.range(at: 1))
+    let dir2Str = rangeStr.substring(with: variableMatch.range(at: 2))
+    
+    guard let dir1 = UInt16(dir1Str) else { throw Error.invalidWinds(rangeStr) }
+    guard let dir2 = UInt16(dir2Str) else { throw Error.invalidWinds(rangeStr) }
+    
+    return (dir1, dir2)
 }
 
 fileprivate func parseSpeed(_ string: String, from match: NSTextCheckingResult, index: Int) throws -> Wind.Speed? {

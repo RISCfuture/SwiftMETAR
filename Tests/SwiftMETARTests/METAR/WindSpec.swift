@@ -37,6 +37,12 @@ class WindSpec: QuickSpec {
                 expect(wind).to(equal(.variable(speed: .knots(3))))
             }
             
+            it("parses light variable winds with heading range") {
+                let string = #"METAR KOKC 011955Z AUTO VRB03KT 030V150 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"#
+                let wind = try! METAR.from(string: string).wind
+                expect(wind).to(equal(.variable(speed: .knots(3), headingRange: (30, 150))))
+            }
+            
             it("parses strong variable winds") {
                 let string = #"METAR KOKC 011955Z AUTO 21010KT 180V240 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"#
                 let wind = try! METAR.from(string: string).wind

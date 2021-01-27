@@ -29,6 +29,7 @@ TAFs.enumerateLines { line, stop in
         _ = try TAF.from(string: string)
     } catch let error {
         print(string)
-        fatalError(error.localizedDescription)
+        print(error.localizedDescription)
+//        fatalError(error.localizedDescription)
     }
 }
