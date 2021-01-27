@@ -1,5 +1,7 @@
+import Foundation
+
 /// METAR and TAF parsing errors.
-public enum Error: Swift.Error {
+public enum Error: Swift.Error, LocalizedError {
     
     /// Format was bad in general, so that no groups could be parsed.
     case badFormat
@@ -35,31 +37,30 @@ public enum Error: Swift.Error {
     case invalidWindshear(_ windshear: String)
     
     
-    /// A non-localized, human-readable description of the error for internal
-    /// use.
-    public var description: String {
+    public var errorDescription: String? {
         switch self {
-            case .badFormat: return "METAR or TAF format is incorrect"
+            case .badFormat:
+                return NSLocalizedString("METAR or TAF format is incorrect.", comment: "SwiftMETAR error")
             case .unknownReportType(let type):
-                return "Unknown report type '\(type)'"
+                return String(format: NSLocalizedString("Unknown report type ‘%@’.", comment: "SwiftMETAR error"), type)
             case .invalidDate(let date):
-                return "Invalid date '\(date)'"
+                return String(format: NSLocalizedString("Invalid date ‘%@’.", comment: "SwiftMETAR error"), date)
             case .invalidWinds(let winds):
-                return "Invalid winds '\(winds)'"
+                return String(format: NSLocalizedString("Invalid winds ‘%@’.", comment: "SwiftMETAR error"), winds)
             case .invalidVisibility(let visibility):
-                return "Invalid visibility '\(visibility)'"
+                return String(format: NSLocalizedString("Invalid visibility ‘%@’.", comment: "SwiftMETAR error"), visibility)
             case .invalidWeather(let weather):
-                return "Invalid weather '\(weather)'"
+                return String(format: NSLocalizedString("Invalid weather ‘%@’.", comment: "SwiftMETAR error"), weather)
             case .invalidConditions(let conditions):
-                return "Invalid conditions '\(conditions)'"
+                return String(format: NSLocalizedString("Invalid conditions ‘%@’.", comment: "SwiftMETAR error"), conditions)
             case .invalidTempDewpoint(let temps):
-                return "Invalid temperature and dewpoint '\(temps)'"
+                return String(format: NSLocalizedString("Invalid temperature and dewpoint ‘%@’.", comment: "SwiftMETAR error"), temps)
             case .invalidAltimeter(let altimeter):
-                return "Invalid altimeter setting '\(altimeter)'"
+                return String(format: NSLocalizedString("Invalid altimeter setting ‘%@’.", comment: "SwiftMETAR error"), altimeter)
             case .invalidPeriod(let period):
-                return "Invalid TAF period '\(period)'"
+                return String(format: NSLocalizedString("Invalid TAF period ‘%@’.", comment: "SwiftMETAR error"), period)
             case .invalidWindshear(let windshear):
-                return "Invalid low-level windshear '\(windshear)'"
+                return String(format: NSLocalizedString("Invalid low-level windshear ‘%@’.", comment: "SwiftMETAR error"), windshear)
         }
     }
 }

@@ -27,10 +27,8 @@ TAFs.enumerateLines { line, stop in
     
     do {
         _ = try TAF.from(string: string)
-    } catch let error as SwiftMETAR.Error {
-        print(string)
-        print(" -- \(error.description)")
     } catch let error {
+        print(string)
         fatalError(error.localizedDescription)
     }
 }
