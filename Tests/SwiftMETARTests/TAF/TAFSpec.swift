@@ -31,6 +31,7 @@ class TAFSpec: QuickSpec {
                     visibility: .greaterThan(.statuteMiles(6)),
                     weather: [],
                     conditions: [.broken(10_000)],
+                    windshearConditions: false,
                     windshear: .init(height: 2000, wind: .direction(350, speed: .knots(35)))),
                 .init(
                     period: .temporary(.init(start: .this(day: 11, hour: 12), end: .this(day: 11, hour: 14))),
@@ -38,6 +39,7 @@ class TAFSpec: QuickSpec {
                     visibility: .equal(.statuteMiles(5)),
                     weather: [.init(intensity: .moderate, descriptor: nil, phenomena: [.mist])],
                     conditions: [],
+                    windshearConditions: false,
                     windshear: nil),
                 .init(
                     period: .from(.this(day: 11, hour: 15, minute: 0)),
@@ -45,6 +47,7 @@ class TAFSpec: QuickSpec {
                     visibility: .greaterThan(.statuteMiles(6)),
                     weather: [],
                     conditions: [.scattered(4000), .broken(25_000)],
+                    windshearConditions: false,
                     windshear: nil),
                 .init(
                     period: .from(.this(day: 12, hour: 0, minute: 0)),
@@ -52,6 +55,7 @@ class TAFSpec: QuickSpec {
                     visibility: .greaterThan(.statuteMiles(6)),
                     weather: [],
                     conditions: [.broken(8000), .overcast(15_000)],
+                    windshearConditions: false,
                     windshear: nil),
                 .init(
                     period: .probability(30, period: .init(start: .this(day: 12, hour: 0), end: .this(day: 12, hour: 4))),
@@ -59,6 +63,7 @@ class TAFSpec: QuickSpec {
                     visibility: .equal(.statuteMiles(3)),
                     weather: [.init(intensity: .moderate, descriptor: .thunderstorms, phenomena: [.rain])],
                     conditions: [.broken(3000, type: .cumulonimbus)],
+                    windshearConditions: false,
                     windshear: nil),
                 .init(
                     period: .from(.this(day: 12, hour: 4, minute: 0)),
@@ -66,6 +71,7 @@ class TAFSpec: QuickSpec {
                     visibility: .greaterThan(.statuteMiles(6)),
                     weather: [],
                     conditions: [.scattered(4000), .overcast(8000)],
+                    windshearConditions: false,
                     windshear: nil),
                 .init(
                     period: .temporary(.init(start: .this(day: 12, hour: 4), end: .this(day: 12, hour: 8))),
@@ -73,6 +79,7 @@ class TAFSpec: QuickSpec {
                     visibility: .equal(.statuteMiles(3)),
                     weather: [.init(intensity: .moderate, descriptor: .thunderstorms, phenomena: [.rain])],
                     conditions: [.overcast(3000, type: .cumulonimbus)],
+                    windshearConditions: false,
                     windshear: nil)
             ]
             
@@ -103,6 +110,7 @@ class TAFSpec: QuickSpec {
                     visibility: .greaterThan(.statuteMiles(6)),
                     weather: [.init(intensity: .vicinity, descriptor: nil, phenomena: [.thunderstorm])],
                     conditions: [.scattered(2500, type: .cumulonimbus), .broken(25_000)],
+                    windshearConditions: false,
                     windshear: nil),
                 .init(
                     period: .temporary(.init(start: .this(day: 13, hour: 16), end: .this(day: 13, hour: 18))),
@@ -110,6 +118,7 @@ class TAFSpec: QuickSpec {
                     visibility: .equal(.statuteMiles(2)),
                     weather: [.init(intensity: .moderate, descriptor: .thunderstorms, phenomena: [.rain])],
                     conditions: [.broken(2000, type: .cumulonimbus)],
+                    windshearConditions: false,
                     windshear: nil),
                 .init(
                     period: .from(.this(day: 13, hour: 18, minute: 0)),
@@ -117,6 +126,7 @@ class TAFSpec: QuickSpec {
                     visibility: .greaterThan(.statuteMiles(6)),
                     weather: [],
                     conditions: [.scattered(2500), .broken(25_000)],
+                    windshearConditions: false,
                     windshear: nil),
                 .init(
                     period: .temporary(.init(start: .this(day: 13, hour: 20), end: .this(day: 14, hour: 0))),
@@ -124,6 +134,7 @@ class TAFSpec: QuickSpec {
                     visibility: .equal(.statuteMiles(1)),
                     weather: [.init(intensity: .moderate, descriptor: .thunderstorms, phenomena: [.rain])],
                     conditions: [.overcast(1000, type: .cumulonimbus)],
+                    windshearConditions: false,
                     windshear: nil),
                 .init(
                     period: .from(.this(day: 14, hour: 0, minute: 0)),
@@ -131,6 +142,7 @@ class TAFSpec: QuickSpec {
                     visibility: .greaterThan(.statuteMiles(6)),
                     weather: [.init(intensity: .vicinity, descriptor: nil, phenomena: [.thunderstorm])],
                     conditions: [.scattered(2000, type: .cumulonimbus), .broken(12_000)],
+                    windshearConditions: false,
                     windshear: nil),
                 .init(
                     period: .temporary(.init(start: .this(day: 14, hour: 8), end: .this(day: 14, hour: 12))),
@@ -138,6 +150,7 @@ class TAFSpec: QuickSpec {
                     visibility: nil,
                     weather: [],
                     conditions: [.broken(2000, type: .cumulonimbus)],
+                    windshearConditions: false,
                     windshear: nil)
             ]
             
@@ -169,36 +182,42 @@ class TAFSpec: QuickSpec {
                       visibility: .greaterThan(.statuteMiles(6)),
                       weather: [],
                       conditions: [.scattered(3000)],
+                      windshearConditions: false,
                       windshear: nil),
                 .init(period: .temporary(.init(start: .this(day: 11, hour: 18), end: .this(day: 11, hour: 20))),
                       wind: nil,
                       visibility: nil,
                       weather: [],
                       conditions: [.broken(4000)],
+                      windshearConditions: false,
                       windshear: nil),
                 .init(period: .from(.this(day: 11, hour: 20, minute: 0)),
                       wind: .direction(160, speed: .knots(11)),
                       visibility: .greaterThan(.statuteMiles(6)),
                       weather: [.init(intensity: .vicinity, descriptor: nil, phenomena: [.thunderstorm])],
                       conditions: [.few(3000, type: .cumulonimbus), .scattered(25_000)],
+                      windshearConditions: false,
                       windshear: nil),
                 .init(period: .from(.this(day: 12, hour: 2, minute: 0)),
                       wind: .direction(140, speed: .knots(6)),
                       visibility: .greaterThan(.statuteMiles(6)),
                       weather: [],
                       conditions: [.few(2500), .scattered(25_000)],
+                      windshearConditions: false,
                       windshear: nil),
                 .init(period: .from(.this(day: 12, hour: 8, minute: 0)),
                       wind: .variable(speed: .knots(3)),
                       visibility: .equal(.statuteMiles(5)),
                       weather: [.init(intensity: .moderate, descriptor: nil, phenomena: [.mist])],
                       conditions: [.scattered(1200)],
+                      windshearConditions: false,
                       windshear: nil),
                 .init(period: .from(.this(day: 12, hour: 15, minute: 0)),
                       wind: .direction(170, speed: .knots(7)),
                       visibility: .greaterThan(.statuteMiles(6)),
                       weather: [],
                       conditions: [.scattered(2500)],
+                      windshearConditions: false,
                       windshear: nil)
             ]
             
@@ -227,6 +246,7 @@ class TAFSpec: QuickSpec {
                           visibility: .equal(.statuteMiles(3)),
                           weather: [.init(intensity: .moderate, descriptor: .thunderstorms, phenomena: [.rain])],
                           conditions: [.broken(3000, type: .cumulonimbus)],
+                          windshearConditions: false,
                           windshear: nil)
                 ))
             }

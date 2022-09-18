@@ -67,7 +67,13 @@ public struct TAF: Codable {
         guard covers(date) else { return nil }
         
         let components = zuluCal.dateComponents(in: zulu, from: date)
-        var combinedGroup = Group(period: .from(components), wind: nil, visibility: nil, weather: [], conditions: [], windshear: nil)
+        var combinedGroup = Group(period: .from(components),
+                                  wind: nil,
+                                  visibility: nil,
+                                  weather: [],
+                                  conditions: [],
+                                  windshearConditions: false,
+                                  windshear: nil)
         
         for group in groups {
             switch group.period {
@@ -150,6 +156,9 @@ public struct TAF: Codable {
         
         /// Any forecasted cloud coverage.
         public var conditions: Array<Condition>
+        
+        /// If windshear conditions are present.
+        public var windshearConditions: Bool
         
         /// Forecasted altimeter setting.
         public var altimeter: Altimeter?
