@@ -26,7 +26,7 @@ func parseTAF(_ codedTAF: String, on referenceDate: Date? = nil, lenientRemarks:
                                 windshear: windshear))
     }
     
-    let remarks = try parseRemarks(&parts, lenientRemarks: lenientRemarks)
+    let remarks = try parseRemarks(&parts, date: date, lenientRemarks: lenientRemarks)
     
     return TAF(text: codedTAF,
                issuance: issuance,

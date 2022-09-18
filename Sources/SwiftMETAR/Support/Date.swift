@@ -21,6 +21,8 @@ extension Date {
                 components = zuluCal.dateComponents([.year, .month, .day, .hour], from: self)
             case .minute:
                 components = zuluCal.dateComponents([.year, .month, .day, .hour, .minute], from: self)
+            case .second:
+                components = zuluCal.dateComponents([.year, .month, .day, .hour, .minute, .second], from: self)
             default:
                 preconditionFailure("Can't get start of \(period)")
         }

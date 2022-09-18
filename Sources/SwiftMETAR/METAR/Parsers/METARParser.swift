@@ -13,7 +13,7 @@ func parseMETAR(_ codedMETAR: String, on referenceDate: Date? = nil, lenientRema
     let conditions = try parseConditions(&parts)
     let tempDewpoint = try parseTempDewpoint(&parts)
     let altimeter = try parseMETARAltimeter(&parts)
-    let remarks = try parseRemarks(&parts, lenientRemarks: lenientRemarks)
+    let remarks = try parseRemarks(&parts, date: date, lenientRemarks: lenientRemarks)
     
     return METAR(text: codedMETAR,
                  issuance: issuance,

@@ -17,14 +17,15 @@ let package = Package(
         // Dependencies declare other packages that this package depends on.
         .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "4.0.0")),
         .package(url: "https://github.com/Quick/Nimble.git", .upToNextMajor(from: "9.2.0")),
-        .package(url: "https://github.com/xwu/NumericAnnex.git", branch: "master")
+        .package(url: "https://github.com/xwu/NumericAnnex.git", branch: "master"),
+        .package(url: "https://github.com/sharplet/Regex.git", from: "2.1.0")
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "SwiftMETAR",
-            dependencies: ["NumericAnnex"]),
+            dependencies: ["NumericAnnex", "Regex"]),
         .testTarget(
             name: "SwiftMETARTests",
             dependencies: ["SwiftMETAR", "Quick", "Nimble"]),

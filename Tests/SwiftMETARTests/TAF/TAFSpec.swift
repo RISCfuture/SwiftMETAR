@@ -161,7 +161,7 @@ class TAFSpec: QuickSpec {
             expect(forecast.airportID).to(equal("KCRP"))
             expect(forecast.originCalendarDate).to(equal(.this(day: 11, hour: 17, minute: 30)))
             expect(forecast.groups.count).to(equal(6))
-            expect(forecast.remarks).to(equal("NXT FCST BY 00Z="))
+            expect(forecast.remarks.map { $0.remark }).to(contain(.unknown("NXT FCST BY 00Z=")))
             
             let groups: Array<TAF.Group> = [
                 .init(period: .range(.init(start: .this(day: 11, hour: 18), end: .this(day: 12, hour: 18))),

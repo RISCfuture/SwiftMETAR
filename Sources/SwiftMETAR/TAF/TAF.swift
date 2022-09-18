@@ -28,7 +28,7 @@ public struct TAF: Codable {
     public let groups: Array<Group>
     
     /// Additional remarks following the forecast.
-    public let remarks: String?
+    public let remarks: Array<RemarkEntry>
     
     /// The date that the forecast was generated.
     public var originDate: Date { originCalendarDate.date! }

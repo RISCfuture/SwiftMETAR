@@ -57,16 +57,10 @@ class METARSpec: QuickSpec {
         }
         
         describe("remarks") {
-            it("parses remarks") {
-                let string = "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
-                let observation = try! METAR.from(string: string)
-                expect(observation.remarks).to(equal("AO2 TSB25 TS OHD MOV E SLP132"))
-            }
-            
             it("parses empty remarks") {
                 let string = "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992"
                 let observation = try! METAR.from(string: string)
-                expect(observation.remarks).to(beNil())
+                expect(observation.remarks).to(beEmpty())
             }
         }
     }

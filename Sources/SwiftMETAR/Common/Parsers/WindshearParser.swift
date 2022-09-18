@@ -6,16 +6,16 @@ fileprivate let windshearRx = try! NSRegularExpression(pattern: windshearRxStr, 
 func parseWindshear(_ parts: inout Array<String.SubSequence>) throws -> Windshear? {
     guard !parts.isEmpty else { return nil }
     let windshearStr = String(parts[0])
-    guard let match = windshearRx.firstMatch(in: windshearStr, options: [], range: windshearStr.nsRange) else {
+    guard let result = windshearRx.firstMatch(in: windshearStr, options: [], range: windshearStr.nsRange) else {
         return nil
     }
     parts.removeFirst()
     
-    guard let height = UInt16(windshearStr.substring(with: match.range(at: 1))) else {
+    guard let height = UInt16(windshearStr.substring(with: result.range(at: 1))) else {
         throw Error.invalidWindshear(windshearStr)
     }
     
-    let windStr = windshearStr.substring(with: match.range(at: 2))
+    let windStr = windshearStr.substring(with: result.range(at: 2))
     var windStrParts = [windStr]
     guard let winds = try parseWind(&windStrParts) else {
         throw Error.invalidWindshear(windshearStr)

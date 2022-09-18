@@ -81,16 +81,30 @@ func parseDayHour(_ string: String.SubSequence, referenceDate: Date? = nil) thro
     return components
 }
 
-func parseRemarks(_ parts: inout Array<String.SubSequence>, lenientRemarks: Bool = false) throws -> String? {
-    if parts.isEmpty { return nil }
-    if parts.count == 1 && parts[0] == "" { return nil } // extra space after METAR
+func parseRemarks(_ parts: inout Array<String.SubSequence>, date: DateComponents, lenientRemarks: Bool = false) throws -> Array<RemarkEntry> {
+    if parts.isEmpty { return [] }
+    if parts.count == 1 && parts[0] == "" { return [] } // extra space after METAR
     
     if lenientRemarks {
         if parts[0] == "RMK" { parts.removeFirst() }
     } else {
         guard parts.removeFirst() == "RMK" else { throw Error.badFormat }
     }
-    if parts.isEmpty { return nil }
+    if parts.isEmpty { return [] }
     
-    return parts.joined(separator: " ")
+    var remarksString = parts.joined(separator: " ")
+    var remarks = Array<RemarkEntry>()
+    for parser in remarkParsers {
+        let parserInstance = parser.init()
+        while let remark = parserInstance.parse(remarks: &remarksString, date: date) {
+            remarks.append(.init(remark: remark, urgency: parserInstance.urgency))
+        }
+    }
+    
+    let trimmedRemarks = remarksString.trimmingCharacters(in: .whitespaces)
+    if !trimmedRemarks.isEmpty {
+        remarks.append(.init(remark: .unknown(trimmedRemarks), urgency: .unknown))
+    }
+    
+    return remarks
 }

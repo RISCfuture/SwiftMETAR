@@ -1,6 +1,16 @@
 import Foundation
 import SwiftMETAR
 
+fileprivate func checkRemarks(_ remarks: Array<RemarkEntry>, string: String) {
+    for remark in remarks {
+        if case let .unknown(remarkStr) = remark.remark {
+            print(string)
+            print("-- Unknown remark: \(remarkStr)")
+        }
+    }
+}
+
+
 let METAR_URL = URL(string: "https://www.aviationweather.gov/adds/dataserver_current/current/metars.cache.csv")!
 let METARs = String(data: try! Data(contentsOf: METAR_URL), encoding: .ascii)!
 METARs.enumerateLines { line, stop in
@@ -10,7 +20,8 @@ METARs.enumerateLines { line, stop in
     guard string.starts(with: "K") else { return }
     
     do {
-        _ = try METAR.from(string: string)
+        let metar = try METAR.from(string: string)
+        checkRemarks(metar.remarks, string: string)
     } catch (let error) {
         print(string)
         print(" -- \(error.localizedDescription)")
@@ -26,10 +37,11 @@ TAFs.enumerateLines { line, stop in
     guard string.starts(with: "TAF K") else { return }
     
     do {
-        _ = try TAF.from(string: string)
+        let taf = try TAF.from(string: string)
+        checkRemarks(taf.remarks, string: string)
     } catch let error {
         print(string)
-        print(error.localizedDescription)
+        print(" -- \(error.localizedDescription)")
 //        fatalError(error.localizedDescription)
     }
 }
