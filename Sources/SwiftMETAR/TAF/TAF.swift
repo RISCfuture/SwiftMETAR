@@ -160,6 +160,9 @@ public struct TAF: Codable {
         /// If windshear conditions are present.
         public var windshearConditions: Bool
         
+        /// Any forecasted icing conditions.
+        public var icing: Icing?
+        
         /// Forecasted altimeter setting.
         public var altimeter: Altimeter?
         

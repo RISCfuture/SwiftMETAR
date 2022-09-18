@@ -36,6 +36,9 @@ public enum Error: Swift.Error, LocalizedError {
     /// Forecasted windshear could not be parsed.
     case invalidWindshear(_ windshear: String)
     
+    /// Forecasted icing could not be parsed.
+    case invalidIcing(_ icing: String)
+    
     
     public var errorDescription: String? {
         switch self {
@@ -61,6 +64,8 @@ public enum Error: Swift.Error, LocalizedError {
                 return String(format: NSLocalizedString("Invalid TAF period ‘%@’.", comment: "SwiftMETAR error"), period)
             case let .invalidWindshear(windshear):
                 return String(format: NSLocalizedString("Invalid low-level windshear ‘%@’.", comment: "SwiftMETAR error"), windshear)
+            case let .invalidIcing(icing):
+                return String(format: NSLocalizedString("Invalid icing ‘%@’", comment: "SwiftMETAR error"), icing)
         }
     }
 }

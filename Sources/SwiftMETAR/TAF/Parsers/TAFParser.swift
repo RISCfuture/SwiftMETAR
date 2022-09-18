@@ -15,6 +15,7 @@ func parseTAF(_ codedTAF: String, on referenceDate: Date? = nil, lenientRemarks:
         let weather = try parseWeather(&parts)
         let conditions = try parseConditions(&parts)
         let windshearConditions = try parseWindshearConditions(&parts)
+        let icing = try parseIcing(&parts)
         let altimeter = try parseTAFAltimeter(&parts)
         let windshear = try parseWindshear(&parts)
         
