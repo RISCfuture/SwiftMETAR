@@ -1,12 +1,10 @@
 import Foundation
 import NumericAnnex
+import Regex
 
-fileprivate let fractionalString = #"^([PM])?(\d+)\/(\d+)SM$"#
-fileprivate let fractionalRx = try! NSRegularExpression(pattern: fractionalString, options: [])
-fileprivate let integerString = #"^([PM])?(\d+)(SM|FT|M)?$"#
-fileprivate let integerRx = try! NSRegularExpression(pattern: integerString, options: [])
-fileprivate let notRecordedRxStr = #"^\/{2,}(SM|FT|M)$"#
-fileprivate let notRecordedRx = try! NSRegularExpression(pattern: notRecordedRxStr, options: [])
+fileprivate let fractionalRx = Regex(#"^([PM])?(\d+)\/(\d+)SM$"#)
+fileprivate let integerRx = Regex(#"^([PM])?(\d+)(SM|FT|M)?$"#)
+fileprivate let notRecordedRx = Regex(#"^\/{2,}(SM|FT|M)$"#)
 
 func parseVisibility(_ parts: inout Array<String.SubSequence>) throws -> Visibility? {
     guard !parts.isEmpty else { return nil }
@@ -21,7 +19,7 @@ func parseVisibility(_ parts: inout Array<String.SubSequence>) throws -> Visibil
         return .greaterThan(.meters(9999))
     }
     
-    if notRecordedRx.firstMatch(in: vizStr, options: [], range: vizStr.nsRange) != nil {
+    if notRecordedRx.firstMatch(in: vizStr) != nil {
         parts.removeFirst()
         return nil
     }
@@ -92,21 +90,19 @@ fileprivate struct FractionResult {
 fileprivate func parseFraction(_ string: String) throws -> FractionResult? {
     var rangeValue = RangeValue.equal
     
-    if let match = fractionalRx.firstMatch(in: string, options: [], range: string.nsRange) {
-        if match.range(at: 1).location != NSNotFound {
-            switch string.substring(with: match.range(at: 1)) {
+    if let match = fractionalRx.firstMatch(in: string) {
+        if let signStr = match.captures[0] {
+            switch signStr {
                 case "P": rangeValue = .greaterThan
                 case "M": rangeValue = .lessThan
-                default: preconditionFailure("Couldn't parse visibility range value")
+                default: throw Error.invalidVisibility(string)
             }
         }
         
-        guard let numerator = UInt8(string.substring(with: match.range(at: 2))) else {
-            throw Error.invalidVisibility(string)
-        }
-        guard let denominator = UInt8(string.substring(with: match.range(at: 3))) else {
-            throw Error.invalidVisibility(string)
-        }
+        guard let numStr = match.captures[1],
+              let numerator = UInt8(numStr),
+              let denStr = match.captures[2],
+              let denominator = UInt8(denStr) else { throw Error.invalidVisibility(string) }
         
         return FractionResult(value: Ratio(numerator: Int(numerator), denominator: Int(denominator)),
                               rangeValue: rangeValue)
@@ -124,21 +120,21 @@ fileprivate struct IntegerResult {
 fileprivate func parseInteger(_ string: String) throws -> IntegerResult? {
     var rangeValue = RangeValue.equal
     
-    if let match = integerRx.firstMatch(in: string, options: [], range: string.nsRange) {
-        if match.range(at: 1).location != NSNotFound {
-            switch string.substring(with: match.range(at: 1)) {
+    if let match = integerRx.firstMatch(in: string) {
+        if let signStr = match.captures[0] {
+            switch signStr {
                 case "P": rangeValue = .greaterThan
                 case "M": rangeValue = .lessThan
-                default: preconditionFailure("Couldn't parse visibility range value")
+                default: throw Error.invalidVisibility(string)
             }
         }
         
-        guard let value = UInt16(string.substring(with: match.range(at: 2))) else {
-            throw Error.invalidVisibility(string)
-        }
+        guard let valueStr = match.captures[1],
+              let value = UInt16(valueStr) else { throw Error.invalidVisibility(string) }
         var units = "M"
-        let unitsRange = match.range(at: 3)
-        if unitsRange.location != NSNotFound { units = String(string.substring(with: unitsRange)) }
+        if let unitsStr = match.captures[2] {
+            units = unitsStr
+        }
         
         return IntegerResult(value: value, units: units, rangeValue: rangeValue)
     }

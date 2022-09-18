@@ -1,25 +1,23 @@
 import Foundation
+import Regex
 
 func parseLocationID(_ parts: inout Array<String.SubSequence>) throws -> String {
     guard !parts.isEmpty else { throw Error.badFormat }
     return String(parts.removeFirst())
 }
 
-fileprivate let dateRxStr = #"^(\d{2}\d{2}\d{2})Z?$"#
-fileprivate let dateRx = try! NSRegularExpression(pattern: dateRxStr, options: [])
+fileprivate let dateRx = Regex(#"^(\d{2}\d{2}\d{2})Z?$"#)
 
 func parseDate(_ parts: inout Array<String.SubSequence>, referenceDate: Date? = nil) throws -> DateComponents {
     guard !parts.isEmpty else { throw Error.badFormat }
     
     let dateStr = String(parts.removeFirst())
-    guard let match = dateRx.firstMatch(in: dateStr, options: [], range: dateStr.nsRange) else {
-        throw Error.invalidDate(dateStr)
-    }
-    
-    return try parseDayHourMinute(dateStr.substring(with: match.range(at: 1)), referenceDate: referenceDate)
+    guard let match = dateRx.firstMatch(in: dateStr),
+          let dayHourMinuteStr = match.captures[0] else { throw Error.invalidDate(dateStr) }
+    return try parseDayHourMinute(dayHourMinuteStr, referenceDate: referenceDate)
 }
 
-func parseDayHourMinute(_ string: String.SubSequence, referenceDate: Date? = nil) throws -> DateComponents {
+func parseDayHourMinute(_ string: String, referenceDate: Date? = nil) throws -> DateComponents {
     let dayRange = string.startIndex...string.index(string.startIndex, offsetBy: 1)
     let hourRange = string.index(string.startIndex, offsetBy: 2)...string.index(string.startIndex, offsetBy: 3)
     let minuteRange = string.index(string.startIndex, offsetBy: 4)...string.index(string.startIndex, offsetBy: 5)
@@ -51,7 +49,7 @@ func parseDayHourMinute(_ string: String.SubSequence, referenceDate: Date? = nil
     return components
 }
 
-func parseDayHour(_ string: String.SubSequence, referenceDate: Date? = nil) throws -> DateComponents {
+func parseDayHour(_ string: String, referenceDate: Date? = nil) throws -> DateComponents {
     let dayRange = string.startIndex...string.index(string.startIndex, offsetBy: 1)
     let hourRange = string.index(string.startIndex, offsetBy: 2)...string.index(string.startIndex, offsetBy: 3)
     

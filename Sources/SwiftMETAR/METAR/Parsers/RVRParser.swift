@@ -1,9 +1,8 @@
 import Foundation
+import Regex
 
-fileprivate let visRxStr = #"^R([A-Z0-9]+)\/([MP]?)(\d+)(FT|M)$"#
-fileprivate let visRx = try! NSRegularExpression(pattern: visRxStr, options: [])
-fileprivate let variableRxStr = #"^R([A-Z0-9]+)\/([MP]?)(\d+)V([MP]?)(\d+)(FT|M)$"#
-fileprivate let variableRx = try! NSRegularExpression(pattern: variableRxStr, options: [])
+fileprivate let visRx = Regex(#"^R([A-Z0-9]+)\/([MP]?)(\d+)(FT|M)$"#)
+fileprivate let variableRx = Regex(#"^R([A-Z0-9]+)\/([MP]?)(\d+)V([MP]?)(\d+)(FT|M)$"#)
 
 func parseRunwayVisibility(_ parts: inout Array<String.SubSequence>) throws -> Array<RunwayVisibility> {
     var visibilities = Array<RunwayVisibility>()
@@ -15,33 +14,30 @@ func parseRunwayVisibility(_ parts: inout Array<String.SubSequence>) throws -> A
         switch visibilityType(visStr) {
             case let .vis(match):
                 parts.removeFirst()
-                let runway = String(visStr.substring(with: match.range(at: 1)))
                 
-                let bound = visStr.substring(with: match.range(at: 2))
-                guard let quantity = UInt16(visStr.substring(with: match.range(at: 3))) else {
-                    throw Error.invalidVisibility(visStr)
-                }
-                let units = visStr.substring(with: match.range(at: 4))
+                guard let runway = match.captures[0],
+                      let bound = match.captures[1],
+                      let quantityStr = match.captures[2],
+                      let quantity = UInt16(quantityStr),
+                      let units = match.captures[3] else { throw Error.invalidVisibility(visStr) }
+                
                 let value = visibilityValue(quantity, bound: bound, units: units)
-                
                 visibilities.append(RunwayVisibility(runwayID: runway, visibility: value))
                 
             case let .variable(match):
                 parts.removeFirst()
-                let runway = String(visStr.substring(with: match.range(at: 1)))
                 
-                let lowBound = visStr.substring(with: match.range(at: 2))
-                guard let lowQuantity = UInt16(visStr.substring(with: match.range(at: 3))) else {
-                    throw Error.invalidVisibility(visStr)
-                }
-                let highBound = visStr.substring(with: match.range(at: 4))
-                guard let highQuantity = UInt16(visStr.substring(with: match.range(at: 5))) else {
-                    throw Error.invalidVisibility(visStr)
-                }
-                let units = visStr.substring(with: match.range(at: 6))
+                guard let runway = match.captures[0],
+                      let lowBound = match.captures[1],
+                      let lowQtyStr = match.captures[2],
+                      let lowQuantity = UInt16(lowQtyStr),
+                      let highQtyStr = match.captures[4],
+                      let highQuantity = UInt16(highQtyStr),
+                      let highBound = match.captures[3],
+                      let units = match.captures[5] else { throw Error.invalidVisibility(visStr) }
+                
                 let low = visibilityValue(lowQuantity, bound: lowBound, units: units)
                 let high = visibilityValue(highQuantity, bound: highBound, units: units)
-                
                 visibilities.append(RunwayVisibility(runwayID: runway, visibility: .variable(low, high)))
                 
             case .none: return visibilities
@@ -49,7 +45,7 @@ func parseRunwayVisibility(_ parts: inout Array<String.SubSequence>) throws -> A
     }
 }
 
-fileprivate func visibilityValue(_ value: UInt16, bound: String.SubSequence, units: String.SubSequence) -> Visibility {
+fileprivate func visibilityValue(_ value: UInt16, bound: String, units: String) -> Visibility {
     switch bound {
         case "M":
             switch units {
@@ -80,15 +76,15 @@ fileprivate func visibilityValue(_ value: UInt16, bound: String.SubSequence, uni
 }
 
 fileprivate enum VisibilityStringType {
-    case vis(match: NSTextCheckingResult)
-    case variable(match: NSTextCheckingResult)
+    case vis(match: MatchResult)
+    case variable(match: MatchResult)
     case none
 }
 
 fileprivate func visibilityType(_ string: String) -> VisibilityStringType {
-    if let match = visRx.firstMatch(in: string, options: [], range: string.nsRange) {
+    if let match = visRx.firstMatch(in: string) {
         return .vis(match: match)
-    } else if let match = variableRx.firstMatch(in: string, options: [], range: string.nsRange) {
+    } else if let match = variableRx.firstMatch(in: string) {
         return .variable(match: match)
     } else {
         return .none

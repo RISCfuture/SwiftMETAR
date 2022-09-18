@@ -1,4 +1,5 @@
 import Foundation
+import Regex
 
 fileprivate let intensities = Weather.Intensity.allCases
     .map { NSRegularExpression.escapedPattern(for: $0.rawValue) }
@@ -11,9 +12,8 @@ fileprivate let phenomena = Weather.Phenomenon.allCases
     .joined(separator: "|")
 
 fileprivate let weatherRxStr = "^(\(intensities))?(\(descriptors))?((?:\(phenomena))+)$"
-fileprivate let weatherRx = try! NSRegularExpression(pattern: weatherRxStr, options: [])
-fileprivate let noRecordedWxStr = #"^\/{2,}$"#
-fileprivate let noRecordedWx = try! NSRegularExpression(pattern: noRecordedWxStr, options: [])
+fileprivate let weatherRx = try! Regex(string: weatherRxStr)
+fileprivate let noRecordedWx = Regex(#"^\/{2,}$"#)
 
 func parseWeather(_ parts: inout Array<String.SubSequence>) throws -> Array<Weather> {
     var weather = Array<Weather>()
@@ -31,28 +31,26 @@ func parseWeather(_ parts: inout Array<String.SubSequence>) throws -> Array<Weat
             parts.removeFirst()
             continue
         }
-        if noRecordedWx.firstMatch(in: weatherStr, options: [], range: weatherStr.nsRange) != nil {
+        if noRecordedWx.firstMatch(in: weatherStr) != nil {
             parts.removeFirst()
             return []
         }
         
-        if let match = weatherRx.firstMatch(in: weatherStr, options: [], range: weatherStr.nsRange) {
+        if let match = weatherRx.firstMatch(in: weatherStr) {
             parts.removeFirst()
             
-            let intensityStr = String(weatherStr.substring(with: match.range(at: 1)))
-            guard let intensity = Weather.Intensity(rawValue: intensityStr) else {
+            guard let intensityStr = match.captures[0],
+                  let intensity = Weather.Intensity(rawValue: intensityStr) else {
                 throw Error.invalidWeather(weatherStr)
             }
             
-            let descriptorRange = match.range(at: 2)
             var descriptor: Weather.Descriptor? = nil
-            if descriptorRange.location != NSNotFound {
-                let descriptorStr = String(weatherStr.substring(with: descriptorRange))
-                descriptor = Weather.Descriptor(rawValue: descriptorStr)
-                guard descriptor != nil else { throw Error.invalidWeather(weatherStr) }
+            if let descriptorStr = match.captures[1] {
+                guard let desc = Weather.Descriptor(rawValue: descriptorStr) else { throw Error.invalidWeather(weatherStr) }
+                descriptor = desc
             }
             
-            let phenomenaStr = String(weatherStr.substring(with: match.range(at: 3))).partition(by: 2)
+            guard let phenomenaStr = match.captures[2]?.partition(by: 2) else { throw Error.invalidWeather(weatherStr) }
             let phenomena = try phenomenaStr.map { code -> Weather.Phenomenon in
                 guard let phenomenon = Weather.Phenomenon(rawValue: code) else {
                     throw Error.invalidWeather(weatherStr)
