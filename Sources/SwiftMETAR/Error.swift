@@ -42,6 +42,9 @@ public enum Error: Swift.Error, LocalizedError {
     /// Forecasted turbulence could not be parsed.
     case invalidTurbulence(_ turbulence: String)
     
+    /// Forecasted temperature or temperature extreme could not be parsed.
+    case invalidForecastTemperature(_ temperature: String)
+    
     public var errorDescription: String? {
         switch self {
             case .badFormat:
@@ -70,6 +73,8 @@ public enum Error: Swift.Error, LocalizedError {
                 return String(format: NSLocalizedString("Invalid icing ‘%@’", comment: "SwiftMETAR error"), icing)
             case let .invalidTurbulence(turbulence):
                 return String(format: NSLocalizedString("Invalid turbulence ‘%@’", comment: "SwiftMETAR error"), turbulence)
+            case let .invalidForecastTemperature(temp):
+                return String(format: NSLocalizedString("Invalid forecast temperature ‘%@’", comment: "SwiftMETAR error"), temp)
         }
     }
 }

@@ -26,6 +26,9 @@ public struct TAF: Codable {
     
     /// The forecasted weather changes, and the valid periods for each forecast.
     public let groups: Array<Group>
+ 
+    /// The forecasted temperature changes and temperature extremes.
+    public let temperatures: Array<Temperature>
     
     /// Additional remarks following the forecast.
     public let remarks: Array<RemarkEntry>
@@ -136,6 +139,29 @@ public struct TAF: Codable {
         
         /// Correction of incorrect information.
         case corrected = "COR"
+    }
+    
+    /// A forecasted temperature value.
+    public struct Temperature: Codable, Equatable {
+        
+        /// Whether this is a forecasted temperature or temperature extreme.
+        public let type: TemperatureType?
+        
+        /// The temperature value, in °C.
+        public let value: Int
+        
+        /// The start time of the forecasted temperature.
+        public let time: DateComponents
+        
+        /// Temperature extreme types
+        public enum TemperatureType: Codable {
+            
+            /// Minimum temperature for the forecast period.
+            case minimum
+            
+            /// Maximum temperature for the forecast period.
+            case maximum
+        }
     }
     
     /// A snapshot of weather conditions for a forecast period. Not all weather

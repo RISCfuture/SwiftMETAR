@@ -1,7 +1,7 @@
 import Foundation
 import Regex
 
-func parsePeriod(_ parts: inout Array<String.SubSequence>, referenceDate: Date? = nil) throws -> TAF.Group.Period {
+func parsePeriod(_ parts: inout Array<String.SubSequence>, referenceDate: Date? = nil) throws -> TAF.Group.Period? {
     if let from = try parseFromPeriod(&parts, referenceDate: referenceDate ?? Date()) {
         return from
     }
@@ -22,7 +22,7 @@ func parsePeriod(_ parts: inout Array<String.SubSequence>, referenceDate: Date? 
         return range
     }
     
-    throw Error.badFormat
+    return nil
 }
 
 fileprivate let fromRx = Regex(#"^FM(\d{2}\d{2}\d{2})$"#)
