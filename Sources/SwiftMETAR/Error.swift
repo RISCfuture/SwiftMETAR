@@ -39,6 +39,8 @@ public enum Error: Swift.Error, LocalizedError {
     /// Forecasted icing could not be parsed.
     case invalidIcing(_ icing: String)
     
+    /// Forecasted turbulence could not be parsed.
+    case invalidTurbulence(_ turbulence: String)
     
     public var errorDescription: String? {
         switch self {
@@ -66,6 +68,8 @@ public enum Error: Swift.Error, LocalizedError {
                 return String(format: NSLocalizedString("Invalid low-level windshear ‘%@’.", comment: "SwiftMETAR error"), windshear)
             case let .invalidIcing(icing):
                 return String(format: NSLocalizedString("Invalid icing ‘%@’", comment: "SwiftMETAR error"), icing)
+            case let .invalidTurbulence(turbulence):
+                return String(format: NSLocalizedString("Invalid turbulence ‘%@’", comment: "SwiftMETAR error"), turbulence)
         }
     }
 }

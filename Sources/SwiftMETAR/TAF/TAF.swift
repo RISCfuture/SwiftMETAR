@@ -166,7 +166,10 @@ public struct TAF: Codable {
         /// Any forecasted icing conditions.
         public var icing: Icing?
         
-        /// Forecasted altimeter setting.
+        /// Any forecasted turbulence conditions.
+        public var turbulence: Turbulence?
+        
+        /// Forecasted minimum altimeter setting.
         public var altimeter: Altimeter?
         
         /// A valid period for a TAF or one of its groups.
