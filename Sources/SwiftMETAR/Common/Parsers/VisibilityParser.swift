@@ -3,7 +3,8 @@ import NumericAnnex
 import Regex
 
 fileprivate let fractionalRx = Regex(#"^([PM])?(\d+)\/(\d+)SM$"#)
-fileprivate let integerRx = Regex(#"^([PM])?(\d+)(SM|FT|M)?$"#)
+fileprivate let integerRx = Regex(#"^([PM])?(\d+)(SM|FT|M)$"#)
+fileprivate let metersRx = Regex(#"^(\d{3,4})$"#)
 fileprivate let notRecordedRx = Regex(#"^\/{2,}(SM|FT|M)$"#)
 
 func parseVisibility(_ parts: inout Array<String.SubSequence>) throws -> Visibility? {
@@ -73,6 +74,8 @@ func parseVisibility(_ parts: inout Array<String.SubSequence>) throws -> Visibil
                 }
             default: preconditionFailure("Unknown units")
         }
+    } else if metersRx.matches(vizStr) {
+        return .equal(.meters(UInt16(vizStr)!))
     } else {
         return nil
     }
