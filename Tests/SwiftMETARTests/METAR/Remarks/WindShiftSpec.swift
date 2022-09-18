@@ -6,7 +6,7 @@ import Nimble
 
 class WindShiftSpec: QuickSpec {
     private var date: DateComponents {
-        return Date().this(day: 1, hour: 19, minute: 30)
+        return Date().this(day: 1, hour: 19, minute: 30)!
     }
     
     override func spec() {

@@ -26,7 +26,7 @@ class TAFSpec: QuickSpec {
             
             let groups: Array<TAF.Group> = [
                 .init(
-                    period: .range(.init(start: .this(day: 11, hour: 12), end: .this(day: 12, hour: 12))),
+                    period: .range(.init(start: .this(day: 11, hour: 12)!, end: .this(day: 12, hour: 12)!)),
                     wind: .direction(130, speed: .knots(12)),
                     visibility: .greaterThan(.statuteMiles(6)),
                     weather: [],
@@ -34,7 +34,7 @@ class TAFSpec: QuickSpec {
                     windshear: .init(height: 2000, wind: .direction(350, speed: .knots(35))),
                     windshearConditions: false),
                 .init(
-                    period: .temporary(.init(start: .this(day: 11, hour: 12), end: .this(day: 11, hour: 14))),
+                    period: .temporary(.init(start: .this(day: 11, hour: 12)!, end: .this(day: 11, hour: 14)!)),
                     wind: nil,
                     visibility: .equal(.statuteMiles(5)),
                     weather: [.init(intensity: .moderate, descriptor: nil, phenomena: [.mist])],
@@ -42,7 +42,7 @@ class TAFSpec: QuickSpec {
                     windshear: nil,
                     windshearConditions: false),
                 .init(
-                    period: .from(.this(day: 11, hour: 15, minute: 0)),
+                    period: .from(.this(day: 11, hour: 15, minute: 0)!),
                     wind: .direction(160, speed: .knots(15), gust: .knots(25)),
                     visibility: .greaterThan(.statuteMiles(6)),
                     weather: [],
@@ -50,7 +50,7 @@ class TAFSpec: QuickSpec {
                     windshear: nil,
                     windshearConditions: false),
                 .init(
-                    period: .from(.this(day: 12, hour: 0, minute: 0)),
+                    period: .from(.this(day: 12, hour: 0, minute: 0)!),
                     wind: .direction(140, speed: .knots(12)),
                     visibility: .greaterThan(.statuteMiles(6)),
                     weather: [],
@@ -58,7 +58,7 @@ class TAFSpec: QuickSpec {
                     windshear: nil,
                     windshearConditions: false),
                 .init(
-                    period: .probability(30, period: .init(start: .this(day: 12, hour: 0), end: .this(day: 12, hour: 4))),
+                    period: .probability(30, period: .init(start: .this(day: 12, hour: 0)!, end: .this(day: 12, hour: 4)!)),
                     wind: nil,
                     visibility: .equal(.statuteMiles(3)),
                     weather: [.init(intensity: .moderate, descriptor: .thunderstorms, phenomena: [.rain])],
@@ -66,7 +66,7 @@ class TAFSpec: QuickSpec {
                     windshear: nil,
                     windshearConditions: false),
                 .init(
-                    period: .from(.this(day: 12, hour: 4, minute: 0)),
+                    period: .from(.this(day: 12, hour: 4, minute: 0)!),
                     wind: .direction(140, speed: .knots(8)),
                     visibility: .greaterThan(.statuteMiles(6)),
                     weather: [],
@@ -74,7 +74,7 @@ class TAFSpec: QuickSpec {
                     windshear: nil,
                     windshearConditions: false),
                 .init(
-                    period: .temporary(.init(start: .this(day: 12, hour: 4), end: .this(day: 12, hour: 8))),
+                    period: .temporary(.init(start: .this(day: 12, hour: 4)!, end: .this(day: 12, hour: 8)!)),
                     wind: nil,
                     visibility: .equal(.statuteMiles(3)),
                     weather: [.init(intensity: .moderate, descriptor: .thunderstorms, phenomena: [.rain])],
@@ -105,7 +105,7 @@ class TAFSpec: QuickSpec {
             
             let groups: Array<TAF.Group> = [
                 .init(
-                    period: .range(.init(start: .this(day: 13, hour: 16), end: .this(day: 14, hour: 12))),
+                    period: .range(.init(start: .this(day: 13, hour: 16)!, end: .this(day: 14, hour: 12)!)),
                     wind: .variable(speed: .knots(3)),
                     visibility: .greaterThan(.statuteMiles(6)),
                     weather: [.init(intensity: .vicinity, descriptor: nil, phenomena: [.thunderstorm])],
@@ -113,7 +113,7 @@ class TAFSpec: QuickSpec {
                     windshear: nil,
                     windshearConditions: false),
                 .init(
-                    period: .temporary(.init(start: .this(day: 13, hour: 16), end: .this(day: 13, hour: 18))),
+                    period: .temporary(.init(start: .this(day: 13, hour: 16)!, end: .this(day: 13, hour: 18)!)),
                     wind: nil,
                     visibility: .equal(.statuteMiles(2)),
                     weather: [.init(intensity: .moderate, descriptor: .thunderstorms, phenomena: [.rain])],
@@ -121,7 +121,7 @@ class TAFSpec: QuickSpec {
                     windshear: nil,
                     windshearConditions: false),
                 .init(
-                    period: .from(.this(day: 13, hour: 18, minute: 0)),
+                    period: .from(.this(day: 13, hour: 18, minute: 0)!),
                     wind: .variable(speed: .knots(3)),
                     visibility: .greaterThan(.statuteMiles(6)),
                     weather: [],
@@ -129,7 +129,7 @@ class TAFSpec: QuickSpec {
                     windshear: nil,
                     windshearConditions: false),
                 .init(
-                    period: .temporary(.init(start: .this(day: 13, hour: 20), end: .this(day: 14, hour: 0))),
+                    period: .temporary(.init(start: .this(day: 13, hour: 20)!, end: .this(day: 14, hour: 0)!)),
                     wind: nil,
                     visibility: .equal(.statuteMiles(1)),
                     weather: [.init(intensity: .moderate, descriptor: .thunderstorms, phenomena: [.rain])],
@@ -137,14 +137,14 @@ class TAFSpec: QuickSpec {
                     windshear: nil,
                     windshearConditions: false),
                 .init(
-                    period: .from(.this(day: 14, hour: 0, minute: 0)),
+                    period: .from(.this(day: 14, hour: 0, minute: 0)!),
                     wind: .variable(speed: .knots(3)),
                     visibility: .greaterThan(.statuteMiles(6)),
                     weather: [.init(intensity: .vicinity, descriptor: nil, phenomena: [.thunderstorm])],
                     conditions: [.scattered(2000, type: .cumulonimbus), .broken(12_000)],
                     windshear: nil, windshearConditions: false),
                 .init(
-                    period: .temporary(.init(start: .this(day: 14, hour: 8), end: .this(day: 14, hour: 12))),
+                    period: .temporary(.init(start: .this(day: 14, hour: 8)!, end: .this(day: 14, hour: 12)!)),
                     wind: nil,
                     visibility: nil,
                     weather: [],
@@ -176,42 +176,42 @@ class TAFSpec: QuickSpec {
             expect(forecast.remarks.map { $0.remark }).to(contain(.unknown("NXT FCST BY 00Z=")))
             
             let groups: Array<TAF.Group> = [
-                .init(period: .range(.init(start: .this(day: 11, hour: 18), end: .this(day: 12, hour: 18))),
+                .init(period: .range(.init(start: .this(day: 11, hour: 18)!, end: .this(day: 12, hour: 18)!)),
                       wind: .direction(190, speed: .knots(7)),
                       visibility: .greaterThan(.statuteMiles(6)),
                       weather: [],
                       conditions: [.scattered(3000)],
                       windshear: nil,
                       windshearConditions: false),
-                .init(period: .temporary(.init(start: .this(day: 11, hour: 18), end: .this(day: 11, hour: 20))),
+                .init(period: .temporary(.init(start: .this(day: 11, hour: 18)!, end: .this(day: 11, hour: 20)!)),
                       wind: nil,
                       visibility: nil,
                       weather: [],
                       conditions: [.broken(4000)],
                       windshear: nil,
                       windshearConditions: false),
-                .init(period: .from(.this(day: 11, hour: 20, minute: 0)),
+                .init(period: .from(.this(day: 11, hour: 20, minute: 0)!),
                       wind: .direction(160, speed: .knots(11)),
                       visibility: .greaterThan(.statuteMiles(6)),
                       weather: [.init(intensity: .vicinity, descriptor: nil, phenomena: [.thunderstorm])],
                       conditions: [.few(3000, type: .cumulonimbus), .scattered(25_000)],
                       windshear: nil,
                       windshearConditions: false),
-                .init(period: .from(.this(day: 12, hour: 2, minute: 0)),
+                .init(period: .from(.this(day: 12, hour: 2, minute: 0)!),
                       wind: .direction(140, speed: .knots(6)),
                       visibility: .greaterThan(.statuteMiles(6)),
                       weather: [],
                       conditions: [.few(2500), .scattered(25_000)],
                       windshear: nil,
                       windshearConditions: false),
-                .init(period: .from(.this(day: 12, hour: 8, minute: 0)),
+                .init(period: .from(.this(day: 12, hour: 8, minute: 0)!),
                       wind: .variable(speed: .knots(3)),
                       visibility: .equal(.statuteMiles(5)),
                       weather: [.init(intensity: .moderate, descriptor: nil, phenomena: [.mist])],
                       conditions: [.scattered(1200)],
                       windshear: nil,
                       windshearConditions: false),
-                .init(period: .from(.this(day: 12, hour: 15, minute: 0)),
+                .init(period: .from(.this(day: 12, hour: 15, minute: 0)!),
                       wind: .direction(170, speed: .knots(7)),
                       visibility: .greaterThan(.statuteMiles(6)),
                       weather: [],
@@ -237,10 +237,10 @@ class TAFSpec: QuickSpec {
                 """
                 let forecast = try! TAF.from(string: string)
                 
-                let components = DateComponents.this(day: 12, hour: 2)
+                let components = DateComponents.this(day: 12, hour: 2)!
                 let date = zuluCal.date(from: components)!
                 expect(forecast.during(date)).to(equal(
-                    .init(period: .from(.this(day: 12, hour: 2)),
+                    .init(period: .from(.this(day: 12, hour: 2)!),
                           wind: .direction(140, speed: .knots(12)),
                           visibility: .equal(.statuteMiles(3)),
                           weather: [.init(intensity: .moderate, descriptor: .thunderstorms, phenomena: [.rain])],
@@ -262,7 +262,7 @@ class TAFSpec: QuickSpec {
                 """
                 let forecast = try! TAF.from(string: string)
                 
-                let components = DateComponents.this(day: 10, hour: 2)
+                let components = DateComponents.this(day: 10, hour: 2)!
                 let date = zuluCal.date(from: components)!
                 
                 expect(forecast.during(date)).to(beNil())

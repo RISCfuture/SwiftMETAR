@@ -7,7 +7,7 @@ import Nimble
 // MARK: - Dates
 
 extension DateComponents {
-    static func this(month: Int? = nil, day: Int? = nil, hour: Int? = nil, minute: Int? = nil, second: Int? = nil, reference: Date? = nil) -> DateComponents {
+    static func this(month: Int? = nil, day: Int? = nil, hour: Int? = nil, minute: Int? = nil, second: Int? = nil, reference: Date? = nil) -> DateComponents? {
         let reference = reference ?? Date()
         
         let startDate: Date
@@ -35,13 +35,13 @@ extension DateComponents {
             preconditionFailure("Must specify at least one date component")
         }
         
-        let date = zuluCal.nextDate(after: startDate, matching: components, matchingPolicy: .nextTime, repeatedTimePolicy: .first, direction: .forward)!
+        guard let date = zuluCal.nextDate(after: startDate, matching: components, matchingPolicy: .nextTime, repeatedTimePolicy: .first, direction: .forward) else { return nil }
         return zuluCal.dateComponents(in: zulu, from: date)
     }
 }
 
 extension Date {
-    func this(month: Int? = nil, day: Int? = nil, hour: Int? = nil, minute: Int? = nil, second: Int? = nil) -> DateComponents {
+    func this(month: Int? = nil, day: Int? = nil, hour: Int? = nil, minute: Int? = nil, second: Int? = nil) -> DateComponents? {
         return DateComponents.this(month: month, day: day, hour: hour, minute: minute, second: second, reference: self)
     }
 }
