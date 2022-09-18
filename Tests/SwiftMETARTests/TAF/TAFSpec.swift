@@ -267,6 +267,27 @@ class TAFSpec: QuickSpec {
                 
                 expect(forecast.during(date)).to(beNil())
             }
+            
+            it("parses a TAF without a forecast time") {
+                let string = """
+                TAF KNFG
+                    2521/2621 21007KT 9999 SKC QNH2989INS
+                    BECMG 2603/2605 VRB05KT 9999 BKN010 QNH2993INS
+                    TEMPO 2606/2612 8000 BR
+                    FM261830 VRB05KT 9999 SCT015 QNH2994INS
+                    T20/2522Z T12/2611Z
+                """
+                let forecast = try! TAF.from(string: string)
+                
+                expect(forecast.originCalendarDate).to(beNil())
+                expect(forecast.groups[0].period).to(equal(.range(.init(start: Date().this(day: 25, hour: 21)!,
+                                                                        end: Date().this(day: 26, hour: 21)!))))
+                expect(forecast.groups[1].period).to(equal(.becoming(.init(start: Date().this(day: 26, hour: 3)!,
+                                                                           end: Date().this(day: 26, hour: 5)!))))
+                expect(forecast.groups[2].period).to(equal(.temporary(.init(start: Date().this(day: 26, hour: 6)!,
+                                                                            end: Date().this(day: 26, hour: 12)!))))
+                expect(forecast.groups[3].period).to(equal(.from(Date().this(day: 26, hour: 18, minute: 30)!)))
+            }
         }
     }
 }

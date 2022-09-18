@@ -9,7 +9,7 @@ func parseTAF(_ codedTAF: String, on referenceDate: Date? = nil, lenientRemarks:
     
     var groups = Array<TAF.Group>()
     while !parts.isEmpty {
-        guard let period = try parsePeriod(&parts, referenceDate: date.date!) else { break }
+        guard let period = try parsePeriod(&parts, referenceDate: date?.date) else { break }
         let wind = try parseWind(&parts)
         let visibility = try parseVisibility(&parts)
         let weather = try parseWeather(&parts)
@@ -32,8 +32,9 @@ func parseTAF(_ codedTAF: String, on referenceDate: Date? = nil, lenientRemarks:
                                 altimeter: altimeter))
     }
     
-    let temperatures = try parseTemperatures(&parts, date: date)
-    let remarks = try parseRemarks(&parts, date: date, lenientRemarks: lenientRemarks)
+    let refDateForRemarks = date ?? Calendar.current.dateComponents(in: .current, from: Date())
+    let temperatures = try parseTemperatures(&parts, date: refDateForRemarks)
+    let remarks = try parseRemarks(&parts, date: refDateForRemarks, lenientRemarks: lenientRemarks)
     
     return TAF(text: codedTAF,
                issuance: issuance,

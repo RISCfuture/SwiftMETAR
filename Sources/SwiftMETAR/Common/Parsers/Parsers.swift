@@ -8,8 +8,13 @@ func parseLocationID(_ parts: inout Array<String.SubSequence>) throws -> String 
 
 fileprivate let dateRx = Regex(#"^(\d{2}\d{2}\d{2})Z?$"#)
 
-func parseDate(_ parts: inout Array<String.SubSequence>, referenceDate: Date? = nil) throws -> DateComponents {
+func parseDate(_ parts: inout Array<String.SubSequence>, referenceDate: Date? = nil) throws -> DateComponents? {
     guard !parts.isEmpty else { throw Error.badFormat }
+    
+    if rangePeriodRx.matches(String(parts[0])) {
+        // TAF doesn't have a date, instead rolls right on to the period (e.g., "1200/1500")
+        return nil
+    }
     
     let dateStr = String(parts.removeFirst())
     guard let match = dateRx.firstMatch(in: dateStr),

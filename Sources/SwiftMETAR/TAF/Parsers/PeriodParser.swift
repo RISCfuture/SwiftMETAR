@@ -90,7 +90,7 @@ fileprivate func parseProbabilityPeriod(_ parts: inout Array<String.SubSequence>
     return .probability(probability, period: period)
 }
 
-fileprivate let rangePeriodRx = Regex(#"^(\d{4})\/(\d{4})$"#)
+let rangePeriodRx = Regex(#"^(\d{4})\/(\d{4})$"#)
 
 fileprivate func parseRangePeriod(_ parts: inout Array<String.SubSequence>, referenceDate: Date) throws -> TAF.Group.Period? {
     guard !parts.isEmpty else { return nil }

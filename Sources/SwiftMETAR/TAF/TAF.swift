@@ -21,8 +21,10 @@ public struct TAF: Codable {
     /// The reporting station ICAO code (typically an airport).
     public let airportID: String
     
-    /// The components of the date that the forecast was generated.
-    public let originCalendarDate: DateComponents
+    /// The components of the date that the forecast was generated. If `nil`,
+    /// forecast generation date was not provided, and all group dates will be
+    /// assumed to be relative to the current month and year.
+    public let originCalendarDate: DateComponents?
     
     /// The forecasted weather changes, and the valid periods for each forecast.
     public let groups: Array<Group>
@@ -34,7 +36,10 @@ public struct TAF: Codable {
     public let remarks: Array<RemarkEntry>
     
     /// The date that the forecast was generated.
-    public var originDate: Date { originCalendarDate.date! }
+    public var originDate: Date? {
+        guard let originCalendarDate = originCalendarDate else { return nil }
+        return originCalendarDate.date
+    }
     
     /**
      Parse a TAF from its text.
