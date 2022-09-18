@@ -7,6 +7,11 @@ func parseTempDewpoint(_ parts: inout Array<String.SubSequence>) throws -> (Int8
     if parts.isEmpty { return (nil, nil) }
     let tempStr = String(parts[0])
     
+    if tempStr == "M" {
+        parts.removeFirst()
+        return (nil, nil)
+    }
+    
     if let match = tempRx.firstMatch(in: tempStr) {
         parts.removeFirst()
         

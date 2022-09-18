@@ -9,7 +9,7 @@ class WeatherSpec: QuickSpec {
         describe("weather phenomena") {
             it("parses light drizzle") {
                 let string = "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT -DZ OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
-                let phenomena = try! METAR.from(string: string).weather
+                let phenomena = try! METAR.from(string: string).weather!
                 expect(phenomena.count).to(equal(1))
                 
                 expect(phenomena[0].intensity).to(equal(.light))
@@ -19,7 +19,7 @@ class WeatherSpec: QuickSpec {
             
             it("parses light rain and snow") {
                 let string = "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT -RASN OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
-                let phenomena = try! METAR.from(string: string).weather
+                let phenomena = try! METAR.from(string: string).weather!
                 expect(phenomena.count).to(equal(1))
                 
                 expect(phenomena[0].intensity).to(equal(.light))
@@ -29,7 +29,7 @@ class WeatherSpec: QuickSpec {
             
             it("parses snow and mist") {
                 let string = "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT SN BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
-                let phenomena = try! METAR.from(string: string).weather
+                let phenomena = try! METAR.from(string: string).weather!
                 expect(phenomena.count).to(equal(2))
                 
                 expect(phenomena[0].intensity).to(equal(.moderate))
@@ -42,7 +42,7 @@ class WeatherSpec: QuickSpec {
             
             it("parses light freezing rain and fog") {
                 let string = "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT -FZRA FG OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
-                let phenomena = try! METAR.from(string: string).weather
+                let phenomena = try! METAR.from(string: string).weather!
                 expect(phenomena.count).to(equal(2))
                 
                 expect(phenomena[0].intensity).to(equal(.light))
@@ -55,7 +55,7 @@ class WeatherSpec: QuickSpec {
             
             it("parses moderate rainshower") {
                 let string = "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT SHRA OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
-                let phenomena = try! METAR.from(string: string).weather
+                let phenomena = try! METAR.from(string: string).weather!
                 expect(phenomena.count).to(equal(1))
                 
                 expect(phenomena[0].intensity).to(equal(.moderate))
@@ -65,7 +65,7 @@ class WeatherSpec: QuickSpec {
             
             it("parses blowing sand in the vicinity") {
                 let string = "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT VCBLSA OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
-                let phenomena = try! METAR.from(string: string).weather
+                let phenomena = try! METAR.from(string: string).weather!
                 expect(phenomena.count).to(equal(1))
                 
                 expect(phenomena[0].intensity).to(equal(.vicinity))
@@ -75,7 +75,7 @@ class WeatherSpec: QuickSpec {
             
             it("parses light rain and snow, fog, and haze") {
                 let string = "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT -RASN FG HZ OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
-                let phenomena = try! METAR.from(string: string).weather
+                let phenomena = try! METAR.from(string: string).weather!
                 expect(phenomena.count).to(equal(3))
                 
                 expect(phenomena[0].intensity).to(equal(.light))
@@ -91,7 +91,7 @@ class WeatherSpec: QuickSpec {
             
             it("parses thunderstorms") {
                 let string = "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT TS OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
-                let phenomena = try! METAR.from(string: string).weather
+                let phenomena = try! METAR.from(string: string).weather!
                 expect(phenomena.count).to(equal(1))
                 
                 expect(phenomena[0].intensity).to(equal(.moderate))
@@ -101,7 +101,7 @@ class WeatherSpec: QuickSpec {
             
             it("parses thunderstorm, heavy rain") {
                 let string = "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
-                let phenomena = try! METAR.from(string: string).weather
+                let phenomena = try! METAR.from(string: string).weather!
                 expect(phenomena.count).to(equal(1))
                 
                 expect(phenomena[0].intensity).to(equal(.heavy))
@@ -111,7 +111,7 @@ class WeatherSpec: QuickSpec {
             
             it("parses tornado, thunderstorm-associated rain and hail, and mist") {
                 let string = "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +FC TSRAGR BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
-                let phenomena = try! METAR.from(string: string).weather
+                let phenomena = try! METAR.from(string: string).weather!
                 expect(phenomena.count).to(equal(3))
                 
                 expect(phenomena[0].intensity).to(equal(.heavy))
@@ -126,6 +126,12 @@ class WeatherSpec: QuickSpec {
                 expect(phenomena[2].intensity).to(equal(.moderate))
                 expect(phenomena[2].descriptor).to(beNil())
                 expect(phenomena[2].phenomena).to(equal([.mist]))
+            }
+            
+            it("parses missing weather") {
+                let string = "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT M OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
+                let metar = try! METAR.from(string: string)
+                expect(metar.weather).to(beNil())
             }
         }
     }

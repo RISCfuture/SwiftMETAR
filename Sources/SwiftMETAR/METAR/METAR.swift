@@ -35,9 +35,9 @@ public struct METAR: Codable {
     /// Any runway visibilities recorded.
     public let runwayVisibility: Array<RunwayVisibility>
     
-    
-    /// Any observed weather phenomena.
-    public let weather: Array<Weather>
+    /// Any observed weather phenomena. An empty array means no weather
+    /// phenomena exists; `nil` means no data was provided.
+    public let weather: Array<Weather>?
     
     /// Any observed cloud layers, or other sky conditions.
     public let conditions: Array<Condition>

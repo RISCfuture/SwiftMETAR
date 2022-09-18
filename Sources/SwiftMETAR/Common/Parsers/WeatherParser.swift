@@ -15,13 +15,17 @@ fileprivate let weatherRxStr = "^(\(intensities))?(\(descriptors))?((?:\(phenome
 fileprivate let weatherRx = try! Regex(string: weatherRxStr)
 fileprivate let noRecordedWx = Regex(#"^\/{2,}$"#)
 
-func parseWeather(_ parts: inout Array<String.SubSequence>) throws -> Array<Weather> {
+func parseWeather(_ parts: inout Array<String.SubSequence>) throws -> Array<Weather>? {
     var weather = Array<Weather>()
     
     while true {
         if parts.isEmpty { return weather }
         let weatherStr = String(parts[0])
         
+        if weatherStr == "M" {
+            parts.removeFirst()
+            return nil
+        }
         if weatherStr == "NSW" {
             parts.removeFirst()
             return []

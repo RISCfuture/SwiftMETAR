@@ -104,7 +104,7 @@ public struct TAF: Codable {
                 default:
                     if let wind = group.wind { combinedGroup.wind = wind }
                     if let visibility = group.visibility { combinedGroup.visibility = visibility }
-                    if !group.weather.isEmpty { combinedGroup.weather = group.weather }
+                    if group.weather != nil && !group.weather!.isEmpty { combinedGroup.weather = group.weather }
                     if !group.conditions.isEmpty { combinedGroup.conditions = group.conditions }
                     if let windshear = group.windshear { combinedGroup.windshear = windshear }
             }
@@ -177,8 +177,9 @@ public struct TAF: Codable {
         /// The forecasted visibility.
         public var visibility: Visibility?
         
-        /// Any forecasted weather phenomena.
-        public var weather: Array<Weather>
+        /// Any forecasted weather phenomena. An empty array means no phenomena
+        /// are forecasted; `nil` means data is not available.
+        public var weather: Array<Weather>?
         
         /// Any forecasted cloud coverage.
         public var conditions: Array<Condition>

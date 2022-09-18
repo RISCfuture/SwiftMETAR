@@ -49,6 +49,12 @@ class VisibilitySpec: QuickSpec {
                 let visibility = try! METAR.from(string: string).visibility
                 expect(visibility).to(equal(.greaterThan(.meters(9999))))
             }
+            
+            it("parses missing visibilities") {
+                let string = "METAR KOKC 011955Z AUTO 22015G25KT 180V250 M R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
+                let metar = try! METAR.from(string: string)
+                expect(metar.visibility).to(beNil())
+            }
         }
     }
 }
