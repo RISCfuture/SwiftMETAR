@@ -15,8 +15,8 @@ let package = Package(
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
-        .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "2.2.0")),
-        .package(url: "https://github.com/Quick/Nimble.git", .branch("master")) // required for Swift 5.3 support
+        .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "4.0.0")),
+        .package(url: "https://github.com/Quick/Nimble.git", .upToNextMajor(from: "9.2.0"))
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.

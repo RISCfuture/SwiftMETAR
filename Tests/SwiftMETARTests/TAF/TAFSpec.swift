@@ -26,49 +26,49 @@ class TAFSpec: QuickSpec {
             
             let groups: Array<TAF.Group> = [
                 .init(
-                    period: .range(.init(start: .this(day: 11, hour: 12)!, end: .this(day: 12, hour: 12)!)),
+                    period: .range(.init(start: .this(day: 11, hour: 12), end: .this(day: 12, hour: 12))),
                     wind: .direction(130, speed: .knots(12)),
                     visibility: .greaterThan(.statuteMiles(6)),
                     weather: [],
                     conditions: [.broken(10_000)],
                     windshear: .init(height: 2000, wind: .direction(350, speed: .knots(35)))),
                 .init(
-                    period: .temporary(.init(start: .this(day: 11, hour: 12)!, end: .this(day: 11, hour: 14)!)),
+                    period: .temporary(.init(start: .this(day: 11, hour: 12), end: .this(day: 11, hour: 14))),
                     wind: nil,
                     visibility: .equal(.statuteMiles(5)),
                     weather: [.init(intensity: .moderate, descriptor: nil, phenomena: [.mist])],
                     conditions: [],
                     windshear: nil),
                 .init(
-                    period: .from(.this(day: 11, hour: 15, minute: 0)!),
+                    period: .from(.this(day: 11, hour: 15, minute: 0)),
                     wind: .direction(160, speed: .knots(15), gust: .knots(25)),
                     visibility: .greaterThan(.statuteMiles(6)),
                     weather: [],
                     conditions: [.scattered(4000), .broken(25_000)],
                     windshear: nil),
                 .init(
-                    period: .from(.this(day: 12, hour: 0, minute: 0)!),
+                    period: .from(.this(day: 12, hour: 0, minute: 0)),
                     wind: .direction(140, speed: .knots(12)),
                     visibility: .greaterThan(.statuteMiles(6)),
                     weather: [],
                     conditions: [.broken(8000), .overcast(15_000)],
                     windshear: nil),
                 .init(
-                    period: .probability(30, period: .init(start: .this(day: 12, hour: 0)!, end: .this(day: 12, hour: 4)!)),
+                    period: .probability(30, period: .init(start: .this(day: 12, hour: 0), end: .this(day: 12, hour: 4))),
                     wind: nil,
                     visibility: .equal(.statuteMiles(3)),
                     weather: [.init(intensity: .moderate, descriptor: .thunderstorms, phenomena: [.rain])],
                     conditions: [.broken(3000, type: .cumulonimbus)],
                     windshear: nil),
                 .init(
-                    period: .from(.this(day: 12, hour: 4, minute: 0)!),
+                    period: .from(.this(day: 12, hour: 4, minute: 0)),
                     wind: .direction(140, speed: .knots(8)),
                     visibility: .greaterThan(.statuteMiles(6)),
                     weather: [],
                     conditions: [.scattered(4000), .overcast(8000)],
                     windshear: nil),
                 .init(
-                    period: .temporary(.init(start: .this(day: 12, hour: 4)!, end: .this(day: 12, hour: 8)!)),
+                    period: .temporary(.init(start: .this(day: 12, hour: 4), end: .this(day: 12, hour: 8))),
                     wind: nil,
                     visibility: .equal(.statuteMiles(3)),
                     weather: [.init(intensity: .moderate, descriptor: .thunderstorms, phenomena: [.rain])],
@@ -98,7 +98,7 @@ class TAFSpec: QuickSpec {
             
             let groups: Array<TAF.Group> = [
                 .init(
-                    period: .range(.init(start: .this(day: 13, hour: 16)!, end: .this(day: 14, hour: 12)!)),
+                    period: .range(.init(start: .this(day: 13, hour: 16), end: .this(day: 14, hour: 12))),
                     wind: .variable(speed: .knots(3)),
                     visibility: .greaterThan(.statuteMiles(6)),
                     weather: [.init(intensity: .vicinity, descriptor: nil, phenomena: [.thunderstorm])],
