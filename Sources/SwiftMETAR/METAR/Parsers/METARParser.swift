@@ -13,7 +13,7 @@ func parseMETAR(_ codedMETAR: String, on referenceDate: Date? = nil, lenientRema
     let conditions = try parseConditions(&parts)
     let tempDewpoint = try parseTempDewpoint(&parts)
     let altimeter = try parseMETARAltimeter(&parts)
-    let remarks = try parseRemarks(&parts, date: date, lenientRemarks: lenientRemarks)
+    let (remarks, remarksString) = try parseRemarks(&parts, date: date, lenientRemarks: lenientRemarks)
     
     return METAR(text: codedMETAR,
                  issuance: issuance,
@@ -28,7 +28,8 @@ func parseMETAR(_ codedMETAR: String, on referenceDate: Date? = nil, lenientRema
                  temperature: tempDewpoint.0,
                  dewpoint: tempDewpoint.1,
                  altimeter: altimeter,
-                 remarks: remarks)
+                 remarks: remarks,
+                 remarksString: remarksString)
 }
 
 fileprivate func parseIssuance(_ parts: inout Array<String.SubSequence>) throws -> METAR.Issuance {

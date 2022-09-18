@@ -455,7 +455,7 @@ public enum Remark: Codable, Equatable {
 }
 
 /// A remark and its urgency.
-public struct RemarkEntry: Codable {
+public struct RemarkEntry: Codable, Equatable {
     public let remark: Remark
     public let urgency: Remark.Urgency
 }

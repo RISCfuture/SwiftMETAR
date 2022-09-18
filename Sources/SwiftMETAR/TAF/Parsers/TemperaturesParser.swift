@@ -3,12 +3,12 @@ import Regex
 
 let temperatureRx = Regex(#"\bT([NX]?)(M?)(\d+)\/(\d{2})(\d{2})Z\b"#)
 
-func parseTemperatures(_ parts: inout Array<String.SubSequence>, date: DateComponents) throws -> Array<TAF.Temperature> {
+func parseTemperatures(_ parts: inout Array<String.SubSequence>, date: DateComponents) throws -> Array<TAF.Temperature>? {
     var temps = Array<TAF.Temperature>()
     
     while !parts.isEmpty {
         let tempStr = String(parts[0])
-        guard let result = temperatureRx.firstMatch(in: tempStr) else { return temps }
+        guard let result = temperatureRx.firstMatch(in: tempStr) else { return nil }
         parts.removeFirst()
         
         guard let extremeStr = result.captures[0],

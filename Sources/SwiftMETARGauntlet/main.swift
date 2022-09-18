@@ -36,7 +36,10 @@ TAFs.enumerateLines { line, stop in
     guard string.starts(with: "TAF K") else { return }
     
     do {
-        let taf = try TAF.from(string: string, lenientRemarks: true)
+        let taf = try TAF.from(string: string)
+        for group in taf.groups {
+            checkRemarks(group.remarks, string: string)
+        }
         checkRemarks(taf.remarks, string: string)
     } catch let error {
         print(string)

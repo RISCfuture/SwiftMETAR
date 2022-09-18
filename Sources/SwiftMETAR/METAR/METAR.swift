@@ -55,6 +55,9 @@ public struct METAR: Codable {
     /// machine-generated, but can also be human-written in plain text.
     public let remarks: Array<RemarkEntry>
     
+    /// Raw remarks, before parsing.
+    public let remarksString: String?
+    
     /// The date this METAR was generated.
     public var date: Date { calendarDate.date! }
     

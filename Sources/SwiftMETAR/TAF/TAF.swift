@@ -35,6 +35,9 @@ public struct TAF: Codable {
     /// Additional remarks following the forecast.
     public let remarks: Array<RemarkEntry>
     
+    /// Raw remarks, before parsing
+    public let remarksString: String?
+    
     /// The date that the forecast was generated.
     public var originDate: Date? {
         guard let originCalendarDate = originCalendarDate else { return nil }
@@ -49,16 +52,11 @@ public struct TAF: Codable {
                        month and year are taken from the current date. If you
                        pass in a date here, its month and year will be used for
                        the TAF dates.
-     - Parameter lenientRemarks: If true, does not require the string "RMK" to
-                                 appear before the remarks section. This will
-                                 reduce the amount of errors when parsing non-US
-                                 TAFs, but can result in mis-formatted weather
-                                 data being parsed as a remark.
      - Returns: The parsed TAF.
      - Throws: If a parsing error occurs.
      */
-    public static func from(string: String, on date: Date? = nil, lenientRemarks: Bool = false) throws -> TAF {
-        return try parseTAF(string, on: date, lenientRemarks: lenientRemarks)
+    public static func from(string: String, on date: Date? = nil) throws -> TAF {
+        return try parseTAF(string, on: date)
     }
     
     /**
@@ -81,7 +79,11 @@ public struct TAF: Codable {
                                   weather: [],
                                   conditions: [],
                                   windshear: nil,
-                                  windshearConditions: false)
+                                  windshearConditions: false,
+                                  icing: [],
+                                  turbulence: [],
+                                  remarks: [],
+                                  remarksString: nil)
         
         for group in groups {
             switch group.period {
@@ -196,13 +198,19 @@ public struct TAF: Codable {
         public var windshearConditions: Bool
         
         /// Any forecasted icing conditions.
-        public var icing: Icing?
+        public var icing: Array<Icing>
         
         /// Any forecasted turbulence conditions.
-        public var turbulence: Turbulence?
+        public var turbulence: Array<Turbulence>
         
         /// Forecasted minimum altimeter setting.
         public var altimeter: Altimeter?
+        
+        /// Additional remarks following the forecast.
+        public var remarks: Array<RemarkEntry>
+        
+        /// Raw remarks, before parsing
+        public var remarksString: String?
         
         /// A valid period for a TAF or one of its groups.
         public enum Period: Codable, Equatable {

@@ -16,7 +16,7 @@ class WindshearConditionsSpec: QuickSpec {
                     BECMG 2618/2619 34006KT 9999 SCT007 BKN015 QNH2980INS
                     TX14/2617Z TN10/2517Z LAST NO AMDS AFT 2522 NEXT 2609
                 """
-                let forecast = try! TAF.from(string: string, lenientRemarks: true)
+                let forecast = try! TAF.from(string: string)
                 expect(forecast.groups[0].windshearConditions).to(beFalse())
                 expect(forecast.groups[1].windshearConditions).to(beFalse())
                 expect(forecast.groups[2].windshearConditions).to(beTrue())

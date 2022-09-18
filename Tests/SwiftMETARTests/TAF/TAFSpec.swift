@@ -32,7 +32,11 @@ class TAFSpec: QuickSpec {
                     weather: [],
                     conditions: [.broken(10_000)],
                     windshear: .init(height: 2000, wind: .direction(350, speed: .knots(35))),
-                    windshearConditions: false),
+                    windshearConditions: false,
+                    icing: [],
+                    turbulence: [],
+                    remarks: [],
+                    remarksString: nil),
                 .init(
                     period: .temporary(.init(start: .this(day: 11, hour: 12)!, end: .this(day: 11, hour: 14)!)),
                     wind: nil,
@@ -40,7 +44,11 @@ class TAFSpec: QuickSpec {
                     weather: [.init(intensity: .moderate, descriptor: nil, phenomena: [.mist])],
                     conditions: [],
                     windshear: nil,
-                    windshearConditions: false),
+                    windshearConditions: false,
+                    icing: [],
+                    turbulence: [],
+                    remarks: [],
+                    remarksString: nil),
                 .init(
                     period: .from(.this(day: 11, hour: 15, minute: 0)!),
                     wind: .direction(160, speed: .knots(15), gust: .knots(25)),
@@ -48,7 +56,11 @@ class TAFSpec: QuickSpec {
                     weather: [],
                     conditions: [.scattered(4000), .broken(25_000)],
                     windshear: nil,
-                    windshearConditions: false),
+                    windshearConditions: false,
+                    icing: [],
+                    turbulence: [],
+                    remarks: [],
+                    remarksString: nil),
                 .init(
                     period: .from(.this(day: 12, hour: 0, minute: 0)!),
                     wind: .direction(140, speed: .knots(12)),
@@ -56,7 +68,11 @@ class TAFSpec: QuickSpec {
                     weather: [],
                     conditions: [.broken(8000), .overcast(15_000)],
                     windshear: nil,
-                    windshearConditions: false),
+                    windshearConditions: false,
+                    icing: [],
+                    turbulence: [],
+                    remarks: [],
+                    remarksString: nil),
                 .init(
                     period: .probability(30, period: .init(start: .this(day: 12, hour: 0)!, end: .this(day: 12, hour: 4)!)),
                     wind: nil,
@@ -64,7 +80,11 @@ class TAFSpec: QuickSpec {
                     weather: [.init(intensity: .moderate, descriptor: .thunderstorms, phenomena: [.rain])],
                     conditions: [.broken(3000, type: .cumulonimbus)],
                     windshear: nil,
-                    windshearConditions: false),
+                    windshearConditions: false,
+                    icing: [],
+                    turbulence: [],
+                    remarks: [],
+                    remarksString: nil),
                 .init(
                     period: .from(.this(day: 12, hour: 4, minute: 0)!),
                     wind: .direction(140, speed: .knots(8)),
@@ -72,7 +92,11 @@ class TAFSpec: QuickSpec {
                     weather: [],
                     conditions: [.scattered(4000), .overcast(8000)],
                     windshear: nil,
-                    windshearConditions: false),
+                    windshearConditions: false,
+                    icing: [],
+                    turbulence: [],
+                    remarks: [],
+                    remarksString: nil),
                 .init(
                     period: .temporary(.init(start: .this(day: 12, hour: 4)!, end: .this(day: 12, hour: 8)!)),
                     wind: nil,
@@ -80,7 +104,11 @@ class TAFSpec: QuickSpec {
                     weather: [.init(intensity: .moderate, descriptor: .thunderstorms, phenomena: [.rain])],
                     conditions: [.overcast(3000, type: .cumulonimbus)],
                     windshear: nil,
-                    windshearConditions: false)
+                    windshearConditions: false,
+                    icing: [],
+                    turbulence: [],
+                    remarks: [],
+                    remarksString: nil)
             ]
             
             expect(forecast.groups).to(equal(groups))
@@ -111,7 +139,11 @@ class TAFSpec: QuickSpec {
                     weather: [.init(intensity: .vicinity, descriptor: nil, phenomena: [.thunderstorm])],
                     conditions: [.scattered(2500, type: .cumulonimbus), .broken(25_000)],
                     windshear: nil,
-                    windshearConditions: false),
+                    windshearConditions: false,
+                    icing: [],
+                    turbulence: [],
+                    remarks: [],
+                    remarksString: nil),
                 .init(
                     period: .temporary(.init(start: .this(day: 13, hour: 16)!, end: .this(day: 13, hour: 18)!)),
                     wind: nil,
@@ -119,7 +151,11 @@ class TAFSpec: QuickSpec {
                     weather: [.init(intensity: .moderate, descriptor: .thunderstorms, phenomena: [.rain])],
                     conditions: [.broken(2000, type: .cumulonimbus)],
                     windshear: nil,
-                    windshearConditions: false),
+                    windshearConditions: false,
+                    icing: [],
+                    turbulence: [],
+                    remarks: [],
+                    remarksString: nil),
                 .init(
                     period: .from(.this(day: 13, hour: 18, minute: 0)!),
                     wind: .variable(speed: .knots(3)),
@@ -127,7 +163,11 @@ class TAFSpec: QuickSpec {
                     weather: [],
                     conditions: [.scattered(2500), .broken(25_000)],
                     windshear: nil,
-                    windshearConditions: false),
+                    windshearConditions: false,
+                    icing: [],
+                    turbulence: [],
+                    remarks: [],
+                    remarksString: nil),
                 .init(
                     period: .temporary(.init(start: .this(day: 13, hour: 20)!, end: .this(day: 14, hour: 0)!)),
                     wind: nil,
@@ -135,14 +175,23 @@ class TAFSpec: QuickSpec {
                     weather: [.init(intensity: .moderate, descriptor: .thunderstorms, phenomena: [.rain])],
                     conditions: [.overcast(1000, type: .cumulonimbus)],
                     windshear: nil,
-                    windshearConditions: false),
+                    windshearConditions: false,
+                    icing: [],
+                    turbulence: [],
+                    remarks: [],
+                    remarksString: nil),
                 .init(
                     period: .from(.this(day: 14, hour: 0, minute: 0)!),
                     wind: .variable(speed: .knots(3)),
                     visibility: .greaterThan(.statuteMiles(6)),
                     weather: [.init(intensity: .vicinity, descriptor: nil, phenomena: [.thunderstorm])],
                     conditions: [.scattered(2000, type: .cumulonimbus), .broken(12_000)],
-                    windshear: nil, windshearConditions: false),
+                    windshear: nil,
+                    windshearConditions: false,
+                    icing: [],
+                    turbulence: [],
+                    remarks: [],
+                    remarksString: nil),
                 .init(
                     period: .temporary(.init(start: .this(day: 14, hour: 8)!, end: .this(day: 14, hour: 12)!)),
                     wind: nil,
@@ -150,7 +199,11 @@ class TAFSpec: QuickSpec {
                     weather: [],
                     conditions: [.broken(2000, type: .cumulonimbus)],
                     windshear: nil,
-                    windshearConditions: false)
+                    windshearConditions: false,
+                    icing: [],
+                    turbulence: [],
+                    remarks: [],
+                    remarksString: nil)
             ]
             
             expect(forecast.groups).to(equal(groups))
@@ -182,42 +235,66 @@ class TAFSpec: QuickSpec {
                       weather: [],
                       conditions: [.scattered(3000)],
                       windshear: nil,
-                      windshearConditions: false),
+                      windshearConditions: false,
+                      icing: [],
+                      turbulence: [],
+                      remarks: [],
+                      remarksString: nil),
                 .init(period: .temporary(.init(start: .this(day: 11, hour: 18)!, end: .this(day: 11, hour: 20)!)),
                       wind: nil,
                       visibility: nil,
                       weather: [],
                       conditions: [.broken(4000)],
                       windshear: nil,
-                      windshearConditions: false),
+                      windshearConditions: false,
+                      icing: [],
+                      turbulence: [],
+                      remarks: [],
+                      remarksString: nil),
                 .init(period: .from(.this(day: 11, hour: 20, minute: 0)!),
                       wind: .direction(160, speed: .knots(11)),
                       visibility: .greaterThan(.statuteMiles(6)),
                       weather: [.init(intensity: .vicinity, descriptor: nil, phenomena: [.thunderstorm])],
                       conditions: [.few(3000, type: .cumulonimbus), .scattered(25_000)],
                       windshear: nil,
-                      windshearConditions: false),
+                      windshearConditions: false,
+                      icing: [],
+                      turbulence: [],
+                      remarks: [],
+                      remarksString: nil),
                 .init(period: .from(.this(day: 12, hour: 2, minute: 0)!),
                       wind: .direction(140, speed: .knots(6)),
                       visibility: .greaterThan(.statuteMiles(6)),
                       weather: [],
                       conditions: [.few(2500), .scattered(25_000)],
                       windshear: nil,
-                      windshearConditions: false),
+                      windshearConditions: false,
+                      icing: [],
+                      turbulence: [],
+                      remarks: [],
+                      remarksString: nil),
                 .init(period: .from(.this(day: 12, hour: 8, minute: 0)!),
                       wind: .variable(speed: .knots(3)),
                       visibility: .equal(.statuteMiles(5)),
                       weather: [.init(intensity: .moderate, descriptor: nil, phenomena: [.mist])],
                       conditions: [.scattered(1200)],
                       windshear: nil,
-                      windshearConditions: false),
+                      windshearConditions: false,
+                      icing: [],
+                      turbulence: [],
+                      remarks: [],
+                      remarksString: nil),
                 .init(period: .from(.this(day: 12, hour: 15, minute: 0)!),
                       wind: .direction(170, speed: .knots(7)),
                       visibility: .greaterThan(.statuteMiles(6)),
                       weather: [],
                       conditions: [.scattered(2500)],
                       windshear: nil,
-                      windshearConditions: false)
+                      windshearConditions: false,
+                      icing: [],
+                      turbulence: [],
+                      remarks: [],
+                      remarksString: nil)
             ]
             
             expect(forecast.groups).to(equal(groups))
@@ -246,7 +323,11 @@ class TAFSpec: QuickSpec {
                           weather: [.init(intensity: .moderate, descriptor: .thunderstorms, phenomena: [.rain])],
                           conditions: [.broken(3000, type: .cumulonimbus)],
                           windshear: nil,
-                          windshearConditions: false)))
+                          windshearConditions: false,
+                          icing: [],
+                          turbulence: [],
+                          remarks: [],
+                          remarksString: nil)))
             }
             
             it("returns nil if the time is outside the forecast period") {
@@ -287,6 +368,39 @@ class TAFSpec: QuickSpec {
                 expect(forecast.groups[2].period).to(equal(.temporary(.init(start: Date().this(day: 26, hour: 6)!,
                                                                             end: Date().this(day: 26, hour: 12)!))))
                 expect(forecast.groups[3].period).to(equal(.from(Date().this(day: 26, hour: 18, minute: 30)!)))
+            }
+            
+            it("parses group comments") {
+                let string = """
+                TAF KNID
+                    2523/2623 VRB05KT 9999 SCT270 QNH2975INS
+                    BECMG 2601/2603 21007KT 9999 FEW270 QNH2978INS WND VRB05KT AFT 2614
+                    BECMG 2614/2616 16006KT 9999 FEW250 QNH2986INS
+                    BECMG 2617/2619 19012G24KT 9999 SCT250 510009 510909 QNH2983INS
+                    BECMG 2620/2622 21020G32KT 9999 BKN250 520009 520909 QNH2977INS LAST NO AMD AFT 2605 NEXT 2615
+                    T18/2612Z T38/2623Z
+                """
+                let forecast = try! TAF.from(string: string)
+                
+                expect(forecast.groups[0].remarks).to(beEmpty())
+                expect(forecast.groups[0].remarksString).to(beNil())
+                
+                expect(forecast.groups[1].remarks.map { $0.remark }).to(equal([.unknown("WND VRB05KT AFT 2614")]))
+                expect(forecast.groups[1].remarksString).to(equal("WND VRB05KT AFT 2614"))
+                
+                expect(forecast.groups[2].remarks).to(beEmpty())
+                expect(forecast.groups[2].remarksString).to(beNil())
+                
+                expect(forecast.groups[3].remarks).to(beEmpty())
+                expect(forecast.groups[3].remarksString).to(beNil())
+                
+                expect(forecast.groups[4].remarks.map { $0.remark }).to(contain(.last))
+                expect(forecast.groups[4].remarks.map { $0.remark }).to(contain(.noAmendmentsAfter(Date().this(day: 26, hour: 5)!)))
+                expect(forecast.groups[4].remarks.map { $0.remark }).to(contain(.next(Date().this(day: 26, hour: 15)!)))
+                expect(forecast.groups[4].remarksString).to(equal("LAST NO AMD AFT 2605 NEXT 2615"))
+                
+                expect(forecast.remarks).to(beEmpty())
+                expect(forecast.remarksString).to(beNil())
             }
         }
     }
