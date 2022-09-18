@@ -31,7 +31,6 @@ let obscurationTypeRegex = phenomenonRegex
 fileprivate let nocapCoverageRegex = Remark.Coverage.allCases.map { $0.rawValue }.joined(separator: "|")
 let coverageRegex = "(\(nocapCoverageRegex))"
 let remarkTimeRegex = #"(\d{2})?(\d{2})"#
-let metarWindRegex = #"(\d{3})(\d{2,3})"#
 fileprivate let nocapRemarkDirectionRegex = directionFromString.keys.joined(separator: "|")
 fileprivate let nocapRemarkProximityRegex = Remark.Proximity.allCases.map { $0.rawValue }.joined(separator: "|")
 let remarkProximityRegex = "(\(nocapRemarkProximityRegex))"
@@ -48,7 +47,7 @@ protocol RemarkParser {
     var urgency: Remark.Urgency { get }
     
     init()
-    func parse(remarks: inout String, date: DateComponents) -> Remark?
+    func parse(remarks: inout String, date: DateComponents) throws -> Remark?
 }
 
 let remarkParsers: Array<RemarkParser.Type> = [
@@ -68,7 +67,8 @@ let remarkParsers: Array<RemarkParser.Type> = [
     VariablePrevailingVisibilityParser.self, VariableSkyConditionParser.self, WaterEquivalentDepthParser.self,
     WindShiftParser.self, RelativeHumidityParser.self, WindDataEstimatedParser.self,
     LastParser.self, NextParser.self, NoAmendmentsAfterParser.self, NavalForecasterParser.self,
-    VariableWindDirectionParser.self,
+    
+    WindChangeParser.self, VariableWindDirectionParser.self,
     
     MaintenanceParser.self, CorrectionParser.self
 ]
@@ -141,10 +141,20 @@ extension RemarkParser {
         }
     }
     
-    func parseWind(from match: MatchResult, index: Int) -> Wind? {
-        guard let direction = UInt16(match.captures[index]!) else { return nil }
-        guard let speed = UInt16(match.captures[index+1]!) else { return nil }
+    func parseWind(from match: MatchResult, index: Int) throws -> Wind? {
+        if match.matchedString == "00000KT" { return .calm }
         
-        return .direction(direction, speed: .knots(speed))
+        guard let speed = try parseSpeed(match.matchedString, from: match, index: index + 1) else {
+            throw Error.invalidWinds(match.matchedString)
+        }
+        
+        guard let dirStr = match.captures[index] else { throw Error.invalidWinds(match.matchedString) }
+        if dirStr == variable { return .variable(speed: speed) }
+        
+        guard let heading = UInt16(dirStr) else { throw Error.invalidWinds(match.matchedString) }
+        
+        let gust = try parseSpeed(match.matchedString, from: match, index: index + 2)
+        
+        return .direction(heading, speed: speed, gust: gust)
     }
 }

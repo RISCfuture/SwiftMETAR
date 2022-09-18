@@ -6,7 +6,7 @@ struct ObservationTypeParser: RemarkParser {
     
     private static let regex = Regex(#"\b(A[O0]\d)(A?)\b"#)
     
-    func parse(remarks: inout String, date: DateComponents) -> Remark? {
+    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
         guard let result = Self.regex.firstMatch(in: remarks) else { return nil }
         
         guard let type = Remark.ObservationType.from(raw: result.captures[0]!) else { return nil }

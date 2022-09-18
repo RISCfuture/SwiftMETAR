@@ -8,7 +8,7 @@ struct PressureTendencyParser: RemarkParser {
     
     private static let regex = try! Regex(string: "\\b5(\(nocapPressureCharacterRegex))(\\d{3})\\b")
     
-    func parse(remarks: inout String, date: DateComponents) -> Remark? {
+    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
         guard let result = Self.regex.firstMatch(in: remarks) else { return nil }
         
         guard let character = Remark.PressureCharacter(rawValue: result.captures[0]!) else { return nil }

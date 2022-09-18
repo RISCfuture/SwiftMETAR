@@ -6,7 +6,7 @@ struct VariableSkyConditionParser: RemarkParser {
     
     private static let regex = try! Regex(string: "\\b\(coverageRegex)(\\d{3})? V \(coverageRegex)\\b")
     
-    func parse(remarks: inout String, date: DateComponents) -> Remark? {
+    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
         guard let result = Self.regex.firstMatch(in: remarks) else { return nil }
         
         guard let coverage1 = Remark.Coverage(rawValue: result.captures[0]!) else { return nil }

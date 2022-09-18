@@ -100,7 +100,7 @@ func parseRemarks(_ parts: inout Array<String.SubSequence>, date: DateComponents
     var remarks = Array<RemarkEntry>()
     for parser in remarkParsers {
         let parserInstance = parser.init()
-        while let remark = parserInstance.parse(remarks: &remarksString, date: date) {
+        while let remark = try parserInstance.parse(remarks: &remarksString, date: date) {
             remarks.append(.init(remark: remark, urgency: parserInstance.urgency))
         }
     }

@@ -9,7 +9,7 @@ struct ObservedPrecipitationParser: RemarkParser {
     
     private static let regex = try! Regex(string: "\\b\(observedPrecipRegex)(?: \(remarkProximityRegex))?(?: \(remarkDirectionsRegex))?\\b")
     
-    func parse(remarks: inout String, date: DateComponents) -> Remark? {
+    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
         guard let result = Self.regex.firstMatch(in: remarks) else { return nil }
         
         guard let precip = Remark.ObservedPrecipitationType(rawValue: result.captures[0]!) else { return nil }

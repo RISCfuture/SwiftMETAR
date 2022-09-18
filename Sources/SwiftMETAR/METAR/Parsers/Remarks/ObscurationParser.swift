@@ -6,7 +6,7 @@ struct ObscurationParser: RemarkParser {
     
     private static let regex = try! Regex(string: "\\b\(obscurationTypeRegex) \(coverageRegex)?(\\d{3})\\b")
     
-    func parse(remarks: inout String, date: DateComponents) -> Remark? {
+    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
         guard let result = Self.regex.firstMatch(in: remarks) else { return nil }
         
         guard let type = Weather.Phenomenon(rawValue: result.captures[0]!) else { return nil }

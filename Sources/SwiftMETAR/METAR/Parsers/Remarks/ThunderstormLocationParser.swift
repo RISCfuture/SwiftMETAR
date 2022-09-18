@@ -6,7 +6,7 @@ struct ThunderstormLocationParser: RemarkParser {
     
     private static let regex = try! Regex(string: "\\bTS(?: \(remarkProximityRegex))?(?:[ \\-]\(remarkDirectionsRegex))?(?: MOVG? \(remarkDirectionRegex))?\\b")
     
-    func parse(remarks: inout String, date: DateComponents) -> Remark? {
+    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
         guard let result = Self.regex.firstMatch(in: remarks) else { return nil }
         
         var proximity: Remark.Proximity? = nil

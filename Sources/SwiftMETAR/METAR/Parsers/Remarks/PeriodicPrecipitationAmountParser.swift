@@ -8,7 +8,7 @@ struct PeriodicPrecipitationAmountParser: RemarkParser {
     
     private static let regex = Regex(#"\b6(\d{4}\b|\/{4})"#)
     
-    func parse(remarks: inout String, date: DateComponents) -> Remark? {
+    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
         guard let result = Self.regex.firstMatch(in: remarks) else { return nil }
         
         let period: UInt

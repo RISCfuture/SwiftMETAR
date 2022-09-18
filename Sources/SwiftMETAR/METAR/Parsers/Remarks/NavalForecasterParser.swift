@@ -8,7 +8,7 @@ struct NavalForecasterParser: RemarkParser {
     
     private static let regex = try! Regex(string: "\\bF(\(nocapWeatherCenterRx))(\\d+)\\b")
     
-    func parse(remarks: inout String, date: DateComponents) -> Remark? {
+    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
         guard let result = Self.regex.firstMatch(in: remarks) else { return nil }
         
         guard let centerStr = result.captures[0],

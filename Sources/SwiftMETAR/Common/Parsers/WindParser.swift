@@ -1,8 +1,11 @@
 import Foundation
 import Regex
 
-fileprivate let windRx = Regex(#"^(\d{3}|VRB)(\d+)(?:G(\d+))?(KTS?|MPS|KPH)$"#)
+let noAnchorWindRx = #"(\d{3}|VRB)(\d+)(?:G(\d+))?(KTS?|MPS|KPH)"#
+fileprivate let windRx = try! Regex(string: "^\(noAnchorWindRx)$")
 fileprivate let variableRx = Regex(#"^(\d+)V(\d+)$"#)
+
+let variable = "VRB"
 
 func parseWind(_ parts: inout Array<String.SubSequence>) throws -> Wind? {
     guard !parts.isEmpty else { return nil }
@@ -21,7 +24,7 @@ func parseWind(_ parts: inout Array<String.SubSequence>) throws -> Wind? {
     }
     
     guard let dirStr = match.captures[0] else { throw Error.invalidWinds(String(dirAndSpeed)) }
-    if dirStr == "VRB" {
+    if dirStr == variable {
         guard let rangeSeq = parts.first else {
             return .variable(speed: speed)
         }
@@ -44,7 +47,7 @@ func parseWind(_ parts: inout Array<String.SubSequence>) throws -> Wind? {
     }
 }
 
-fileprivate func parseDirectionRange(_ parts: inout Array<String.SubSequence>, rangeSeq: String.SubSequence) throws -> (UInt16, UInt16)? {
+func parseDirectionRange(_ parts: inout Array<String.SubSequence>, rangeSeq: String.SubSequence) throws -> (UInt16, UInt16)? {
     let rangeStr = String(rangeSeq)
     
     guard let variableMatch = variableRx.firstMatch(in: rangeStr) else { return nil }
@@ -58,7 +61,7 @@ fileprivate func parseDirectionRange(_ parts: inout Array<String.SubSequence>, r
     return (dir1, dir2)
 }
 
-fileprivate func parseSpeed(_ string: String, from match: MatchResult, index: Int) throws -> Wind.Speed? {
+func parseSpeed(_ string: String, from match: MatchResult, index: Int) throws -> Wind.Speed? {
     guard let speedStr = match.captures[index] else { return nil }
     guard let speed = UInt16(speedStr),
           let units = match.captures[3] else { throw Error.invalidWinds(string) }

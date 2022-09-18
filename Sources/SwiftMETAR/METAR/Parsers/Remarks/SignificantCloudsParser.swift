@@ -13,7 +13,7 @@ struct SignificantCloudsParser: RemarkParser {
     
     static private let regex = try! Regex(string: "\\b(\(apparent) )?\(cloudTypeRegex) (\(distant) )?\(remarkDirectionsRegex)(?: \(moving) \(remarkDirectionRegex))?\\b")
     
-    func parse(remarks: inout String, date: DateComponents) -> Remark? {
+    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
         guard let result = Self.regex.firstMatch(in: remarks) else { return nil }
         
         let apparent = result.captures[0] != nil

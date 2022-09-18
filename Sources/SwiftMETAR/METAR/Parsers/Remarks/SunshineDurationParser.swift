@@ -6,7 +6,7 @@ struct SunshineDurationParser: RemarkParser {
     
     private static let regex = Regex(#"\b98(\d{3})\b"#)
     
-    func parse(remarks: inout String, date: DateComponents) -> Remark? {
+    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
         guard let result = Self.regex.firstMatch(in: remarks) else { return nil }
         
         guard let duration = UInt(result.captures[0]!) else { return nil }

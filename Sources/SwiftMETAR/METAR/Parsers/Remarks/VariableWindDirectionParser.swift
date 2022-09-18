@@ -6,7 +6,7 @@ struct VariableWindDirectionParser: RemarkParser {
     
     private static let regex = Regex(#"WND (\d{3})V(\d{3})"#)
     
-    func parse(remarks: inout String, date: DateComponents) -> Remark? {
+    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
         guard let result = Self.regex.firstMatch(in: remarks) else { return nil }
         
         guard let dir1Str = result.captures[0],

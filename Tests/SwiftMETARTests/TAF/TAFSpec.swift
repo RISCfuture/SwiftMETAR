@@ -385,7 +385,9 @@ class TAFSpec: QuickSpec {
                 expect(forecast.groups[0].remarks).to(beEmpty())
                 expect(forecast.groups[0].remarksString).to(beNil())
                 
-                expect(forecast.groups[1].remarks.map { $0.remark }).to(equal([.unknown("WND VRB05KT AFT 2614")]))
+                expect(forecast.groups[1].remarks.map { $0.remark }).to(equal([
+                    .windChange(wind: .variable(speed: .knots(5)), after: Date().this(day: 26, hour: 14)!)
+                ]))
                 expect(forecast.groups[1].remarksString).to(equal("WND VRB05KT AFT 2614"))
                 
                 expect(forecast.groups[2].remarks).to(beEmpty())

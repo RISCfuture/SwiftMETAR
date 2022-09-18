@@ -23,7 +23,7 @@ struct SensorStatusParser: RemarkParser {
     
     private static let regex = try! Regex(string: "\\b(\(nocapAllSensorRegex))\\b")
     
-    func parse(remarks: inout String, date: DateComponents) -> Remark? {
+    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
         guard let result = Self.regex.firstMatch(in: remarks) else { return nil }
         
         let type: Remark.SensorType

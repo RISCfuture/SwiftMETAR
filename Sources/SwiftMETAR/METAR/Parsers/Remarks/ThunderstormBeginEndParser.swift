@@ -9,7 +9,7 @@ struct ThunderstormBeginEndParser: RemarkParser {
     private static let eventRegex = try! Regex(string: thunderstormBeginEndRegex)
     private static let regex = try! Regex(string: "\\bTS(\(thunderstormBeginEndRegex))+\\b")
     
-    func parse(remarks: inout String, date: DateComponents) -> Remark? {
+    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
         guard let result = Self.regex.firstMatch(in: remarks) else { return nil }
         
         var events = Array<Remark.ThunderstormEvent>()

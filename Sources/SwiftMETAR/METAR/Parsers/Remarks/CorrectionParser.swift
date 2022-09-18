@@ -6,7 +6,7 @@ struct CorrectionParser: RemarkParser {
     
     private static let regex = Regex(#"\bCOR (\d{2})(\d{2})\b"#)
     
-    func parse(remarks: inout String, date: DateComponents) -> Remark? {
+    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
         guard let result = Self.regex.firstMatch(in: remarks) else { return nil }
         
         guard let hourStr = result.captures[0],

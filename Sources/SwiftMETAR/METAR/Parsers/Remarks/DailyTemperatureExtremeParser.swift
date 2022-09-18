@@ -6,7 +6,7 @@ struct DailyTemperatureExtremeParser: RemarkParser {
     
     private static let regex = try! Regex(string: "\\b4\(multiplierSignRegex)(\\d{3})\(multiplierSignRegex)(\\d{3})\\b")
     
-    func parse(remarks: inout String, date: DateComponents) -> Remark? {
+    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
         guard let result = Self.regex.firstMatch(in: remarks) else { return nil }
         
         guard let highMultiplier = multiplierFromSignString[result.captures[0]!] else { return nil }

@@ -352,6 +352,16 @@ public enum Remark: Codable, Equatable {
      */
     case waterEquivalentDepth(_ depth: Float)
     
+    /**
+     Wind direction/speed will change after a certain time within the forecast
+     period. This remark is used exclusively in TAFs.
+     
+     - Parameter wind: The new wind direction/speed.
+     - Parameter after: The time after which the new wind direction/speed takes
+                        effect.
+     */
+    case windChange(wind: Wind, after: DateComponents)
+    
     /// Wind data is estimated instead of recorded from an anemometer.
     case windDataEstimated
     

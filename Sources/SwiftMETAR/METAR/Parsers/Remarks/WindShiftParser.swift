@@ -6,7 +6,7 @@ struct WindShiftParser: RemarkParser {
     
     private static let regex = try! Regex(string: "\\bWSHFT \(remarkTimeRegex)(?: (FROPA))?\\b")
     
-    func parse(remarks: inout String, date: DateComponents) -> Remark? {
+    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
         guard let result = Self.regex.firstMatch(in: remarks) else { return nil }
         
         guard let date = parseDate(from: result, index: 0, base: date) else { return nil }

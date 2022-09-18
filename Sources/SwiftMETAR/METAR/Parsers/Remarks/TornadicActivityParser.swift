@@ -8,7 +8,7 @@ struct TornadicActivityParser: RemarkParser {
     
     private static let regex = try! Regex(string: "\\b(\(nocapTornadicActivityRx)) ([BE])\(remarkTimeRegex) (\\d+) \(remarkDirectionRegex)(?: MOVG? \(remarkDirectionRegex))?\\b")
     
-    func parse(remarks: inout String, date: DateComponents) -> Remark? {
+    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
         guard let result = Self.regex.firstMatch(in: remarks) else { return nil }
         
         guard let type = Remark.TornadicActivityType(rawValue: result.captures[0]!) else { return nil }

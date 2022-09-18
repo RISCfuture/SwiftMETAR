@@ -6,7 +6,7 @@ struct PeriodicIceAccretionAmountParser: RemarkParser {
     
     private static let regex = Regex(#"\bI([136])(\d{3})\b"#)
     
-    func parse(remarks: inout String, date: DateComponents) -> Remark? {
+    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
         guard let result = Self.regex.firstMatch(in: remarks) else { return nil }
         
         guard let period = UInt(result.captures[0]!) else { return nil }

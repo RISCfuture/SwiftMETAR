@@ -11,7 +11,7 @@ struct PrecipitationBeginEndParser: RemarkParser {
     private static let precipitationElementRegex = try! Regex(string: "\(precipitationDescriptorRegex)?\(phenomenonRegex)((?:[BE]\(nocapTimeRegex))+)")
     private static let precipitationEventRegex = try! Regex(string: "([BE])\(remarkTimeRegex)")
     
-    func parse(remarks: inout String, date: DateComponents) -> Remark? {
+    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
         guard let result = Self.beginEndRegex.firstMatch(in: remarks) else { return nil }
         
         var events = Array<Remark.PrecipitationEvent>()

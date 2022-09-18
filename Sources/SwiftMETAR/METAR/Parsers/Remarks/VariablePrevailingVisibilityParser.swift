@@ -6,7 +6,7 @@ struct VariablePrevailingVisibilityParser: RemarkParser {
     
     private static let regex = try! Regex(string: "\\bVIS \(metarVisibilityRegex)V\(metarVisibilityRegex)\\b")
     
-    func parse(remarks: inout String, date: DateComponents) -> Remark? {
+    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
         guard let result = Self.regex.firstMatch(in: remarks) else { return nil }
         
         guard let low = parseVisibility(from: result, index: 0) else { return nil }

@@ -8,7 +8,7 @@ struct SeaLevelPressureParser: RemarkParser {
     
     private static let regex = Regex(#"\bSLP(\d{3}|NO)\b"#)
     
-    func parse(remarks: inout String, date: DateComponents) -> Remark? {
+    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
         guard let result = Self.regex.firstMatch(in: remarks) else { return nil }
         
         var pressure: Float? = nil

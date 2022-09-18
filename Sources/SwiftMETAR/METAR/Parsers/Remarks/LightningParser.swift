@@ -8,7 +8,7 @@ struct LightningParser: RemarkParser {
     
     private static let regex = try! Regex(string: "\\b(?:\(remarkFrequencyRegex) )?LTG((?:\(lightningTypesRegex))*)(?: \(remarkProximityRegex))?(?: \(remarkDirectionsRegex))?\\b")
     
-    func parse(remarks: inout String, date: DateComponents) -> Remark? {
+    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
         guard let result = Self.regex.firstMatch(in: remarks) else { return nil }
         
         var frequency: Remark.Frequency? = nil
