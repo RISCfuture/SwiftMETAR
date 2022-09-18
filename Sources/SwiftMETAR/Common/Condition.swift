@@ -84,23 +84,23 @@ public enum Condition: Codable, Equatable {
             case .clear: try container.encode("CLR", forKey: .coverage)
             case .skyClear: try container.encode("SKC", forKey: .coverage)
             case .noSignificantClouds: try container.encode("NXC", forKey: .coverage)
-            case .few(let height, type: let type):
+            case let .few(height, type):
                 try container.encode("FEW", forKey: .coverage)
                 try container.encode(height, forKey: .height)
                 try container.encode(type, forKey: .type)
-            case .scattered(let height, type: let type):
+            case let .scattered(height, type):
                 try container.encode("SCT", forKey: .coverage)
                 try container.encode(height, forKey: .height)
                 try container.encode(type, forKey: .type)
-            case .broken(let height, type: let type):
+            case let .broken(height, type):
                 try container.encode("BKN", forKey: .coverage)
                 try container.encode(height, forKey: .height)
                 try container.encode(type, forKey: .type)
-            case .overcast(let height, type: let type):
+            case let .overcast(height, type):
                 try container.encode("OVC", forKey: .coverage)
                 try container.encode(height, forKey: .height)
                 try container.encode(type, forKey: .type)
-            case .indefinite(let height):
+            case let .indefinite(height):
                 try container.encode("VV", forKey: .coverage)
                 try container.encode(height, forKey: .height)
         }
@@ -108,51 +108,24 @@ public enum Condition: Codable, Equatable {
     
     public static func == (lhs: Condition, rhs: Condition) -> Bool {
         switch lhs {
-            case .clear:
-                switch rhs {
-                    case .clear: return true
-                    default: return false
-                }
-            case .skyClear:
-                switch rhs {
-                    case .skyClear: return true
-                    default: return false
-                }
-            case .noSignificantClouds:
-                switch rhs {
-                    case .noSignificantClouds: return true
-                    default: return false
-                }
-            case .few(let lhsHeight, let lhsType):
-                switch rhs {
-                    case .few(let rhsHeight, let rhsType):
-                        return lhsHeight == rhsHeight && lhsType == rhsType
-                    default: return false
-                }
-            case .scattered(let lhsHeight, let lhsType):
-                switch rhs {
-                    case .scattered(let rhsHeight, let rhsType):
-                        return lhsHeight == rhsHeight && lhsType == rhsType
-                    default: return false
-                }
-            case .broken(let lhsHeight, let lhsType):
-                switch rhs {
-                    case .broken(let rhsHeight, let rhsType):
-                        return lhsHeight == rhsHeight && lhsType == rhsType
-                    default: return false
-                }
-            case .overcast(let lhsHeight, let lhsType):
-                switch rhs {
-                    case .overcast(let rhsHeight, let rhsType):
-                        return lhsHeight == rhsHeight && lhsType == rhsType
-                    default: return false
-                }
-            case .indefinite(let lhsCeiling):
-                switch rhs {
-                    case .indefinite(let rhsCeiling):
-                        return lhsCeiling == rhsCeiling
-                    default: return false
-                }
+            case .clear: if case .clear = rhs { return true } else { return false }
+            case .skyClear: if case .skyClear = rhs { return true } else { return false }
+            case .noSignificantClouds: if case .noSignificantClouds = rhs { return true } else { return false }
+            case let .few(lhsHeight, lhsType):
+                guard case let .few(rhsHeight, rhsType) = rhs else { return false }
+                return lhsHeight == rhsHeight && lhsType == rhsType
+            case let .scattered(lhsHeight, lhsType):
+                guard case let .scattered(rhsHeight, rhsType) = rhs else { return false }
+                return lhsHeight == rhsHeight && lhsType == rhsType
+            case let .broken(lhsHeight, lhsType):
+                guard case let .broken(rhsHeight, rhsType) = rhs else { return false }
+                return lhsHeight == rhsHeight && lhsType == rhsType
+            case let .overcast(lhsHeight, lhsType):
+                guard case let .overcast(rhsHeight, rhsType) = rhs else { return false }
+                return lhsHeight == rhsHeight && lhsType == rhsType
+            case let .indefinite(lhsCeiling):
+                guard case let .indefinite(rhsCeiling) = rhs else { return false }
+                return lhsCeiling == rhsCeiling
         }
     }
     

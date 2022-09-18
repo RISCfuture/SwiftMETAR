@@ -48,10 +48,10 @@ fileprivate func parseTemporaryPeriod(_ parts: inout Array<String.SubSequence>, 
         throw Error.invalidPeriod(String(parts[0]))
     }
     
-    switch range {
-        case .range(let period): return .temporary(period)
-        default: preconditionFailure("Period enum not of type .range")
+    guard case let .range(period) = range else {
+        preconditionFailure("Period enum not of type .range")
     }
+    return .temporary(period)
 }
 
 fileprivate func parseBecomingPeriod(_ parts: inout Array<String.SubSequence>, referenceDate: Date) throws -> TAF.Group.Period? {
@@ -63,10 +63,10 @@ fileprivate func parseBecomingPeriod(_ parts: inout Array<String.SubSequence>, r
         throw Error.invalidPeriod(String(parts[0]))
     }
     
-    switch range {
-        case .range(let period): return .becoming(period)
-        default: preconditionFailure("Period enum not of type .range")
+    guard case let .range(period) = range else {
+        preconditionFailure("Period enum not of type .range")
     }
+    return .becoming(period)
 }
 
 fileprivate let probRxStr = #"^PROB(\d+)$"#
@@ -88,10 +88,10 @@ fileprivate func parseProbabilityPeriod(_ parts: inout Array<String.SubSequence>
         throw Error.invalidPeriod(probStr)
     }
     
-    switch range {
-        case .range(let period): return .probability(probability, period: period)
-        default: preconditionFailure("Period enum not of type .range")
+    guard case let .range(period) = range else {
+        preconditionFailure("Period enum not of type .range")
     }
+    return .probability(probability, period: period)
 }
 
 fileprivate let rangePeriodRxStr = #"^(\d{4})\/(\d{4})$"#

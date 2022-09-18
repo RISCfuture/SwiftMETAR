@@ -71,16 +71,16 @@ public struct TAF: Codable {
         
         for group in groups {
             switch group.period {
-                case .from(let from):
+                case let .from(from):
                     guard let fromDate = zuluCal.date(from: from) else { continue }
                     if date < fromDate { continue }
-                case .range(let period):
+                case let .range(period):
                     if !period.contains(date) { continue }
-                case .probability(_, let period):
+                case let .probability(_, period):
                     if !period.contains(date) { continue }
-                case .temporary(let period):
+                case let .temporary(period):
                     if !period.contains(date) { continue }
-                case .becoming(let period):
+                case let .becoming(period):
                     if !period.contains(date) { continue }
             }
             // if we're still here, this period covers the date in question
@@ -113,11 +113,10 @@ public struct TAF: Codable {
     public func covers(_ date: Date) -> Bool {
         guard !groups.isEmpty else { return false }
         
-        switch groups[0].period {
-            case .range(let period):
-                return period.contains(date)
-            default: preconditionFailure("TAF must start with group with range period") //TODO is this too extreme
+        guard case let .range(period) = groups[0].period else {
+            preconditionFailure("TAF must start with group with range period") //TODO is this too extreme
         }
+        return period.contains(date)
     }
     
     /// Reasons for a TAF issuance.
@@ -226,19 +225,19 @@ public struct TAF: Codable {
             public func encode(to encoder: Encoder) throws {
                 var container = encoder.container(keyedBy: CodingKeys.self)
                 switch self {
-                    case .range(let period):
+                    case let .range(period):
                         try container.encode("", forKey: .type)
                         try container.encode(period, forKey: .period)
-                    case .from(let from):
+                    case let .from(from):
                         try container.encode("FM", forKey: .type)
                         try container.encode(from, forKey: .from)
-                    case .temporary(let period):
+                    case let .temporary(period):
                         try container.encode("TEMPO", forKey: .type)
                         try container.encode(period, forKey: .period)
-                    case .becoming(let period):
+                    case let .becoming(period):
                         try container.encode("BCMG", forKey: .type)
                         try container.encode(period, forKey: .period)
-                    case .probability(let probability, let period):
+                    case let .probability(probability, period):
                         try container.encode("PROB", forKey: .type)
                         try container.encode(probability, forKey: .probability)
                         try container.encode(period, forKey: .period)
@@ -247,32 +246,21 @@ public struct TAF: Codable {
             
             public static func == (lhs: Period, rhs: Period) -> Bool {
                 switch lhs {
-                    case .range(let lhsPeriod):
-                        switch rhs {
-                            case .range(let rhsPeriod): return lhsPeriod == rhsPeriod
-                            default: return false
-                        }
-                    case .from(let lhsFrom):
-                        switch rhs {
-                            case .from(let rhsFrom): return lhsFrom == rhsFrom
-                            default: return false
-                        }
-                    case .temporary(let lhsPeriod):
-                        switch rhs {
-                            case .temporary(let rhsPeriod): return lhsPeriod == rhsPeriod
-                            default: return false
-                        }
-                    case .becoming(let lhsPeriod):
-                        switch rhs {
-                            case .becoming(let rhsPeriod): return lhsPeriod == rhsPeriod
-                            default: return false
-                        }
-                    case .probability(let lhsProb, let lhsPeriod):
-                        switch rhs {
-                            case .probability(let rhsProb, let rhsPeriod):
-                                return lhsProb == rhsProb && lhsPeriod == rhsPeriod
-                            default: return false
-                        }
+                    case let .range(lhsPeriod):
+                        guard case let .range(rhsPeriod) = rhs else { return false }
+                        return lhsPeriod == rhsPeriod
+                    case let .from(lhsFrom):
+                        guard case let .from(rhsFrom) = rhs else { return false }
+                        return lhsFrom == rhsFrom
+                    case let .temporary(lhsPeriod):
+                        guard case let .temporary(rhsPeriod) = rhs else { return false }
+                        return lhsPeriod == rhsPeriod
+                    case let .becoming(lhsPeriod):
+                        guard case let .becoming(rhsPeriod) = rhs else { return false }
+                        return lhsPeriod == rhsPeriod
+                    case let .probability(lhsProb, lhsPeriod):
+                        guard case let .probability(rhsProb, rhsPeriod) = rhs else { return false }
+                        return lhsProb == rhsProb && lhsPeriod == rhsPeriod
                 }
             }
             

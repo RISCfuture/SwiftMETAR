@@ -26,10 +26,10 @@ public enum Altimeter: Codable, Comparable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
-            case .inHg(let value):
+            case let .inHg(value):
                 try container.encode(value, forKey: .value)
                 try container.encode("inHq", forKey: .units)
-            case .hPa(let value):
+            case let .hPa(value):
                 try container.encode(value, forKey: .value)
                 try container.encode("hPa", forKey: .units)
         }
@@ -39,8 +39,8 @@ public enum Altimeter: Codable, Comparable {
     /// hPa as appropriate). This field is used for comparison.
     public var inHg: Float {
         switch self {
-            case .inHg(let value): return Float(value)/100
-            case .hPa(let value): return Float(value)*0.02953
+            case let .inHg(value): return Float(value)/100
+            case let .hPa(value): return Float(value)*0.02953
         }
     }
     

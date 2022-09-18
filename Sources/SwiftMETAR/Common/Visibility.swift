@@ -54,16 +54,16 @@ public enum Visibility: Codable, Equatable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
-            case .equal(let value):
+            case let .equal(value):
                 try container.encode("=", forKey: .constraint)
                 try container.encode(value, forKey: .value)
-            case .lessThan(let value):
+            case let .lessThan(value):
                 try container.encode("<", forKey: .constraint)
                 try container.encode(value, forKey: .value)
-            case .greaterThan(let value):
+            case let .greaterThan(value):
                 try container.encode(">", forKey: .constraint)
                 try container.encode(value, forKey: .value)
-            case .variable(let low, let high):
+            case let .variable(low, high):
                 try container.encode("<>", forKey: .constraint)
                 try container.encode(low, forKey: .low)
                 try container.encode(high, forKey: .high)
@@ -72,27 +72,18 @@ public enum Visibility: Codable, Equatable {
     
     public static func == (lhs: Visibility, rhs: Visibility) -> Bool {
         switch lhs {
-            case .equal(let lhsValue):
-                switch rhs {
-                    case .equal(let rhsValue): return lhsValue == rhsValue
-                    default: return false
-                }
-            case .lessThan(let lhsValue):
-                switch rhs {
-                    case .lessThan(let rhsValue): return lhsValue == rhsValue
-                    default: return false
-                }
-            case .greaterThan(let lhsValue):
-                switch rhs {
-                    case .greaterThan(let rhsValue): return lhsValue == rhsValue
-                    default: return false
-                }
-            case .variable(let lhsLow, let lhsHigh):
-                switch rhs {
-                    case .variable(let rhsLow, let rhsHigh):
-                        return lhsLow == rhsLow && lhsHigh == rhsHigh
-                    default: return false
-                }
+            case let .equal(lhsValue):
+                guard case let .equal(rhsValue) = rhs else { return false }
+                return lhsValue == rhsValue
+            case let .lessThan(lhsValue):
+                guard case let .lessThan(rhsValue) = rhs else { return false }
+                return lhsValue == rhsValue
+            case let .greaterThan(lhsValue):
+                guard case let .greaterThan(rhsValue) = rhs else { return false }
+                return lhsValue == rhsValue
+            case let .variable(lhsLow, lhsHigh):
+                guard case let .variable(rhsLow, rhsHigh) = rhs else { return false }
+                return lhsLow == rhsLow && lhsHigh == rhsHigh
         }
     }
     
@@ -142,14 +133,14 @@ public enum Visibility: Codable, Equatable {
         public func encode(to encoder: Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             switch self {
-                case .statuteMiles(let num, let den):
+                case let .statuteMiles(num, den):
                     try container.encode("SM", forKey: .unit)
                     try container.encode(num, forKey: .numerator)
                     try container.encode(den, forKey: .denominator)
-                case .feet(let value):
+                case let .feet(value):
                     try container.encode("FT", forKey: .unit)
                     try container.encode(value, forKey: .value)
-                case .meters(let value):
+                case let .meters(value):
                     try container.encode("M", forKey: .unit)
                     try container.encode(value, forKey: .value)
             }
@@ -159,9 +150,9 @@ public enum Visibility: Codable, Equatable {
         /// used for comparison between distances.
         public var feet: Float {
             switch self {
-                case .feet(let value): return Float(value)
-                case .meters(let value): return Float(value)*3.28084
-                case .statuteMiles(let num, let den): return Float(num)/Float(den)*5280
+                case let .feet(value): return Float(value)
+                case let .meters(value): return Float(value)*3.28084
+                case let .statuteMiles(num, den): return Float(num)/Float(den)*5280
             }
         }
         

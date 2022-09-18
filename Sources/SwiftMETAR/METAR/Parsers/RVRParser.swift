@@ -13,7 +13,7 @@ func parseRunwayVisibility(_ parts: inout Array<String.SubSequence>) throws -> A
         let visStr = String(parts[0])
         
         switch visibilityType(visStr) {
-            case .vis(let match):
+            case let .vis(match):
                 parts.removeFirst()
                 let runway = String(visStr.substring(with: match.range(at: 1)))
                 
@@ -26,7 +26,7 @@ func parseRunwayVisibility(_ parts: inout Array<String.SubSequence>) throws -> A
                 
                 visibilities.append(RunwayVisibility(runwayID: runway, visibility: value))
                 
-            case .variable(let match):
+            case let .variable(match):
                 parts.removeFirst()
                 let runway = String(visStr.substring(with: match.range(at: 1)))
                 

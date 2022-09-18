@@ -71,19 +71,19 @@ public enum Wind: Codable, Equatable {
         switch self {
             case .calm:
                 try container.encode("calm", forKey: .type)
-            case .variable(let speed, let headingRange):
+            case let .variable(speed, headingRange):
                 try container.encode("variable", forKey: .type)
                 try container.encode(speed, forKey: .speed)
                 if let range = headingRange {
                     try container.encode(range.0, forKey: .headingLow)
                     try container.encode(range.1, forKey: .headingHigh)
                 }
-            case .direction(let heading, let speed, let gust):
+            case let .direction(heading, speed, gust):
                 try container.encode("direction", forKey: .type)
                 try container.encode(speed, forKey: .speed)
                 try container.encode(gust, forKey: .gust)
                 try container.encode(heading, forKey: .heading)
-            case .directionRange(let heading, let headingRange, let speed, let gust):
+            case let .directionRange(heading, headingRange, speed, gust):
                 try container.encode("range", forKey: .type)
                 try container.encode(speed, forKey: .speed)
                 try container.encode(gust, forKey: .gust)
@@ -95,41 +95,26 @@ public enum Wind: Codable, Equatable {
     
     public static func == (lhs: Wind, rhs: Wind) -> Bool {
         switch lhs {
-            case .calm:
-                switch rhs {
-                    case .calm: return true
-                    default: return false
+            case .calm: if case .calm = rhs { return true } else { return false }
+            case let .variable(lhsSpeed, lhsRange):
+                guard case let .variable(rhsSpeed, rhsRange) = rhs else { return false }
+                if let lhsRange = lhsRange {
+                    if let rhsRange = rhsRange {
+                        // both not nil
+                        return lhsSpeed == rhsSpeed
+                        && lhsRange.0 == rhsRange.0 && lhsRange.1 == rhsRange.1
+                    }
+                    else { return false } // one nil, one not
+                } else {
+                    if let _ = rhsRange { return false } // one nil, one not
+                    else { return lhsSpeed == rhsSpeed } // both nil
                 }
-            case .variable(let lhsSpeed, let lhsRange):
-                switch rhs {
-                    case .variable(let rhsSpeed, let rhsRange):
-                        if let lhsRange = lhsRange {
-                            if let rhsRange = rhsRange {
-                                // both not nil
-                                return lhsSpeed == rhsSpeed
-                                    && lhsRange.0 == rhsRange.0 && lhsRange.1 == rhsRange.1
-                            }
-                            else { return false } // one nil, one not
-                        } else {
-                            if let _ = rhsRange { return false } // one nil, one not
-                            else { return lhsSpeed == rhsSpeed } // both nil
-                        }
-                    default: return false
-                }
-            case .direction(let lhsHeading, let lhsSpeed, let lhsGust):
-                switch rhs {
-                    case .direction(let rhsHeading, let rhsSpeed, let rhsGust):
-                        return lhsHeading == rhsHeading
-                            && lhsSpeed == rhsSpeed && lhsGust == rhsGust
-                    default: return false
-                }
-            case .directionRange(let lhsHeading, headingRange: let lhsRange, let lhsSpeed, let lhsGust):
-                switch rhs {
-                    case .directionRange(let rhsHeading, let rhsRange, let rhsSpeed, let rhsGust):
-                        return lhsHeading == rhsHeading && lhsRange == rhsRange
-                            && lhsSpeed == rhsSpeed && lhsGust == rhsGust
-                    default: return false
-                }
+            case let .direction(lhsHeading, lhsSpeed, lhsGust):
+                guard case let .direction(rhsHeading, rhsSpeed, rhsGust) = rhs else { return false }
+                return lhsHeading == rhsHeading && lhsSpeed == rhsSpeed && lhsGust == rhsGust
+            case let .directionRange(lhsHeading, lhsRange, lhsSpeed, lhsGust):
+                guard case let .directionRange(rhsHeading, rhsRange, rhsSpeed, rhsGust) = rhs else { return false }
+                return lhsHeading == rhsHeading && lhsRange == rhsRange && lhsSpeed == rhsSpeed && lhsGust == rhsGust
         }
     }
     
@@ -165,9 +150,9 @@ public enum Wind: Codable, Equatable {
         /// is used to compare wind speeds.
         public var knots: Float {
             switch self {
-                case .knots(let quantity): return Float(quantity)
-                case .kph(let quantity): return Float(quantity)*0.539957
-                case .mps(let quantity): return Float(quantity)*1.94384
+                case let .knots(quantity): return Float(quantity)
+                case let .kph(quantity): return Float(quantity)*0.539957
+                case let .mps(quantity): return Float(quantity)*1.94384
             }
         }
         
@@ -199,13 +184,13 @@ public enum Wind: Codable, Equatable {
         public func encode(to encoder: Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             switch self {
-                case .knots(let quantity):
+                case let .knots(quantity):
                     try container.encode("KT", forKey: .unit)
                     try container.encode(quantity, forKey: .quantity)
-                case .kph(let quantity):
+                case let .kph(quantity):
                     try container.encode("KPH", forKey: .unit)
                     try container.encode(quantity, forKey: .quantity)
-                case .mps(let quantity):
+                case let .mps(quantity):
                     try container.encode("MPS", forKey: .unit)
                     try container.encode(quantity, forKey: .quantity)
             }
