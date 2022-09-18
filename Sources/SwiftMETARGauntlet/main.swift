@@ -10,7 +10,6 @@ fileprivate func checkRemarks(_ remarks: Array<RemarkEntry>, string: String) {
     }
 }
 
-
 let METAR_URL = URL(string: "https://www.aviationweather.gov/adds/dataserver_current/current/metars.cache.csv")!
 let METARs = String(data: try! Data(contentsOf: METAR_URL), encoding: .ascii)!
 METARs.enumerateLines { line, stop in

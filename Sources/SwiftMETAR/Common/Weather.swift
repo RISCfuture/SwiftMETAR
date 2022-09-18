@@ -47,10 +47,17 @@ public struct Weather: Codable, Equatable {
         case moderate = ""
         case heavy = "+"
         
-        /// This "pseudo-intensity" is applied to phenomena that are not
-        /// occuring within 5 miles of the reporting station, but are still of
-        /// relevance.
+        /**
+         This "pseudo-intensity" is applied to phenomena that are not occuring
+         within 5 miles of the reporting station, but are still of relevance.
+         */
         case vicinity = "VC"
+        
+        /// Another "pseudo-intensity" for light phenomena in the vicinity.
+        case vicinityLight = "-VC"
+        
+        /// Another "pseudo-intensity" for heavy phenomena in the vicinity.
+        case vicinityHeavy = "+VC"
     }
     
     /// Qualifiers for precipitation phenomena. Most are not applied to
