@@ -14,19 +14,20 @@ func parseTAF(_ codedTAF: String, on referenceDate: Date? = nil, lenientRemarks:
         let visibility = try parseVisibility(&parts)
         let weather = try parseWeather(&parts)
         let conditions = try parseConditions(&parts)
+        let windshear = try parseWindshear(&parts)
         let windshearConditions = try parseWindshearConditions(&parts)
         let icing = try parseIcing(&parts)
         let altimeter = try parseTAFAltimeter(&parts)
-        let windshear = try parseWindshear(&parts)
         
         groups.append(TAF.Group(period: period,
                                 wind: wind,
                                 visibility: visibility,
                                 weather: weather,
                                 conditions: conditions,
+                                windshear: windshear,
                                 windshearConditions: windshearConditions,
-                                altimeter: altimeter,
-                                windshear: windshear))
+                                icing: icing,
+                                altimeter: altimeter))
     }
     
     let remarks = try parseRemarks(&parts, date: date, lenientRemarks: lenientRemarks)

@@ -72,8 +72,8 @@ public struct TAF: Codable {
                                   visibility: nil,
                                   weather: [],
                                   conditions: [],
-                                  windshearConditions: false,
-                                  windshear: nil)
+                                  windshear: nil,
+                                  windshearConditions: false)
         
         for group in groups {
             switch group.period {
@@ -157,6 +157,9 @@ public struct TAF: Codable {
         /// Any forecasted cloud coverage.
         public var conditions: Array<Condition>
         
+        /// Any forecasted windshear.
+        public var windshear: Windshear?
+        
         /// If windshear conditions are present.
         public var windshearConditions: Bool
         
@@ -165,9 +168,6 @@ public struct TAF: Codable {
         
         /// Forecasted altimeter setting.
         public var altimeter: Altimeter?
-        
-        /// Any forecasted windshear.
-        public var windshear: Windshear?
         
         /// A valid period for a TAF or one of its groups.
         public enum Period: Codable, Equatable {
