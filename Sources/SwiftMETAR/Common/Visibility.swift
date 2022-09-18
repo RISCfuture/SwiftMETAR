@@ -1,3 +1,5 @@
+import NumericAnnex
+
 /// A visibility report, made by a human or a transmissometer.
 public enum Visibility: Codable, Equatable {
     
@@ -93,10 +95,9 @@ public enum Visibility: Codable, Equatable {
         /**
          A distance reported in statute miles, as a vulgar fraction.
          
-         - Parameter numerator: The fractional numerator of the value.
-         - Parameter denominator: The fractional denominator of the value.
+         - Parameter value: distance, in statute miles.
          */
-        case statuteMiles(_ numerator: UInt8, _ denominator: UInt8 = 1)
+        case statuteMiles(_ value: Ratio)
         
         /**
          A distance reported in feet.
@@ -116,9 +117,8 @@ public enum Visibility: Codable, Equatable {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             switch try container.decode(String.self, forKey: .unit) {
                 case "SM":
-                    let num = try container.decode(UInt8.self, forKey: .numerator)
-                    let den = try container.decode(UInt8.self, forKey: .denominator)
-                    self = .statuteMiles(num, den)
+                    let value = try container.decode(Ratio.self, forKey: .value)
+                    self = .statuteMiles(value)
                 case "FT":
                     let value = try container.decode(UInt16.self, forKey: .value)
                     self = .feet(value)
@@ -133,10 +133,9 @@ public enum Visibility: Codable, Equatable {
         public func encode(to encoder: Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             switch self {
-                case let .statuteMiles(num, den):
+                case let .statuteMiles(value):
                     try container.encode("SM", forKey: .unit)
-                    try container.encode(num, forKey: .numerator)
-                    try container.encode(den, forKey: .denominator)
+                    try container.encode(value, forKey: .value)
                 case let .feet(value):
                     try container.encode("FT", forKey: .unit)
                     try container.encode(value, forKey: .value)
@@ -152,7 +151,7 @@ public enum Visibility: Codable, Equatable {
             switch self {
                 case let .feet(value): return Float(value)
                 case let .meters(value): return Float(value)*3.28084
-                case let .statuteMiles(num, den): return Float(num)/Float(den)*5280
+                case let .statuteMiles(value): return Float(value.magnitude)*5280
             }
         }
         

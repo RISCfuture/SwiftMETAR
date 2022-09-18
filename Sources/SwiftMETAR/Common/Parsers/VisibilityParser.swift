@@ -1,4 +1,5 @@
 import Foundation
+import NumericAnnex
 
 fileprivate let fractionalString = #"^([PM])?(\d+)\/(\d+)SM$"#
 fileprivate let fractionalRx = try! NSRegularExpression(pattern: fractionalString, options: [])
@@ -32,11 +33,12 @@ func parseVisibility(_ parts: inout Array<String.SubSequence>) throws -> Visibil
         
         if let fractionalParts = try parseFraction(vizStr2) {
             parts.removeFirst()
-            let numerator = UInt8(whole)*fractionalParts.denominator + fractionalParts.numerator
+            
+            let value = Ratio(numerator: Int(whole), denominator: 1) + fractionalParts.value
             switch fractionalParts.rangeValue {
-                case .lessThan: return .lessThan(.statuteMiles(numerator, fractionalParts.denominator))
-                case .equal: return .equal(.statuteMiles(numerator, fractionalParts.denominator))
-                case .greaterThan: return .greaterThan(.statuteMiles(numerator, fractionalParts.denominator))
+                case .lessThan: return .lessThan(.statuteMiles(value))
+                case .equal: return .equal(.statuteMiles(value))
+                case .greaterThan: return .greaterThan(.statuteMiles(value))
             }
         } else {
             return .equal(.meters(whole))
@@ -44,18 +46,20 @@ func parseVisibility(_ parts: inout Array<String.SubSequence>) throws -> Visibil
     } else if let fractionalParts = try parseFraction(vizStr) {
         parts.removeFirst()
         switch fractionalParts.rangeValue {
-            case .lessThan: return .lessThan(.statuteMiles(fractionalParts.numerator, fractionalParts.denominator))
-            case .equal: return .equal(.statuteMiles(fractionalParts.numerator, fractionalParts.denominator))
-            case .greaterThan: return .greaterThan(.statuteMiles(fractionalParts.numerator, fractionalParts.denominator))
+            case .lessThan: return .lessThan(.statuteMiles(fractionalParts.value))
+            case .equal: return .equal(.statuteMiles(fractionalParts.value))
+            case .greaterThan: return .greaterThan(.statuteMiles(fractionalParts.value))
         }
     } else if let integerParts = try parseInteger(vizStr) {
         parts.removeFirst()
+        
         switch integerParts.units {
             case "SM":
+                let value = Ratio(numerator: Int(integerParts.value), denominator: 1)
                 switch integerParts.rangeValue {
-                    case .lessThan: return .lessThan(.statuteMiles(UInt8(integerParts.value), 1))
-                    case .equal: return .equal(.statuteMiles(UInt8(integerParts.value), 1))
-                    case .greaterThan: return .greaterThan(.statuteMiles(UInt8(integerParts.value), 1))
+                    case .lessThan: return .lessThan(.statuteMiles(value))
+                    case .equal: return .equal(.statuteMiles(value))
+                    case .greaterThan: return .greaterThan(.statuteMiles(value))
                 }
             case "M":
                 switch integerParts.rangeValue {
@@ -81,8 +85,7 @@ fileprivate enum RangeValue {
 }
 
 fileprivate struct FractionResult {
-    let numerator: UInt8
-    let denominator: UInt8
+    let value: Ratio
     let rangeValue: RangeValue
 }
 
@@ -105,7 +108,8 @@ fileprivate func parseFraction(_ string: String) throws -> FractionResult? {
             throw Error.invalidVisibility(string)
         }
         
-        return FractionResult(numerator: numerator, denominator: denominator, rangeValue: rangeValue)
+        return FractionResult(value: Ratio(numerator: Int(numerator), denominator: Int(denominator)),
+                              rangeValue: rangeValue)
     }
     
     return nil
