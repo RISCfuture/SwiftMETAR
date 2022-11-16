@@ -6,7 +6,7 @@ import Foundation
  28 hours depending on the reporting station.
  
  A TAF object consists of an origin date, when it was originally reported, and
- one or more `Group`s, each of which contains a valid period, and the weather
+ one or more ``Group``s, each of which contains a valid period, and the weather
  that is forecasted during that valid period.
  */
 
@@ -63,7 +63,7 @@ public struct TAF: Codable {
      Generates a snapshot of the forecasted weather at a given time within the
      forecast period. The closest prior `FM` (from) entry is combined with any
      subsequent `TEMPO` or `PROB` entries (regardless of probability) to create
-     an aggregate `Group`, which is returned.
+     an aggregate ``Group``, which is returned.
      
      - Parameter date: The date to generate aggregate weather for.
      - Returns: The aggregate weather at that time, or `nil` if `date` is
@@ -231,7 +231,7 @@ public struct TAF: Codable {
             
             /**
              Forecast is valid between two dates within a larger date range
-             covered by a `.from` entry.
+             covered by a ``from(_:)`` entry.
              
              - Parameter period: The valid period.
              */

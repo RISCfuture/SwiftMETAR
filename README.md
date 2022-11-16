@@ -27,10 +27,13 @@ made for parsing TAFs at military airbases, but most of those will fail to parse
 
 ## Installation
 
+Online API and tutorial documentation is available at
+https://riscfuture.github.io/SwiftMETAR/documentation/swiftmetar/
+
 SwiftMETAR is a Swift Package Manager project. To use SwiftMETAR, simply add this
 project to your `Package.swift` file. Example:
 
-``` swift
+```swift
 // [...]
 dependencies: [
     .package(url: "https://github.com/RISCfuture/SwiftMETAR/", .branch("master")),
@@ -41,9 +44,9 @@ dependencies: [
 ## Usage
 
 To parse a METAR in String format, simply call `METAR.from`. You will get back a struct
-that you can query for weather information: 
+that you can query for weather information:
 
-``` swift
+```swift
 let observation = try METAR.from(string: myString)
 if let winds = observation.winds {
     switch winds {
@@ -56,7 +59,6 @@ if let winds = observation.winds {
         // [...]
     }
 }
-
 ```
 
 As you can see, many of the fields in a `METAR` (or `TAF`) struct are enums (or even nested
@@ -70,6 +72,21 @@ SwiftMETAR prefers `DateComponents` rather than `Date` objects generally, to pre
 original data (day-hour-minute) rather than generating timestamps. Both `METAR` and `TAF`
 have vars allowing you to retrieve these values as `Date`s, but the data is stored as
 components.
+
+## Documentation
+
+DocC documentation is available, including tutorials and API documentation. For
+Xcode documentation, you can run
+
+```sh
+swift package generate-documentation --target SwiftMETAR
+```
+
+to generate a docarchive at
+`.build/plugins/Swift-DocC/outputs/SwiftMETAR.doccarchive`. You can open this
+docarchive file in Xcode for browseable API documentation. Or, within Xcode,
+open the SwiftNASR package in Xcode and choose **Build Documentation** from the
+**Product** menu.
 
 ## Tests
 

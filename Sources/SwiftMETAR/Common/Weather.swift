@@ -9,8 +9,9 @@
  no such thing as a freezing tornado, and a blowing tornado goes without saying.
  
  Along with the intensities of light, moderate, and heavy, a "pseudo-intensity"
- titled `vicinity` represents weather phenomena observed outside of five miles
- from the reporting station, but still of relevance to pilots.
+ titled ``Intensity-swift.enum/vicinity`` represents weather phenomena observed
+ outside of five miles from the reporting station, but still of relevance to
+ pilots.
  
  "Thunderstorms" can be both a descriptor and a phenomenon. Thunderstorms in the
  vicinity are reported as a phenomenon, but thunderstorms overhead will be
