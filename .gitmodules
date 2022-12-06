@@ -1,4 +1,0 @@
-[submodule "doc"]
-	path = doc
-	url = git@github.com:RISCfuture/SwiftMETAR.git
-	branch = docs
