@@ -21,7 +21,14 @@ METARs.enumerateLines { line, stop in
     do {
         let metar = try METAR.from(string: string)
         checkRemarks(metar.remarks, string: string)
-    } catch (let error) {
+    } catch let error as LocalizedError {
+        print(string)
+        if let reason = error.failureReason {
+            print(" -- \(error.localizedDescription): \(reason)")
+        } else {
+            print(" -- \(error.localizedDescription)")
+        }
+    } catch {
         print(string)
         print(" -- \(error.localizedDescription)")
     }
