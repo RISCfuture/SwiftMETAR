@@ -1,5 +1,5 @@
 import Foundation
-import NumericAnnex
+import NumberKit
 import Quick
 import Nimble
 

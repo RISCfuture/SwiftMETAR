@@ -1,5 +1,5 @@
 import Foundation
-import NumericAnnex
+import NumberKit
 
 /// Types of METAR remarks.
 public enum Remark: Codable, Equatable {

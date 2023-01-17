@@ -1,13 +1,13 @@
 import Foundation
-import NumericAnnex
+import NumberKit
 import Regex
 
-fileprivate let fractionalRx = Regex(#"^([PM])?(\d+)\/(\d+)SM$"#)
-fileprivate let integerRx = Regex(#"^([PM])?(\d+)(SM|FT|M)$"#)
-fileprivate let metersRx = Regex(#"^(\d{3,4})$"#)
-fileprivate let notRecordedRx = Regex(#"^\/{2,}(SM|FT|M)$"#)
+private let fractionalRx = Regex(#"^([PM])?(\d+)\/(\d+)SM$"#)
+private let integerRx = Regex(#"^([PM])?(\d+)(SM|FT|M)$"#)
+private let metersRx = Regex(#"^(\d{3,4})$"#)
+private let notRecordedRx = Regex(#"^\/{2,}(SM|FT|M)$"#)
 
-func parseVisibility(_ parts: inout Array<String.SubSequence>) throws -> Visibility? {
+func parseVisibility(_ parts: inout [String.SubSequence]) throws -> Visibility? {
     guard !parts.isEmpty else { return nil }
     let vizStr = String(parts[0])
     
@@ -37,7 +37,7 @@ func parseVisibility(_ parts: inout Array<String.SubSequence>) throws -> Visibil
         if let fractionalParts = try parseFraction(vizStr2) {
             parts.removeFirst()
             
-            let value = Ratio(numerator: Int(whole), denominator: 1) + fractionalParts.value
+            let value = Ratio(Int(whole), 1) + fractionalParts.value
             switch fractionalParts.rangeValue {
                 case .lessThan: return .lessThan(.statuteMiles(value))
                 case .equal: return .equal(.statuteMiles(value))
@@ -58,7 +58,7 @@ func parseVisibility(_ parts: inout Array<String.SubSequence>) throws -> Visibil
         
         switch integerParts.units {
             case "SM":
-                let value = Ratio(numerator: Int(integerParts.value), denominator: 1)
+                let value = Ratio(Int(integerParts.value), 1)
                 switch integerParts.rangeValue {
                     case .lessThan: return .lessThan(.statuteMiles(value))
                     case .equal: return .equal(.statuteMiles(value))
@@ -85,16 +85,16 @@ func parseVisibility(_ parts: inout Array<String.SubSequence>) throws -> Visibil
     }
 }
 
-fileprivate enum RangeValue {
+private enum RangeValue {
     case lessThan, equal, greaterThan
 }
 
-fileprivate struct FractionResult {
+private struct FractionResult {
     let value: Ratio
     let rangeValue: RangeValue
 }
 
-fileprivate func parseFraction(_ string: String) throws -> FractionResult? {
+private func parseFraction(_ string: String) throws -> FractionResult? {
     var rangeValue = RangeValue.equal
     
     if let match = fractionalRx.firstMatch(in: string) {
@@ -111,20 +111,20 @@ fileprivate func parseFraction(_ string: String) throws -> FractionResult? {
               let denStr = match.captures[2],
               let denominator = UInt8(denStr) else { throw Error.invalidVisibility(string) }
         
-        return FractionResult(value: Ratio(numerator: Int(numerator), denominator: Int(denominator)),
+        return FractionResult(value: Ratio(Int(numerator), Int(denominator)),
                               rangeValue: rangeValue)
     }
     
     return nil
 }
 
-fileprivate struct IntegerResult {
+private struct IntegerResult {
     let value: UInt16
     let units: String
     let rangeValue: RangeValue
 }
 
-fileprivate func parseInteger(_ string: String) throws -> IntegerResult? {
+private func parseInteger(_ string: String) throws -> IntegerResult? {
     var rangeValue = RangeValue.equal
     
     if let match = integerRx.firstMatch(in: string) {
