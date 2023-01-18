@@ -1,7 +1,7 @@
 import Foundation
+import NumberKit
 import Quick
 import Nimble
-import NumericAnnex
 
 @testable import SwiftMETAR
 

@@ -28,15 +28,6 @@
       }
     },
     {
-      "identity" : "numericannex",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/xwu/NumericAnnex.git",
-      "state" : {
-        "branch" : "master",
-        "revision" : "ff00a9ad3c7c9632a149ac3114936dbc9dabae01"
-      }
-    },
-    {
       "identity" : "quick",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/Quick/Quick.git",
@@ -61,6 +52,15 @@
       "state" : {
         "revision" : "3303b164430d9a7055ba484c8ead67a52f7b74f6",
         "version" : "1.0.0"
+      }
+    },
+    {
+      "identity" : "swift-numberkit",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/objecthub/swift-numberkit",
+      "state" : {
+        "revision" : "0f9c918dcea73f6ff4ff762b8e83a0991ca668d9",
+        "version" : "2.4.2"
       }
     }
   ],
