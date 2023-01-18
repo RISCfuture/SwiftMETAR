@@ -1,5 +1,5 @@
 import Foundation
-import NumericAnnex
+import NumberKit
 import Regex
 
 let directionFromString: Dictionary<String, Remark.Direction> = [
@@ -107,19 +107,19 @@ extension RemarkParser {
             guard let whole = UInt(wholeStr),
                   let num = UInt(numStr),
                   let den = UInt(denStr) else { return nil }
-            return .init(numerator: Int(whole*den+num), denominator: Int(den))
+            return .init(Int(whole*den+num), Int(den))
         }
         
         if let numStr = match.captures[index+3],
            let denStr = match.captures[index+4] {
             guard let num = UInt(numStr),
                   let den = UInt(denStr) else { return nil }
-            return .init(numerator: Int(num), denominator: Int(den))
+            return .init(Int(num), Int(den))
         }
         
         if let wholeStr = match.captures[index+5] {
             guard let whole = UInt(wholeStr) else { return nil }
-            return .init(numerator: Int(whole), denominator: 1)
+            return .init(Int(whole), 1)
         }
         
         return nil

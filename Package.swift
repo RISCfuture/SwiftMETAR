@@ -18,7 +18,7 @@ let package = Package(
         // Dependencies declare other packages that this package depends on.
         .package(url: "https://github.com/Quick/Quick.git", .upToNextMajor(from: "4.0.0")),
         .package(url: "https://github.com/Quick/Nimble.git", .upToNextMajor(from: "9.2.0")),
-        .package(url: "https://github.com/xwu/NumericAnnex.git", branch: "master"),
+        .package(url: "https://github.com/objecthub/swift-numberkit.git", from: "2.4.2"),
         .package(url: "https://github.com/sharplet/Regex.git", from: "2.1.0"),
         .package(url: "https://github.com/apple/swift-docc-plugin", from: "1.0.0")
     ],
@@ -27,7 +27,7 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "SwiftMETAR",
-            dependencies: ["NumericAnnex", "Regex"],
+            dependencies: [.product(name: "NumberKit", package: "swift-numberkit"), "Regex"],
             resources: [.process("Resources")]),
         .testTarget(
             name: "SwiftMETARTests",
