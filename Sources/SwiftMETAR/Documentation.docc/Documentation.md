@@ -14,7 +14,7 @@ within 5 miles of an airport, and TAFs are textual point forecasts of expected
 conditions within 5 miles of an airport, over a 24- to 28-hour period.
 
 SwiftMETAR does not download METAR or TAF products from the Internet -- you'll
-have to do that yourself. Once you have the text product, SwiftNASR will parse
+have to do that yourself. Once you have the text product, SwiftMETAR will parse
 it into a ``METAR`` or ``TAF`` object that you can use to programmatically work
 with the weather information.
 

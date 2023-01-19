@@ -8,7 +8,7 @@ textual point forecasts of expected conditions within 5 miles of an airport, ove
 28-hour period.
 
 SwiftMETAR does not download METAR or TAF products from the Internet -- you'll have to
-do that yourself. Once you have the text product, SwiftNASR will parse it into a `METAR` or
+do that yourself. Once you have the text product, SwiftMETAR will parse it into a `METAR` or
 `TAF` object that you can use to programmatically work with the weather information.
 
 The design goal of SwiftMETAR is _domain-restricted data as much as possible_. Wherever
@@ -75,6 +75,9 @@ components.
 
 ## Documentation
 
+Online API documentation and tutorials are available at
+https://riscfuture.github.io/SwiftMETAR/documentation/swiftmetar/
+
 DocC documentation is available, including tutorials and API documentation. For
 Xcode documentation, you can run
 
@@ -85,7 +88,7 @@ swift package generate-documentation --target SwiftMETAR
 to generate a docarchive at
 `.build/plugins/Swift-DocC/outputs/SwiftMETAR.doccarchive`. You can open this
 docarchive file in Xcode for browseable API documentation. Or, within Xcode,
-open the SwiftNASR package in Xcode and choose **Build Documentation** from the
+open the SwiftMETAR package in Xcode and choose **Build Documentation** from the
 **Product** menu.
 
 ## Tests
