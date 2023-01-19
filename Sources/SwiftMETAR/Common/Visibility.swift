@@ -1,4 +1,4 @@
-import NumericAnnex
+import NumberKit
 
 /// A visibility report, made by a human or a transmissometer.
 public enum Visibility: Codable, Equatable {
