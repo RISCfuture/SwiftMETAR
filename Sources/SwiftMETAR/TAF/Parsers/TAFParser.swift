@@ -6,7 +6,7 @@ func parseTAF(_ codedTAF: String, on referenceDate: Date? = nil) throws -> TAF {
     let issuance = try parseIssuance(&parts)
     let locationID = try parseLocationID(&parts)
     let date = try parseDate(&parts, referenceDate: referenceDate)
-    let refDateForRemarks = date ?? Calendar.current.dateComponents(in: zulu, from: Date())
+    let refDateForRemarks = date ?? zuluCal.dateComponents(in: zulu, from: Date())
     
     var groups = Array<TAF.Group>()
     var pendingGroupRemarks = Array<String.SubSequence>()
