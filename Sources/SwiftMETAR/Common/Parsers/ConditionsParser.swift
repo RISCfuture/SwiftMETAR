@@ -24,7 +24,7 @@ func parseConditions(_ parts: inout Array<String.SubSequence>) throws -> Array<C
             parts.removeFirst()
             return [.clear]
         }
-        if condStr == "NSC" {
+        if condStr == "NSC" || condStr == "CAVOK" {
             parts.removeFirst()
             return [.noSignificantClouds]
         }

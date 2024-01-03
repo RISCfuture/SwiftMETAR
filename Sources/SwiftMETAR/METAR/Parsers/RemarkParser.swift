@@ -70,7 +70,9 @@ let remarkParsers: Array<RemarkParser.Type> = [
     
     WindChangeParser.self, VariableWindDirectionParser.self,
     
-    MaintenanceParser.self, CorrectionParser.self
+    MaintenanceParser.self, CorrectionParser.self,
+    
+    NOSIGParser.self
 ]
 
 extension RemarkParser {

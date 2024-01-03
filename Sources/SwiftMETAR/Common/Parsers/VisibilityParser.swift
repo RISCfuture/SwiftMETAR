@@ -11,6 +11,9 @@ func parseVisibility(_ parts: inout Array<String.SubSequence>) throws -> Visibil
     guard !parts.isEmpty else { return nil }
     let vizStr = String(parts[0])
     
+    if vizStr == "CAVOK" {
+        return .greaterThan(.meters(9999))
+    }
     if vizStr == "M" {
         parts.removeFirst()
         return nil
