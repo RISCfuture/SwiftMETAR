@@ -4,8 +4,10 @@ import NumberKit
 /// Types of METAR remarks.
 public enum Remark: Codable, Equatable {
     
-    
-    /// No significant changes in weather conditions are expected in the two hours following the publication of the METAR.
+    /**
+     No significant changes in weather conditions are expected in the two hours
+     following the publication of the METAR.
+     */
     case nosig
     
     /// An aircraft mishap has occurred.

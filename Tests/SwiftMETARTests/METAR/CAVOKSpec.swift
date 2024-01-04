@@ -12,7 +12,7 @@ class CAVOKSpec: QuickSpec {
                 let string = "LOWK 031520Z AUTO VRB01KT CAVOK 05/02 Q1005 NOSIG"
                 let observation = try! METAR.from(string: string, lenientRemarks: true)
                 
-                expect(observation.conditions).to(contain(.noSignificantClouds))
+                expect(observation.conditions).to(contain(.cavok))
                 expect(observation.visibility).to(equal(.greaterThan(.meters(9999))))
                 expect(observation.temperature).to(equal(5))
                 expect(observation.dewpoint).to(equal(2))
@@ -23,7 +23,7 @@ class CAVOKSpec: QuickSpec {
                 
                 let observation = try! METAR.from(string: string, lenientRemarks: true)
                 
-                expect(observation.conditions).to(contain(.noSignificantClouds))
+                expect(observation.conditions).to(contain(.cavok))
                 expect(observation.visibility).to(equal(.greaterThan(.meters(9999))))
                 expect(observation.temperature).to(equal(12))
                 expect(observation.dewpoint).to(equal(5))
