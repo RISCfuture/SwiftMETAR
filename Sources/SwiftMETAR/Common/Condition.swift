@@ -12,6 +12,18 @@ public enum Condition: Codable, Equatable {
     case noSignificantClouds
     
     /**
+     Included outside US region as a replacement of
+     visibility, cloud, and weather groups.
+     
+     - No clouds exist below 5,000 feet or below the highest minimum sector
+     altitude, whichever is greater, and no TCU or CB are present.
+     - Visibility is 10 kilometres or greater
+     - No precipitation, thunderstorms, sandstorm, dust storm, shallow fog,
+     or low drifting dust, sand or snow is occurring (no significant weather).
+     */
+    case cavok
+    
+    /**
      Cloud coverage between 1 and 2 oktas.
      
      - Parameter height: The cloud bases in feet AGL.
@@ -81,51 +93,29 @@ public enum Condition: Codable, Equatable {
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
-            case .clear: try container.encode("CLR", forKey: .coverage)
-            case .skyClear: try container.encode("SKC", forKey: .coverage)
-            case .noSignificantClouds: try container.encode("NXC", forKey: .coverage)
-            case let .few(height, type):
-                try container.encode("FEW", forKey: .coverage)
-                try container.encode(height, forKey: .height)
-                try container.encode(type, forKey: .type)
-            case let .scattered(height, type):
-                try container.encode("SCT", forKey: .coverage)
-                try container.encode(height, forKey: .height)
-                try container.encode(type, forKey: .type)
-            case let .broken(height, type):
-                try container.encode("BKN", forKey: .coverage)
-                try container.encode(height, forKey: .height)
-                try container.encode(type, forKey: .type)
-            case let .overcast(height, type):
-                try container.encode("OVC", forKey: .coverage)
-                try container.encode(height, forKey: .height)
-                try container.encode(type, forKey: .type)
-            case let .indefinite(height):
-                try container.encode("VV", forKey: .coverage)
-                try container.encode(height, forKey: .height)
-        }
-    }
-    
-    public static func == (lhs: Condition, rhs: Condition) -> Bool {
-        switch lhs {
-            case .clear: if case .clear = rhs { return true } else { return false }
-            case .skyClear: if case .skyClear = rhs { return true } else { return false }
-            case .noSignificantClouds: if case .noSignificantClouds = rhs { return true } else { return false }
-            case let .few(lhsHeight, lhsType):
-                guard case let .few(rhsHeight, rhsType) = rhs else { return false }
-                return lhsHeight == rhsHeight && lhsType == rhsType
-            case let .scattered(lhsHeight, lhsType):
-                guard case let .scattered(rhsHeight, rhsType) = rhs else { return false }
-                return lhsHeight == rhsHeight && lhsType == rhsType
-            case let .broken(lhsHeight, lhsType):
-                guard case let .broken(rhsHeight, rhsType) = rhs else { return false }
-                return lhsHeight == rhsHeight && lhsType == rhsType
-            case let .overcast(lhsHeight, lhsType):
-                guard case let .overcast(rhsHeight, rhsType) = rhs else { return false }
-                return lhsHeight == rhsHeight && lhsType == rhsType
-            case let .indefinite(lhsCeiling):
-                guard case let .indefinite(rhsCeiling) = rhs else { return false }
-                return lhsCeiling == rhsCeiling
+        case .clear: try container.encode("CLR", forKey: .coverage)
+        case .skyClear: try container.encode("SKC", forKey: .coverage)
+        case .noSignificantClouds: try container.encode("NXC", forKey: .coverage)
+        case .cavok: try container.encode("CAVOK", forKey: .coverage)
+        case let .few(height, type):
+            try container.encode("FEW", forKey: .coverage)
+            try container.encode(height, forKey: .height)
+            try container.encode(type, forKey: .type)
+        case let .scattered(height, type):
+            try container.encode("SCT", forKey: .coverage)
+            try container.encode(height, forKey: .height)
+            try container.encode(type, forKey: .type)
+        case let .broken(height, type):
+            try container.encode("BKN", forKey: .coverage)
+            try container.encode(height, forKey: .height)
+            try container.encode(type, forKey: .type)
+        case let .overcast(height, type):
+            try container.encode("OVC", forKey: .coverage)
+            try container.encode(height, forKey: .height)
+            try container.encode(type, forKey: .type)
+        case let .indefinite(height):
+            try container.encode("VV", forKey: .coverage)
+            try container.encode(height, forKey: .height)
         }
     }
     

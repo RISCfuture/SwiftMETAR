@@ -16,17 +16,21 @@ func parseConditions(_ parts: inout Array<String.SubSequence>) throws -> Array<C
         if parts.isEmpty { return conditions }
         let condStr = String(parts[0])
         
-        if condStr == "SKC" {
+        switch condStr {
+        case "SKC":
             parts.removeFirst()
             return [.skyClear]
-        }
-        if condStr == "CLR" || condStr == "NCD" {
+        case "CLR", "NCD":
             parts.removeFirst()
             return [.clear]
-        }
-        if condStr == "NSC" {
+        case "NSC":
             parts.removeFirst()
             return [.noSignificantClouds]
+        case "CAVOK":
+            parts.removeFirst()
+            return [.cavok]
+        default:
+            break
         }
         
         if let match = conditionsRx.firstMatch(in: condStr) {
