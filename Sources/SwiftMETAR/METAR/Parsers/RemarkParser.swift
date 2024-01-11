@@ -2,7 +2,7 @@ import Foundation
 import NumberKit
 import Regex
 
-let directionFromString: Dictionary<String, Remark.Direction> = [
+let directionFromString: Dictionary<String, Direction> = [
     "N": .north,
     "NE": .northeast,
     "E": .east,
@@ -14,7 +14,7 @@ let directionFromString: Dictionary<String, Remark.Direction> = [
     "ALQS": .all,
     "ALQDS": .all
 ]
-fileprivate let directionOrder: Array<Remark.Direction> = [.north, .northeast, .east, .southeast, .south, .southwest, .west, .northwest]
+fileprivate let directionOrder: Array<Direction> = [.north, .northeast, .east, .southeast, .south, .southwest, .west, .northwest]
 
 let multiplierFromSignString: Dictionary<String, Int> = [
     "0": 1,
@@ -76,8 +76,8 @@ let remarkParsers: Array<RemarkParser.Type> = [
 ]
 
 extension RemarkParser {
-    func parseDirections(from match: MatchResult, index: Int) -> Set<Remark.Direction>? {
-        var directions = Set<Remark.Direction>()
+    func parseDirections(from match: MatchResult, index: Int) -> Set<Direction>? {
+        var directions = Set<Direction>()
         
         let direction1String = match.captures[index]!
         guard let direction1 = directionFromString[direction1String] else { return nil }

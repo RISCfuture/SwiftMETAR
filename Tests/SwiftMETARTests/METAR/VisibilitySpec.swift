@@ -59,6 +59,7 @@ class VisibilitySpec: QuickSpec {
             it("parses directional visibilities") {
                 let string = "METAR LOWK 042250Z AUTO VRB02KT 9000 3600S BR FEW002 M01/M01 Q1011"
                 let metar = try! METAR.from(string: string)
+                print(metar)
             }
         }
     }

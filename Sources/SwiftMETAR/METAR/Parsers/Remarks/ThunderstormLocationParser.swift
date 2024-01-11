@@ -15,13 +15,13 @@ struct ThunderstormLocationParser: RemarkParser {
             proximity = prox
         }
         
-        var directions = Set<Remark.Direction>()
+        var directions = Set<Direction>()
         if result.captures[1] != nil {
             guard let dirs = parseDirections(from: result, index: 1) else { return nil }
             directions = dirs
         }
         
-        var movingDirection: Remark.Direction? = nil
+        var movingDirection: Direction? = nil
         if let dirStr = result.captures[4] {
             guard let dir = directionFromString[dirStr] else { return nil }
             movingDirection = dir

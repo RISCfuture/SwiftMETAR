@@ -29,9 +29,9 @@ struct LightningParser: RemarkParser {
             proximity = Remark.Proximity(rawValue: proxStr)
         }
         
-        var directions = Set<Remark.Direction>()
+        var directions = Set<Direction>()
         if result.captures[3] != nil {
-            directions = parseDirections(from: result, index: 3) ?? Set<Remark.Direction>()
+            directions = parseDirections(from: result, index: 3) ?? Set<Direction>()
         }
         
         remarks.removeSubrange(result.range)

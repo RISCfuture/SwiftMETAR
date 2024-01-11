@@ -12,5 +12,3 @@ func parseConditions(_ parts: inout Array<String.SubSequence>) throws -> Array<C
 
     return conditions
 }
-
-

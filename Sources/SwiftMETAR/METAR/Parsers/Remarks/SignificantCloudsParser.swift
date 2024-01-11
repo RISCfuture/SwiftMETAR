@@ -24,7 +24,7 @@ struct SignificantCloudsParser: RemarkParser {
         
         guard let directions = parseDirections(from: result, index: 3) else { return nil }
         
-        var movingDirection: Remark.Direction? = nil
+        var movingDirection: Direction? = nil
         if let movingDirStr = result.captures[6] {
             guard let movingDir = directionFromString[movingDirStr] else { return nil }
             movingDirection = movingDir

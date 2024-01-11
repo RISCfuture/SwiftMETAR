@@ -29,8 +29,13 @@ public struct METAR: Codable {
     /// The recorded winds.
     public let wind: Wind?
     
+    /// The least recorded visibility amount.
+    public var visibility: Visibility? {
+        visibilities.last?.vilibility
+    }
+    
     /// The recorded visibility amount.
-    public let visibility: Visibility?
+    public let visibilities: [DirectionalVisibility]
     
     /// Any runway visibilities recorded.
     public let runwayVisibility: Array<RunwayVisibility>

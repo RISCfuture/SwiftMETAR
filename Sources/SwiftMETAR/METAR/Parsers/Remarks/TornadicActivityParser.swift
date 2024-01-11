@@ -17,7 +17,7 @@ struct TornadicActivityParser: RemarkParser {
         guard let distance = UInt(result.captures[4]!) else { return nil }
         guard let direction = directionFromString[result.captures[5]!] else { return nil }
         
-        var movingDirection: Remark.Direction? = nil
+        var movingDirection: Direction? = nil
         if let movingDirStr = result.captures[6] {
             guard let movingDir = directionFromString[movingDirStr] else { return nil }
             movingDirection = movingDir
