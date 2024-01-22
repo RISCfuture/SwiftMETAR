@@ -160,17 +160,30 @@ public enum Visibility: Codable, Equatable {
 extension Visibility: RawRepresentable {
     
     public var rawValue: String {
-        return "unimplemented"
-        
         switch self {
-        case let .lessThan(value):
-            fatalError()
-        case let .equal(value):
-            fatalError()
-        case let .greaterThan(value):
-            fatalError()
+        case let .lessThan(.feet(value)):
+            return "M\(value)FT"
+        case let .lessThan(.meters(value)):
+            return "M\(value)"
+        case let .lessThan(.statuteMiles(value)):
+            return "M\(value)SM"
+            
+        case let .equal(.feet(value)):
+            return "\(value.description)FT"
+        case let .equal(.meters(value)):
+            return value.description
+        case let .equal(.statuteMiles(value)):
+            return "\(value.description)SM"
+            
+        case let .greaterThan(.feet(value)):
+            return "P\(value)FT"
+        case let .greaterThan(.meters(value)):
+            return "P\(value)"
+        case let .greaterThan(.statuteMiles(value)):
+            return "P\(value)SM"
+            
         case let .variable(low, high):
-            fatalError()
+            return "\(low.rawValue)V\(high.rawValue)"
         }
     }
     
@@ -245,7 +258,14 @@ fileprivate struct FractionResult {
 
 extension FractionResult: RawRepresentable {
     var rawValue: String {
-        "Unimplemented"
+        switch self.rangeValue {
+        case .lessThan:
+            return "M\(self.value.description)"
+        case .equal:
+            return self.value.description
+        case .greaterThan:
+            return "P\(self.value.description)"
+        }
     }
     
     init?(rawValue: String) {
@@ -291,7 +311,14 @@ extension IntegerResult: RawRepresentable {
     }
     
     var rawValue: String {
-        "unimplemented"
+        switch self.rangeValue {
+        case .lessThan:
+            return "M\(value)\(units)"
+        case .equal:
+            return "\(value)\(units)"
+        case .greaterThan:
+            return "P\(value)\(units)"
+        }
     }
     
     init?(rawValue: String) {

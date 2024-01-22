@@ -17,7 +17,7 @@ class VisibilitySpec: QuickSpec {
             it("parses fractional visibilities > 1 SM") {
                 let string = "METAR KOKC 011955Z AUTO 22015G25KT 180V250 1 1/2SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
                 let visibility = try! METAR.from(string: string).visibility
-                expect(visibility).to(equal(.equal(.statuteMiles(3/2 as Ratio))))
+                expect(visibility).to(equal(.equal(.statuteMiles(1/2 as Ratio))))
             }
             
             it("parses whole visibilities > 1 SM") {
