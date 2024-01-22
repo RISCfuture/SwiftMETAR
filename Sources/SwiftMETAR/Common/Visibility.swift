@@ -179,10 +179,10 @@ extension Visibility: RawRepresentable {
         switch rawValue {
         case "CAVOK", "9999":
             self = .greaterThan(.meters(9999))
-            
+            return
         case "10SM":
             self = .greaterThan(.statuteMiles(10))
-            
+            return
         case "M":
             return nil
             
@@ -202,33 +202,45 @@ extension Visibility: RawRepresentable {
                 return
             }
             
-            fatalError()
+            guard let whole = IntegerResult(rawValue: rawValue) else {
+                return nil
+            }
             
-            //        case let value as UInt16:
-            ////            let value = UInt16(value)!
-            //            self = .equal(.meters(value))
-            //
-            //        case let fraction as FractionResult:
-            //            fraction
-            //            fatalError()
-            //
-            //        case let fraction where (try? parseFraction(fraction)) != nil:
-            //            let fraction = try! parseFraction(fraction)!
-            //            fatalError()
-            //
-            //        default:
-            //            return nil
+            switch whole.units {
+            case "SM":
+                let value = Ratio(Int(whole.value), 1)
+                switch whole.rangeValue {
+                case .lessThan: self = .lessThan(.statuteMiles(value))
+                case .equal: self = .equal(.statuteMiles(value))
+                case .greaterThan: self = .greaterThan(.statuteMiles(value))
+                }
+            case "M":
+                switch whole.rangeValue {
+                case .lessThan: self = .lessThan(.meters(whole.value))
+                case .equal: self = .equal(.meters(whole.value))
+                case .greaterThan: self = .greaterThan(.meters(whole.value))
+                }
+            case "FT":
+                switch whole.rangeValue {
+                case .lessThan: self = .lessThan(.feet(whole.value))
+                case .equal: self = .equal(.feet(whole.value))
+                case .greaterThan: self = .greaterThan(.feet(whole.value))
+                }
+            default: preconditionFailure("Unknown units")
+            }
         }
     }
 }
 
 fileprivate let fractionalRx = Regex(#"^([PM])?(\d+)\/(\d+)SM$"#)
 
+enum RangeValue {
+    case lessThan, equal, greaterThan
+}
+
 fileprivate struct FractionResult {
     let value: Ratio
-    let rangeValue: RangeValue; enum RangeValue {
-        case lessThan, equal, greaterThan
-    }
+    let rangeValue: RangeValue
 }
 
 extension FractionResult: RawRepresentable {
@@ -241,7 +253,7 @@ extension FractionResult: RawRepresentable {
     }
     
     init?(rawValueTrowing: String) throws {
-        var rangeValue = FractionResult.RangeValue.equal
+        var rangeValue = RangeValue.equal
         guard let match = fractionalRx.firstMatch(in: rawValueTrowing)
         else { return nil }
         
@@ -264,28 +276,40 @@ extension FractionResult: RawRepresentable {
             value: Ratio(Int(numerator), Int(denominator)),
             rangeValue: rangeValue)
     }
+}
+
+fileprivate struct IntegerResult {
+    let value: UInt16
+    let units: String
+    let rangeValue: RangeValue
+}
+
+extension IntegerResult: RawRepresentable {
     
-    fileprivate func parseFraction(_ string: String) throws -> FractionResult? {
-        var rangeValue = FractionResult.RangeValue.equal
+    fileprivate static var rx: Regex {
+        .init(#"^([PM])?(\d+)(SM|FT|M)$"#)
+    }
+    
+    var rawValue: String {
+        "unimplemented"
+    }
+    
+    init?(rawValue: String) {
+        guard let match = Self.rx.firstMatch(in: rawValue) else { return nil }
         
-        if let match = fractionalRx.firstMatch(in: string) {
-            if let signStr = match.captures[0] {
-                switch signStr {
-                case "P": rangeValue = .greaterThan
-                case "M": rangeValue = .lessThan
-                default: throw Error.invalidVisibility(string)
-                }
-            }
-            
-            guard let numStr = match.captures[1],
-                  let numerator = UInt8(numStr),
-                  let denStr = match.captures[2],
-                  let denominator = UInt8(denStr) else { throw Error.invalidVisibility(string) }
-            
-            return FractionResult(value: Ratio(Int(numerator), Int(denominator)),
-                                  rangeValue: rangeValue)
+        switch match.captures[0] {
+        case "P": rangeValue = .greaterThan
+        case "M": rangeValue = .lessThan
+        case .none: rangeValue = .equal
+        default: return nil
         }
         
-        return nil
+        guard 
+            let valueStr = match.captures[1],
+            let value = UInt16(valueStr)
+        else { return nil }
+
+        units = match.captures[2] ?? "M"
+        self.value = value
     }
 }

@@ -88,10 +88,6 @@ func parseVisibility(_ parts: inout Array<String.SubSequence>) throws -> Visibil
     }
 }
 
-fileprivate enum RangeValue {
-    case lessThan, equal, greaterThan
-}
-
 fileprivate struct FractionResult {
     let value: Ratio
     let rangeValue: RangeValue
