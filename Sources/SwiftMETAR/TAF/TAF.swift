@@ -179,7 +179,7 @@ public struct TAF: Codable {
     public struct Group: Codable, Equatable {
         
         /// The raw text of this particular TAF Group.
-        public internal(set) var raw: String
+        public var raw: String
         
         /// The period during which these forecasts are valid.
         public let period: Period
