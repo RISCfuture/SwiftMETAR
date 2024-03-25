@@ -26,7 +26,7 @@ class TAFSpec: QuickSpec {
             
             let groups: Array<TAF.Group> = [
                 .init(
-                    raw: "111140Z 1112/1212 13012KT P6SM BKN100 WS020/35035KT",
+                    raw: "1112/1212 13012KT P6SM BKN100 WS020/35035KT",
                     period: .range(.init(start: .this(day: 11, hour: 12)!, end: .this(day: 12, hour: 12)!)),
                     wind: .direction(130, speed: .knots(12)),
                     visibility: .greaterThan(.statuteMiles(6)),
@@ -140,7 +140,7 @@ class TAFSpec: QuickSpec {
             
             let groups: Array<TAF.Group> = [
                 .init(
-                    raw: "131555Z 1316/1412 VRB03KT P6SM VCTS SCT025CB BKN250",
+                    raw: "1316/1412 VRB03KT P6SM VCTS SCT025CB BKN250",
                     period: .range(.init(start: .this(day: 13, hour: 16)!, end: .this(day: 14, hour: 12)!)),
                     wind: .variable(speed: .knots(3)),
                     visibility: .greaterThan(.statuteMiles(6)),
@@ -242,7 +242,7 @@ class TAFSpec: QuickSpec {
             expect(forecast.remarks.map { $0.remark }).to(contain(.unknown("NXT FCST BY 00Z=")))
             
             let groups: Array<TAF.Group> = [
-                .init(raw: "111730Z 1118/1218 19007KT P6SM SCT030",
+                .init(raw: "1118/1218 19007KT P6SM SCT030",
                       period: .range(.init(start: .this(day: 11, hour: 18)!, end: .this(day: 12, hour: 18)!)),
                       wind: .direction(190, speed: .knots(7)),
                       visibility: .greaterThan(.statuteMiles(6)),

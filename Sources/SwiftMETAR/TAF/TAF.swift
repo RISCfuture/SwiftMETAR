@@ -104,12 +104,14 @@ public struct TAF: Codable {
             
             switch group.period {
                 case .from(_): // reset all the fields
+                    combinedGroup.raw = group.raw
                     combinedGroup.wind = group.wind
                     combinedGroup.visibility = group.visibility
                     combinedGroup.weather = group.weather
                     combinedGroup.conditions = group.conditions
                     combinedGroup.windshear = group.windshear
                 default:
+                    combinedGroup.raw = group.raw
                     if let wind = group.wind { combinedGroup.wind = wind }
                     if let visibility = group.visibility { combinedGroup.visibility = visibility }
                     if group.weather != nil && !group.weather!.isEmpty { combinedGroup.weather = group.weather }
@@ -177,7 +179,7 @@ public struct TAF: Codable {
     public struct Group: Codable, Equatable {
         
         /// The raw text of this particular TAF Group.
-        public let raw: String
+        public internal(set) var raw: String
         
         /// The period during which these forecasts are valid.
         public let period: Period
