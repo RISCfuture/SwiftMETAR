@@ -7,7 +7,6 @@ func parseMETAR(_ codedMETAR: String, on referenceDate: Date? = nil, lenientRema
     let date = try parseDate(&parts, referenceDate: referenceDate)!
     let observer = try parseObserver(&parts)
     let wind = try parseWind(&parts)
-//    let visibility = try parseVisibility(&parts)
     let directionalVisibilities = try parseDirectionalVisibilities(&parts)
     let runwayViz = try parseRunwayVisibility(&parts)
     let weather = try parseWeather(&parts)
