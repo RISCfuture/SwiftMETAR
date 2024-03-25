@@ -99,6 +99,28 @@ class ConditionsSpec: QuickSpec {
                 expect(conditions[1]).to(equal(.scattered(2400)))
                 expect(conditions[2]).to(equal(.broken(4800)))
             }
+            
+            it("parses undefined significant cloud cover") {
+                let string = "EGSS 042320Z AUTO 36008KT 4100 -RADZ OVC003/// 07/06 Q0992"
+                let metar = try! METAR.from(string: string, lenientRemarks: true)
+                expect(metar.conditions.isEmpty).to(equal(false))
+                expect(metar.remarks.isEmpty).to(equal(true))
+            }
+            
+            it("parses undefined cloud cover with Significant cloud cover") {
+                let string = "EGSS 042320Z AUTO 36008KT 4100 -RADZ //////TCU 07/06 Q0992"
+                let metar = try! METAR.from(string: string, lenientRemarks: true)
+                expect(metar.conditions.isEmpty).to(equal(false))
+                expect(metar.remarks.isEmpty).to(equal(true))
+                expect(metar.conditions[0].type).to(equal(.toweringCumulus))
+            }
+            
+            it("parses multiple cloud covers with undefined values") {
+                let string = "METAR EGLL 042350Z AUTO 35010KT 320V020 5000 -RADZ BKN008/// OVC015/// //////CB 06/04 Q0993 TEMPO 4000 RADZ"
+                let metar = try! METAR.from(string: string, lenientRemarks: true)
+                expect(metar.conditions.count).to(equal(3))
+                expect(metar.conditions[2].type).to(equal(.cumulonimbus))
+            }
         }
     }
 }

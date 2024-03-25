@@ -55,6 +55,12 @@ class VisibilitySpec: QuickSpec {
                 let metar = try! METAR.from(string: string)
                 expect(metar.visibility).to(beNil())
             }
+            
+            it("parses directional visibilities") {
+                let string = "METAR LOWK 042250Z AUTO VRB02KT 9000 3600S BR FEW002 M01/M01 Q1011"
+                let visibility = try! METAR.from(string: string).visibility
+                expect(visibility).to(equal(.equal(.meters(3600))))
+            }
         }
     }
 }

@@ -418,19 +418,6 @@ public enum Remark: Codable, Equatable {
         case distant = "DSNT"
     }
     
-    /// A direction from an observation station.
-    public enum Direction: Codable {
-        case all
-        case north
-        case northeast
-        case east
-        case southeast
-        case south
-        case southwest
-        case west
-        case northwest
-    }
-    
     /// Cloud coverage amounts, as used in remarks.
     public enum Coverage: String, Codable, Equatable, RawRepresentable, CaseIterable {
         

@@ -20,7 +20,7 @@ struct ObservedPrecipitationParser: RemarkParser {
             proximity = prox
         }
         
-        var directions = Set<Remark.Direction>()
+        var directions = Set<Direction>()
         if result.captures[2] != nil {
             guard let dirs = parseDirections(from: result, index: 2) else { return nil }
             directions = dirs
