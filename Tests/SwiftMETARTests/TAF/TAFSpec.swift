@@ -26,6 +26,7 @@ class TAFSpec: QuickSpec {
             
             let groups: Array<TAF.Group> = [
                 .init(
+                    raw: "111140Z 1112/1212 13012KT P6SM BKN100 WS020/35035KT",
                     period: .range(.init(start: .this(day: 11, hour: 12)!, end: .this(day: 12, hour: 12)!)),
                     wind: .direction(130, speed: .knots(12)),
                     visibility: .greaterThan(.statuteMiles(6)),
@@ -38,6 +39,7 @@ class TAFSpec: QuickSpec {
                     remarks: [],
                     remarksString: nil),
                 .init(
+                    raw: "TEMPO 1112/1114 5SM BR",
                     period: .temporary(.init(start: .this(day: 11, hour: 12)!, end: .this(day: 11, hour: 14)!)),
                     wind: nil,
                     visibility: .equal(.statuteMiles(5)),
@@ -50,6 +52,7 @@ class TAFSpec: QuickSpec {
                     remarks: [],
                     remarksString: nil),
                 .init(
+                    raw: "FM111500 16015G25KT P6SM SCT040 BKN250",
                     period: .from(.this(day: 11, hour: 15, minute: 0)!),
                     wind: .direction(160, speed: .knots(15), gust: .knots(25)),
                     visibility: .greaterThan(.statuteMiles(6)),
@@ -62,6 +65,7 @@ class TAFSpec: QuickSpec {
                     remarks: [],
                     remarksString: nil),
                 .init(
+                    raw: "FM120000 14012KT P6SM BKN080 OVC150",
                     period: .from(.this(day: 12, hour: 0, minute: 0)!),
                     wind: .direction(140, speed: .knots(12)),
                     visibility: .greaterThan(.statuteMiles(6)),
@@ -74,6 +78,7 @@ class TAFSpec: QuickSpec {
                     remarks: [],
                     remarksString: nil),
                 .init(
+                    raw: "PROB30 1200/1204 3SM TSRA BKN030CB",
                     period: .probability(30, period: .init(start: .this(day: 12, hour: 0)!, end: .this(day: 12, hour: 4)!)),
                     wind: nil,
                     visibility: .equal(.statuteMiles(3)),
@@ -86,6 +91,7 @@ class TAFSpec: QuickSpec {
                     remarks: [],
                     remarksString: nil),
                 .init(
+                    raw: "FM120400 14008KT P6SM SCT040 OVC080",
                     period: .from(.this(day: 12, hour: 4, minute: 0)!),
                     wind: .direction(140, speed: .knots(8)),
                     visibility: .greaterThan(.statuteMiles(6)),
@@ -98,6 +104,7 @@ class TAFSpec: QuickSpec {
                     remarks: [],
                     remarksString: nil),
                 .init(
+                    raw: "TEMPO 1204/1208 3SM TSRA OVC030CB",
                     period: .temporary(.init(start: .this(day: 12, hour: 4)!, end: .this(day: 12, hour: 8)!)),
                     wind: nil,
                     visibility: .equal(.statuteMiles(3)),
@@ -133,6 +140,7 @@ class TAFSpec: QuickSpec {
             
             let groups: Array<TAF.Group> = [
                 .init(
+                    raw: "131555Z 1316/1412 VRB03KT P6SM VCTS SCT025CB BKN250",
                     period: .range(.init(start: .this(day: 13, hour: 16)!, end: .this(day: 14, hour: 12)!)),
                     wind: .variable(speed: .knots(3)),
                     visibility: .greaterThan(.statuteMiles(6)),
@@ -145,6 +153,7 @@ class TAFSpec: QuickSpec {
                     remarks: [],
                     remarksString: nil),
                 .init(
+                    raw: "TEMPO 1316/1318 2SM TSRA BKN020CB",
                     period: .temporary(.init(start: .this(day: 13, hour: 16)!, end: .this(day: 13, hour: 18)!)),
                     wind: nil,
                     visibility: .equal(.statuteMiles(2)),
@@ -157,6 +166,7 @@ class TAFSpec: QuickSpec {
                     remarks: [],
                     remarksString: nil),
                 .init(
+                    raw: "FM131800 VRB03KT P6SM SCT025 BKN250",
                     period: .from(.this(day: 13, hour: 18, minute: 0)!),
                     wind: .variable(speed: .knots(3)),
                     visibility: .greaterThan(.statuteMiles(6)),
@@ -169,6 +179,7 @@ class TAFSpec: QuickSpec {
                     remarks: [],
                     remarksString: nil),
                 .init(
+                    raw: "TEMPO 1320/1324 1SM TSRA OVC010CB",
                     period: .temporary(.init(start: .this(day: 13, hour: 20)!, end: .this(day: 14, hour: 0)!)),
                     wind: nil,
                     visibility: .equal(.statuteMiles(1)),
@@ -181,6 +192,7 @@ class TAFSpec: QuickSpec {
                     remarks: [],
                     remarksString: nil),
                 .init(
+                    raw: "FM140000 VRB03KT P6SM VCTS SCT020CB BKN120",
                     period: .from(.this(day: 14, hour: 0, minute: 0)!),
                     wind: .variable(speed: .knots(3)),
                     visibility: .greaterThan(.statuteMiles(6)),
@@ -193,6 +205,7 @@ class TAFSpec: QuickSpec {
                     remarks: [],
                     remarksString: nil),
                 .init(
+                    raw: "TEMPO 1408/1412 BKN020CB",
                     period: .temporary(.init(start: .this(day: 14, hour: 8)!, end: .this(day: 14, hour: 12)!)),
                     wind: nil,
                     visibility: nil,
@@ -229,7 +242,8 @@ class TAFSpec: QuickSpec {
             expect(forecast.remarks.map { $0.remark }).to(contain(.unknown("NXT FCST BY 00Z=")))
             
             let groups: Array<TAF.Group> = [
-                .init(period: .range(.init(start: .this(day: 11, hour: 18)!, end: .this(day: 12, hour: 18)!)),
+                .init(raw: "111730Z 1118/1218 19007KT P6SM SCT030",
+                      period: .range(.init(start: .this(day: 11, hour: 18)!, end: .this(day: 12, hour: 18)!)),
                       wind: .direction(190, speed: .knots(7)),
                       visibility: .greaterThan(.statuteMiles(6)),
                       weather: [],
@@ -240,7 +254,8 @@ class TAFSpec: QuickSpec {
                       turbulence: [],
                       remarks: [],
                       remarksString: nil),
-                .init(period: .temporary(.init(start: .this(day: 11, hour: 18)!, end: .this(day: 11, hour: 20)!)),
+                .init(raw: "TEMPO 1118/1120 BKN040",
+                      period: .temporary(.init(start: .this(day: 11, hour: 18)!, end: .this(day: 11, hour: 20)!)),
                       wind: nil,
                       visibility: nil,
                       weather: [],
@@ -251,7 +266,8 @@ class TAFSpec: QuickSpec {
                       turbulence: [],
                       remarks: [],
                       remarksString: nil),
-                .init(period: .from(.this(day: 11, hour: 20, minute: 0)!),
+                .init(raw: "FM112000 16011KT P6SM VCTS FEW030CB SCT250",
+                      period: .from(.this(day: 11, hour: 20, minute: 0)!),
                       wind: .direction(160, speed: .knots(11)),
                       visibility: .greaterThan(.statuteMiles(6)),
                       weather: [.init(intensity: .vicinity, descriptor: nil, phenomena: [.thunderstorm])],
@@ -262,7 +278,8 @@ class TAFSpec: QuickSpec {
                       turbulence: [],
                       remarks: [],
                       remarksString: nil),
-                .init(period: .from(.this(day: 12, hour: 2, minute: 0)!),
+                .init(raw: "FM120200 14006KT P6SM FEW025 SCT250",
+                      period: .from(.this(day: 12, hour: 2, minute: 0)!),
                       wind: .direction(140, speed: .knots(6)),
                       visibility: .greaterThan(.statuteMiles(6)),
                       weather: [],
@@ -273,7 +290,8 @@ class TAFSpec: QuickSpec {
                       turbulence: [],
                       remarks: [],
                       remarksString: nil),
-                .init(period: .from(.this(day: 12, hour: 8, minute: 0)!),
+                .init(raw: "FM120800 VRB03KT 5SM BR SCT012",
+                      period: .from(.this(day: 12, hour: 8, minute: 0)!),
                       wind: .variable(speed: .knots(3)),
                       visibility: .equal(.statuteMiles(5)),
                       weather: [.init(intensity: .moderate, descriptor: nil, phenomena: [.mist])],
@@ -284,7 +302,8 @@ class TAFSpec: QuickSpec {
                       turbulence: [],
                       remarks: [],
                       remarksString: nil),
-                .init(period: .from(.this(day: 12, hour: 15, minute: 0)!),
+                .init(raw: "FM121500 17007KT P6SM SCT025",
+                      period: .from(.this(day: 12, hour: 15, minute: 0)!),
                       wind: .direction(170, speed: .knots(7)),
                       visibility: .greaterThan(.statuteMiles(6)),
                       weather: [],
@@ -317,7 +336,8 @@ class TAFSpec: QuickSpec {
                 let components = DateComponents.this(day: 12, hour: 2)!
                 let date = zuluCal.date(from: components)!
                 expect(forecast.during(date)).to(equal(
-                    .init(period: .from(.this(day: 12, hour: 2)!),
+                    .init(raw: "PROB30 1200/1204 3SM TSRA BKN030CB",
+                          period: .from(.this(day: 12, hour: 2)!),
                           wind: .direction(140, speed: .knots(12)),
                           visibility: .equal(.statuteMiles(3)),
                           weather: [.init(intensity: .moderate, descriptor: .thunderstorms, phenomena: [.rain])],

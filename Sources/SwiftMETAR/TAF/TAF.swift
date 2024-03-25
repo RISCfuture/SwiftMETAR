@@ -73,7 +73,8 @@ public struct TAF: Codable {
         guard covers(date) else { return nil }
         
         let components = zuluCal.dateComponents(in: zulu, from: date)
-        var combinedGroup = Group(period: .from(components),
+        var combinedGroup = Group(raw: "",
+                                  period: .from(components),
                                   wind: nil,
                                   visibility: nil,
                                   weather: [],
@@ -174,6 +175,9 @@ public struct TAF: Codable {
     /// A snapshot of weather conditions for a forecast period. Not all weather
     /// information need be supplied.
     public struct Group: Codable, Equatable {
+        
+        /// The raw text of this particular TAF Group.
+        public let raw: String
         
         /// The period during which these forecasts are valid.
         public let period: Period
