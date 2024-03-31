@@ -16,6 +16,20 @@ public struct DateComponentsInterval: Comparable, Hashable, Codable {
     public init(start: DateComponents, end: DateComponents) {
         self.start = start
         self.end = end
+        
+        fixEndDateShouldRollForwardOneMonth()
+    }
+    
+    // If the endDate rolled over to the first day of the month of the startDate, shift it forward one month.
+    private mutating func fixEndDateShouldRollForwardOneMonth() {
+        if let startDate = start.date,
+           let endDate = end.date,
+           startDate > endDate,
+           end.day == 1,
+           end.month == start.month,
+           let adjustedEndDate = zuluCal.date(byAdding: .month, value: 1, to: endDate) {
+            self.end = zuluCal.dateComponents(in: zulu, from: adjustedEndDate)
+        }
     }
     
     public init(start: DateComponents, duration: TimeInterval) {
