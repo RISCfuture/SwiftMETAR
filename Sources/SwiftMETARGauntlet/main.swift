@@ -1,5 +1,6 @@
 import Foundation
 import SwiftMETAR
+import Gzip
 
 fileprivate func checkRemarks(_ remarks: Array<RemarkEntry>, string: String) {
     for remark in remarks {
@@ -10,8 +11,9 @@ fileprivate func checkRemarks(_ remarks: Array<RemarkEntry>, string: String) {
     }
 }
 
-let METAR_URL = URL(string: "https://www.aviationweather.gov/adds/dataserver_current/current/metars.cache.csv")!
-let METARs = String(data: try! Data(contentsOf: METAR_URL), encoding: .ascii)!
+let METAR_URL = URL(string: "https://aviationweather.gov/data/cache/metars.cache.csv.gz")!
+let METARData = try Data(contentsOf: METAR_URL)
+let METARs = String(data: try METARData.gunzipped(), encoding: .ascii)!
 METARs.enumerateLines { line, stop in
     guard let range  = line.rangeOfCharacter(from: CharacterSet(charactersIn: ",")) else { return }
     let string = String(line[line.startIndex..<range.lowerBound])
@@ -34,8 +36,9 @@ METARs.enumerateLines { line, stop in
     }
 }
 
-let TAF_URL = URL(string: "https://www.aviationweather.gov/adds/dataserver_current/current/tafs.cache.csv")!
-let TAFs = String(data: try! Data(contentsOf: TAF_URL), encoding: .ascii)!
+let TAF_URL = URL(string: "https://aviationweather.gov/data/cache/tafs.cache.csv.gz")!
+let TAFsData = try Data(contentsOf: TAF_URL)
+let TAFs = String(data: try TAFsData.gunzipped(), encoding: .ascii)!
 TAFs.enumerateLines { line, stop in
     guard let range  = line.rangeOfCharacter(from: CharacterSet(charactersIn: ",")) else { return }
     let string = String(line[line.startIndex..<range.lowerBound])
