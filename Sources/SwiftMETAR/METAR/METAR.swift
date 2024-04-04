@@ -61,6 +61,20 @@ public struct METAR: Codable {
     /// The date this METAR was generated.
     public var date: Date { calendarDate.date! }
     
+    /// The temperature as a `Measurement`, which can be converted to other
+    /// units.
+    public var temperatureMeasurement: Measurement<UnitTemperature>? {
+        guard let temperature = temperature else { return nil }
+        return .init(value: Double(temperature), unit: .celsius)
+    }
+    
+    /// The dewpoint as a `Measurement`, which can be converted to other
+    /// units.
+    public var dewpointMeasurement: Measurement<UnitTemperature>? {
+        guard let dewpoint = dewpoint else { return nil }
+        return .init(value: Double(dewpoint), unit: .celsius)
+    }
+    
     /**
      Parse a METAR from its text.
      

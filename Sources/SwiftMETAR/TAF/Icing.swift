@@ -15,6 +15,21 @@ public struct Icing: Codable, Equatable {
     /// The top of the icing layer, in feet AGL.
     public var top: UInt { base + depth }
     
+    /// The base as a `Measurement`, which can be converted to other units.
+    public var baseMeasurement: Measurement<UnitLength> {
+        .init(value: Double(base), unit: .feet)
+    }
+    
+    /// The depth as a `Measurement`, which can be converted to other units.
+    public var depthMeasurement: Measurement<UnitLength> {
+        .init(value: Double(depth), unit: .feet)
+    }
+    
+    /// The top as a `Measurement`, which can be converted to other units.
+    public var topMeasurement: Measurement<UnitLength> {
+        .init(value: Double(top), unit: .feet)
+    }
+    
     /// Type of icing forecasted.
     public enum IcingType: String, RawRepresentable, CaseIterable, Codable, Equatable {
         

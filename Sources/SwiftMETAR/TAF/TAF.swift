@@ -160,6 +160,12 @@ public struct TAF: Codable {
         /// The start time of the forecasted temperature.
         public let time: DateComponents
         
+        /// The temperature as a `Measurement`, which can be converted to other
+        /// units.
+        public var measurement: Measurement<UnitTemperature> {
+            .init(value: Double(value), unit: .celsius)
+        }
+        
         /// Temperature extreme types
         public enum TemperatureType: Codable {
             

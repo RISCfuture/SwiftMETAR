@@ -1,3 +1,5 @@
+import Foundation
+
 /// A report on the condition and strength of the winds.
 public enum Wind: Codable, Equatable {
     
@@ -146,22 +148,22 @@ public enum Wind: Codable, Equatable {
          */
         case mps(_ quantity: UInt16)
         
-        /// The wind speed in knots, regardless of the original units. This var
-        /// is used to compare wind speeds.
-        public var knots: Float {
+        /// The speed expressed as a `Measurement`, which is convertible to
+        /// other units.
+        public var measurement: Measurement<UnitSpeed> {
             switch self {
-                case let .knots(quantity): return Float(quantity)
-                case let .kph(quantity): return Float(quantity)*0.539957
-                case let .mps(quantity): return Float(quantity)*1.94384
+                case let .knots(quantity): .init(value: Double(quantity), unit: .knots)
+                case let .kph(quantity): .init(value: Double(quantity), unit: .kilometersPerHour)
+                case let .mps(quantity): .init(value: Double(quantity), unit: .metersPerSecond)
             }
         }
         
         public static func == (lhs: Speed, rhs: Speed) -> Bool {
-            return lhs.knots == rhs.knots
+            return lhs.measurement == rhs.measurement
         }
         
         public static func < (lhs: Speed, rhs: Speed) -> Bool {
-            return lhs.knots < rhs.knots
+            return lhs.measurement < rhs.measurement
         }
         
         public init(from decoder: Decoder) throws {

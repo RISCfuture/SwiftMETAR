@@ -1,3 +1,4 @@
+import Foundation
 import NumberKit
 
 /// A visibility report, made by a human or a transmissometer.
@@ -113,6 +114,16 @@ public enum Visibility: Codable, Equatable {
          */
         case meters(_ value: UInt16)
         
+        /// The distance expressed as a `Measurement`, which is convertible to
+        /// other units.
+        public var measurement: Measurement<UnitLength> {
+            switch self {
+                case let .statuteMiles(value): .init(value: value.doubleValue, unit: .miles)
+                case let .feet(value): .init(value: Double(value), unit: .feet)
+                case let .meters(value): .init(value: Double(value), unit: .meters)
+            }
+        }
+        
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             switch try container.decode(String.self, forKey: .unit) {
@@ -145,22 +156,12 @@ public enum Visibility: Codable, Equatable {
             }
         }
         
-        /// The distance in feet, regardless of the original units. This var is
-        /// used for comparison between distances.
-        public var feet: Float {
-            switch self {
-                case let .feet(value): return Float(value)
-                case let .meters(value): return Float(value)*3.28084
-                case let .statuteMiles(value): return Float(value.magnitude)*5280
-            }
-        }
-        
         public static func == (lhs: Value, rhs: Value) -> Bool {
-            return lhs.feet == rhs.feet
+            return lhs.measurement == rhs.measurement
         }
         
         public static func < (lhs: Value, rhs: Value) -> Bool {
-            return lhs.feet < rhs.feet
+            return lhs.measurement < rhs.measurement
         }
         
         enum CodingKeys: String, CodingKey {

@@ -1,3 +1,5 @@
+import Foundation
+
 /// A sea-level pressure altimeter setting.
 public enum Altimeter: Codable, Comparable {
     
@@ -10,6 +12,14 @@ public enum Altimeter: Codable, Comparable {
     
     /// An altimeter setting in hectopascals (typical in Europe).
     case hPa(_ value: UInt16)
+    
+    /// The value as a `Measurement`, which can be converted to other units.
+    public var measurement: Measurement<UnitPressure> {
+        switch self {
+            case let .inHg(value): .init(value: Double(value)/100, unit: .inchesOfMercury)
+            case let .hPa(value): .init(value: Double(value), unit: .hectopascals)
+        }
+    }
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -35,21 +45,12 @@ public enum Altimeter: Codable, Comparable {
         }
     }
     
-    /// The altimeter setting in inches of mercury (converted from inHg*100 or
-    /// hPa as appropriate). This field is used for comparison.
-    public var inHg: Float {
-        switch self {
-            case let .inHg(value): return Float(value)/100
-            case let .hPa(value): return Float(value)*0.02953
-        }
-    }
-    
     public static func == (lhs: Altimeter, rhs: Altimeter) -> Bool {
-        return lhs.inHg == rhs.inHg
+        return lhs.measurement == rhs.measurement
     }
     
     public static func < (lhs: Altimeter, rhs: Altimeter) -> Bool {
-        return lhs.inHg < rhs.inHg
+        return lhs.measurement < rhs.measurement
     }
     
     enum CodingKeys: String, CodingKey {

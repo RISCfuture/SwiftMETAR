@@ -1,3 +1,5 @@
+import Foundation
+
 /// A sky condition, either a cloud layer or the presence of a clear sky.
 public enum Condition: Codable, Equatable {
     
@@ -63,6 +65,19 @@ public enum Condition: Codable, Equatable {
                           AGL.
      */
     case indefinite(_ ceiling: UInt)
+    
+    /// The cloud height as a `Measurement`, which can be converted to other
+    /// units. Returns `nil` for conditions without cloud heights.
+    public var heightMeasurement: Measurement<UnitLength>? {
+        switch self {
+            case let .few(height, _): .init(value: Double(height), unit: .feet)
+            case let .scattered(height, _): .init(value: Double(height), unit: .feet)
+            case let .broken(height, _): .init(value: Double(height), unit: .feet)
+            case let .overcast(height, _): .init(value: Double(height), unit: .feet)
+            case let .indefinite(height): .init(value: Double(height), unit: .feet)
+            default: nil
+        }
+    }
     
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)

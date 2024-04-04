@@ -12,7 +12,7 @@ class AltimeterSpec: QuickSpec {
                 let observation = try! METAR.from(string: string)
                 
                 expect(observation.altimeter).to(equal(.inHg(2992)))
-                expect(observation.altimeter!.inHg).to(equal(29.92))
+                expect(observation.altimeter!.measurement.value).to(equal(29.92))
             }
             
             it("parses an hPa altimeter setting") {
@@ -20,7 +20,7 @@ class AltimeterSpec: QuickSpec {
                 let observation = try! METAR.from(string: string)
                 
                 expect(observation.altimeter).to(equal(.hPa(1021)))
-                expect(observation.altimeter!.inHg).to(beCloseTo(30.15, within: 0.01))
+                expect(observation.altimeter!.measurement.converted(to: .inchesOfMercury).value).to(beCloseTo(30.15, within: 0.01))
             }
         }
     }

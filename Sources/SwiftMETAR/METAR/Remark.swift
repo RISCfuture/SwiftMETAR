@@ -33,6 +33,7 @@ public enum Remark: Codable, Equatable {
      Daily accumulated precipitation amount.
      
      - Parameter amount: The amount, in inches. 0 indicates trace precipitation.
+     - SeeAlso: ``precipitationAmountMeasurement``
      */
     case dailyPrecipitationAmount(_ amount: Float?)
     
@@ -41,6 +42,7 @@ public enum Remark: Codable, Equatable {
      
      - Parameter low: The low temperature extreme, in °C.
      - Parameter high: The high temperature extreme, in °C.
+     - SeeAlso: ``lowTemperatureMeasurement``, ``highTemperatureMeasurement``
      */
     case dailyTemperatureExtremes(low: Float, high: Float)
     
@@ -48,6 +50,7 @@ public enum Remark: Codable, Equatable {
      Largest recorded hailstone size.
      
      - Parameter size: Largest hailstone size, in inches.
+     - SeeAlso: ``hailstoneSizeMeasurement``
      */
     case hailstoneSize(_ size: Ratio)
     
@@ -55,6 +58,7 @@ public enum Remark: Codable, Equatable {
      Hourly accumulated precipitation amount.
      
      - Parameter amount: The amount, in inches. 0 indicates trace precipitation.
+     - SeeAlso: ``precipitationAmountMeasurement``
      */
     case hourlyPrecipitationAmount(_ amount: Float)
     
@@ -106,6 +110,7 @@ public enum Remark: Codable, Equatable {
      - Parameter type: The type of obscuration.
      - Parameter amount: How much obscuration was present.
      - Parameter height: The height of the obscuration, in feet AGL.
+     - SeeAlso: ``heightMeasurement``
      */
     case obscuration(type: Weather.Phenomenon, amount: Coverage?, height: UInt)
     
@@ -132,6 +137,7 @@ public enum Remark: Codable, Equatable {
      
      - Parameter source: The location that the visibility was observed from.
      - Parameter distance: The visibility, in statute miles.
+     - SeeAlso: ``distanceMeasurement``
      */
     case observedVisibility(source: VisibilitySource, distance: Ratio)
     
@@ -148,6 +154,7 @@ public enum Remark: Codable, Equatable {
      
      - Parameter period: The recording period, in hours (1, 3, or 6).
      - Parameter amount: The amount of ice accretion, in inches.
+     - SeeAlso: ``precipitationAmountMeasurement``
      */
     case periodicIceAccretionAmount(period: UInt, amount: Float)
     
@@ -156,6 +163,7 @@ public enum Remark: Codable, Equatable {
      
      - Parameter period: The recording period, in hours (3 or 6).
      - Parameter amount: The amount of precipitation, in inches.
+     - SeeAlso: ``precipitationAmountMeasurement``
      */
     case periodicPrecipitationAmount(period: UInt, amount: Float?)
     
@@ -173,6 +181,7 @@ public enum Remark: Codable, Equatable {
      - Parameter character: Whether the pressure was rising or falling during
                             the 3-hour period, and how quickly.
      - Parameter change: The pressure change, in hectopascals.
+     - SeeAlso: ``pressureChangeMeasurement
      */
     case pressureTendency(character: PressureCharacter, change: Float)
     
@@ -188,6 +197,7 @@ public enum Remark: Codable, Equatable {
      
      - Parameter depthIncrease: The snow depth increase, in inches.
      - Parameter totalDepth: The total snow depth, in inches.
+     - SeeAlso: ``depthIncreaseMeasurment``, ``totalDepthMeasurement``
      */
     case rapidSnowIncrease(_ depthIncrease: UInt, totalDepth: UInt)
     
@@ -204,6 +214,7 @@ public enum Remark: Codable, Equatable {
      
      - Parameter runway: The runway name (e.g., "11" for runway 11).
      - Parameter height: The ceiling height, in feet AGL.
+     - SeeAlso: ``heightMeasurement``
      */
     case runwayCeiling(runway: String, height: UInt)
     
@@ -212,6 +223,7 @@ public enum Remark: Codable, Equatable {
      
      - Parameter runway: The runway name (e.g., "11" for runway 11).
      - Parameter distance: The visibility, in statute miles.
+     - SeeAlso: ``distanceMeasurement``
      */
     case runwayVisibility(runway: String, distance: Ratio)
     
@@ -219,6 +231,7 @@ public enum Remark: Codable, Equatable {
      Recorded sea-level pressure.
      
      - Parameter pressure: Sea-level pressure, in hectopascals.
+     - SeeAlso: ``pressureMeasurement``
      */
     case seaLevelPressure(_ pressure: Float?)
     
@@ -227,6 +240,7 @@ public enum Remark: Codable, Equatable {
      
      - Parameter direction: The cardinal direction.
      - Parameter distance: The visibility, in statute miles.
+     - SeeAlso: ``distanceMeasurement``
      */
     case sectorVisibility(direction: Direction, distance: Ratio)
     
@@ -257,6 +271,7 @@ public enum Remark: Codable, Equatable {
      
      - Parameter type: Whether this is a high or low extreme.
      - Parameter temperature: Minimum or maximum temperature, in °C.
+     - SeeAlso: ``temperatureMeasurement``
      */
     case sixHourTemperatureExtreme(type: Extreme, temperature: Float)
     
@@ -264,6 +279,7 @@ public enum Remark: Codable, Equatable {
      Current recorded snow depth.
      
      - Parameter depth: Snow depth, in inches.
+    - SeeAlso: ``depthMeasurement``
      */
     case snowDepth(_ depth: UInt)
     
@@ -272,6 +288,7 @@ public enum Remark: Codable, Equatable {
      recorded with the 0800 UTC report or first 6-hourly period report.
      
      - Parameter duration: Total minutes of sunshine during the previous day.
+     - SeeAlso: ``durationMeasurement``
      */
     case sunshineDuration(_ duration: UInt)
     
@@ -280,6 +297,7 @@ public enum Remark: Codable, Equatable {
      
      - Parameter temperature: Recorded air temperature, in °C.
      - Parameter dewpoint: Recorded dewpoint, in °C.
+     - SeeAlso: ``temperatureMeasurement``, ``dewpointMeasurement``
      */
     case temperatureDewpoint(temperature: Float, dewpoint: Float?)
     
@@ -322,6 +340,7 @@ public enum Remark: Codable, Equatable {
      
      - Parameter low: The lowest ceiling height, in feet AGL.
      - Parameter high: The highest ceiling height, in feet AGL.
+     - SeeAlso: ``lowHeightMeasurement``, ``highHeightMeasurement``
      */
     case variableCeilingHeight(low: UInt, high: UInt)
     
@@ -330,6 +349,7 @@ public enum Remark: Codable, Equatable {
      
      - Parameter low: The lowest visibility, in statute miles.
      - Parameter high: The highest visibility, in statute miles.
+     - SeeAlso: ``lowVisibilityMeasurement``, ``highVisibilityMeasurement``
      */
     case variablePrevailingVisibility(low: Ratio, high: Ratio)
     
@@ -338,6 +358,7 @@ public enum Remark: Codable, Equatable {
      
      - Parameter low: The thinnest cloud coverage.
      - Parameter high: The thickest cloud coverage.
+     - SeeAlso: ``heightMeasurement``
      */
     case variableSkyCondition(low: Coverage, high: Coverage, height: UInt?)
     
@@ -355,6 +376,7 @@ public enum Remark: Codable, Equatable {
      The equivalent water depth of snow on the ground.
      
      - Parameter depth: The equivalent water depth of fallen snow, in inches.
+     - SeeAlso: ``depthMeasurement``
      */
     case waterEquivalentDepth(_ depth: Float)
     
