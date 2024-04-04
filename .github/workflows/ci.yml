@@ -16,25 +16,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [macos-13, macos-12]
-        xcode: ['15', '14.3', '14.2', '13']
-        exclude:
-          - os: macos-12
-            xcode: '15'
-          - os: macos-12
-            xcode: '14.3'
-          - os: macos-13
-            xcode: '13'
+        swift: ["5.9", "5.10"]
+        os: [macos-14]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v3
-      - uses: maxim-lobanov/setup-xcode@v1
+      - uses: swift-actions/setup-swift@v2
         with:
-          xcode-version: ${{ matrix.xcode }}    
-      - name: Swift version
-        run: swift --version
+          swift-version: ${{ matrix.swift }}
       - name: Build
         run: swift build -v
       - name: Test
         run: swift test -v
-
