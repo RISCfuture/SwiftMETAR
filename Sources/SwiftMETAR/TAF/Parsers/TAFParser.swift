@@ -14,6 +14,8 @@ func parseTAF(_ codedTAF: String, on referenceDate: Date? = nil) throws -> TAF {
     var TAFRemarks = Array<RemarkEntry>()
     var TAFRemarksString: String? = nil
     
+    var originalParts = Array(parts)
+    
     while !parts.isEmpty {
         if let period = try parsePeriod(&parts, referenceDate: date?.date) {
             if !pendingGroupRemarks.isEmpty {
@@ -47,7 +49,10 @@ func parseTAF(_ codedTAF: String, on referenceDate: Date? = nil) throws -> TAF {
             
             let altimeter = try parseTAFAltimeter(&parts)
             
-            groups.append(TAF.Group(period: period,
+            let removedParts = parts.removedItems(from: originalParts)
+            originalParts = Array(parts)
+            groups.append(TAF.Group(text: removedParts.joined(separator: " "),
+                                    period: period,
                                     wind: wind,
                                     visibility: visibility,
                                     weather: weather,
