@@ -181,6 +181,9 @@ public struct TAF: Codable {
     /// information need be supplied.
     public struct Group: Codable, Equatable {
         
+        /// The raw text of the Group.
+        public var text: String? = nil
+        
         /// The period during which these forecasts are valid.
         public let period: Period
         
