@@ -1,10 +1,3 @@
-//
-//  File.swift
-//  
-//
-//  Created by Jakob Stuber on 5/22/24.
-//
-
 import Foundation
 
 extension Array where Element == Substring {
