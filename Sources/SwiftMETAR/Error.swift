@@ -48,65 +48,43 @@ public enum Error: Swift.Error {
  
 extension Error: LocalizedError {
     public var errorDescription: String? {
-        return t("Couldn’t parse METAR or TAF.", comment: "error description")
+        return String(localized: "Couldn’t parse METAR or TAF.", comment: "error description")
     }
     
     public var failureReason: String? {
         switch self {
             case .badFormat:
-                return t("METAR or TAF format is incorrect.", comment: "failure reason")
+                return String(localized: "METAR or TAF format is incorrect.", comment: "failure reason")
             case let .unknownReportType(type):
-                return t("Unknown report type ‘%@’.", comment: "failure reason",
-                         type)
+                return String(localized: "Unknown report type ‘\(type)’.", comment: "failure reason")
             case let .invalidDate(date):
-                return t("Invalid date ‘%@’.", comment: "failure reason",
-                         date)
+                return String(localized: "Invalid date ‘\(date)’.", comment: "failure reason")
             case let .invalidWinds(winds):
-                return t("Invalid winds ‘%@’.", comment: "failure reason",
-                         winds)
+                return String(localized: "Invalid winds ‘\(winds)’.", comment: "failure reason")
             case let .invalidVisibility(visibility):
-                return t("Invalid visibility ‘%@’.", comment: "failure reason",
-                         visibility)
+                return String(localized: "Invalid visibility ‘\(visibility)’.", comment: "failure reason")
             case let .invalidWeather(weather):
-                return t("Invalid weather ‘%@’.", comment: "failure reason",
-                         weather)
+                return String(localized: "Invalid weather ‘\(weather)’.", comment: "failure reason")
             case let .invalidConditions(conditions):
-                return t("Invalid conditions ‘%@’.", comment: "failure reason",
-                         conditions)
+                return String(localized: "Invalid conditions ‘\(conditions)’.", comment: "failure reason")
             case let .invalidTempDewpoint(temps):
-                return t("Invalid temperature and dewpoint ‘%@’.", comment: "failure reason",
-                         temps)
+                return String(localized: "Invalid temperature and dewpoint ‘\(temps)’.", comment: "failure reason")
             case let .invalidAltimeter(altimeter):
-                return t("Invalid altimeter setting ‘%@’.", comment: "failure reason",
-                         altimeter)
+                return String(localized: "Invalid altimeter setting ‘\(altimeter)’.", comment: "failure reason")
             case let .invalidPeriod(period):
-                return t("Invalid TAF period ‘%@’.", comment: "failure reason",
-                         period)
+                return String(localized: "Invalid TAF period ‘\(period)’.", comment: "failure reason")
             case let .invalidWindshear(windshear):
-                return t("Invalid low-level windshear ‘%@’.", comment: "failure reason",
-                         windshear)
+                return String(localized: "Invalid low-level windshear ‘\(windshear)’.", comment: "failure reason")
             case let .invalidIcing(icing):
-                return t("Invalid icing ‘%@’", comment: "failure reason",
-                         icing)
+                return String(localized: "Invalid icing ‘\(icing)’", comment: "failure reason")
             case let .invalidTurbulence(turbulence):
-                return t("Invalid turbulence ‘%@’", comment: "failure reason",
-                         turbulence)
+                return String(localized: "Invalid turbulence ‘\(turbulence)’", comment: "failure reason")
             case let .invalidForecastTemperature(temp):
-                return t("Invalid forecast temperature ‘%@’", comment: "failure reason",
-                         temp)
+                return String(localized: "Invalid forecast temperature ‘\(temp)’", comment: "failure reason")
         }
     }
     
     public var recoverySuggestion: String? {
-        return t("Verify the format of the METAR or TAF string.", comment: "recovery suggestion")
-    }
-}
-
-fileprivate func t(_ key: String, comment: String, _ arguments: CVarArg...) -> String {
-    let format = NSLocalizedString(key, bundle: Bundle.module, comment: comment)
-    if arguments.isEmpty {
-        return format
-    } else {
-        return String(format: format, arguments: arguments)
+        return String(localized: "Verify the format of the METAR or TAF string.", comment: "recovery suggestion")
     }
 }

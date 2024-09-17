@@ -1,0 +1,54 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Couldn’t parse METAR or TAF." : {
+      "comment" : "error description"
+    },
+    "Invalid altimeter setting ‘%@’." : {
+      "comment" : "failure reason"
+    },
+    "Invalid conditions ‘%@’." : {
+      "comment" : "failure reason"
+    },
+    "Invalid date ‘%@’." : {
+      "comment" : "failure reason"
+    },
+    "Invalid forecast temperature ‘%@’" : {
+      "comment" : "failure reason"
+    },
+    "Invalid icing ‘%@’" : {
+      "comment" : "failure reason"
+    },
+    "Invalid low-level windshear ‘%@’." : {
+      "comment" : "failure reason"
+    },
+    "Invalid TAF period ‘%@’." : {
+      "comment" : "failure reason"
+    },
+    "Invalid temperature and dewpoint ‘%@’." : {
+      "comment" : "failure reason"
+    },
+    "Invalid turbulence ‘%@’" : {
+      "comment" : "failure reason"
+    },
+    "Invalid visibility ‘%@’." : {
+      "comment" : "failure reason"
+    },
+    "Invalid weather ‘%@’." : {
+      "comment" : "failure reason"
+    },
+    "Invalid winds ‘%@’." : {
+      "comment" : "failure reason"
+    },
+    "METAR or TAF format is incorrect." : {
+      "comment" : "failure reason"
+    },
+    "Unknown report type ‘%@’." : {
+      "comment" : "failure reason"
+    },
+    "Verify the format of the METAR or TAF string." : {
+      "comment" : "recovery suggestion"
+    }
+  },
+  "version" : "1.0"
+}

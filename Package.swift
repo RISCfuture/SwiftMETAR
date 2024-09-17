@@ -28,8 +28,7 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "SwiftMETAR",
-            dependencies: [.product(name: "NumberKit", package: "swift-numberkit"), "Regex"],
-            resources: [.process("Resources")]),
+            dependencies: [.product(name: "NumberKit", package: "swift-numberkit"), "Regex"]),
         .testTarget(
             name: "SwiftMETARTests",
             dependencies: ["SwiftMETAR", "Quick", "Nimble"]),
