@@ -9,8 +9,8 @@ import Foundation
  METARs indicate observed weather in a 5-mile radius around a reporting site.
  */
 
-public struct METAR: Codable {
-    
+public struct METAR: Codable, Sendable {
+
     /// The raw text of the METAR.
     public let text: String?
     
@@ -91,13 +91,13 @@ public struct METAR: Codable {
      - Returns: The parsed METAR.
      - Throws: If a parsing error occurs.
      */
-    public static func from(string: String, on date: Date? = nil, lenientRemarks: Bool = false) throws -> METAR {
-        return try parseMETAR(string, on: date, lenientRemarks: lenientRemarks)
+    public static func from(string: String, on date: Date? = nil, lenientRemarks: Bool = false) async throws -> METAR {
+        return try await METARParser.shared.parse(string, on: date, lenientRemarks: lenientRemarks)
     }
     
     /// Possible reasons for a METAR publication.
-    public enum Issuance: String, Codable {
-        
+    public enum Issuance: String, Codable, Sendable {
+
         /// Routine hourly METAR.
         case routine = "METAR"
         
@@ -106,7 +106,7 @@ public struct METAR: Codable {
     }
 
     /// Sources for METAR observations.
-    public enum Observer: String, Codable {
+    public enum Observer: String, Codable, Sendable {
         
         /// A trained observer recorded this METAR.
         case human = ""

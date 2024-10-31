@@ -1,7 +1,7 @@
 import Foundation
 
 /// A sea-level pressure altimeter setting.
-public enum Altimeter: Codable, Comparable {
+public enum Altimeter: Codable, Comparable, Sendable {
     
     /**
      An altimeter setting in inches of mercury (typical in the US).

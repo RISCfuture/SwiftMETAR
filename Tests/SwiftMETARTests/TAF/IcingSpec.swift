@@ -4,8 +4,8 @@ import Nimble
 
 @testable import SwiftMETAR
 
-class IcingConditionsSpec: QuickSpec {
-    override func spec() {
+class IcingConditionsSpec: AsyncSpec {
+    override class func spec() {
         describe("icing conditions") {
             it("parses icing conditions") {
                 let string = """
@@ -14,7 +14,7 @@ class IcingConditionsSpec: QuickSpec {
                     BECMG 2614/2615 29008KT 3200 -RA OVC030 620304 610909 QNH2958INS
                     BECMG 2614/2615 30008KT 9999 SKC QNH2950INS
                 """
-                let forecast = try! TAF.from(string: string)
+                let forecast = try await TAF.from(string: string)
                 expect(forecast.groups[0].icing).to(beEmpty())
                 expect(forecast.groups[1].icing).to(equal([
                     .init(type: .lightRime, base: 3000, depth: 4000),

@@ -1,8 +1,8 @@
 import Foundation
 
 /// A report on the condition and strength of the winds.
-public enum Wind: Codable, Equatable {
-    
+public enum Wind: Codable, Equatable, Sendable {
+
     /// No winds detected, or variable winds with speed under 3 knots.
     case calm
     
@@ -125,7 +125,7 @@ public enum Wind: Codable, Equatable {
     }
     
     /// A wind speed.
-    public enum Speed: Codable, Comparable {
+    public enum Speed: Codable, Comparable, Sendable {
         
         /**
          A wind speed in knots.

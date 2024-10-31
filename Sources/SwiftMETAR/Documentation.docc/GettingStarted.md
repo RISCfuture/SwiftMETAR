@@ -9,7 +9,7 @@ To parse a METAR in String format, simply call
 can query for weather information: 
 
 ``` swift
-let observation = try METAR.from(string: myString)
+let observation = try await METAR.from(string: myString)
 if let winds = observation.winds {
     switch winds {
         case let .direction(heading, speed, gust):
@@ -26,7 +26,7 @@ if let winds = observation.winds {
 Parsing TAFs is similar, using ``TAF/from(string:on:)``:
 
 ``` swift
-let forecast = try TAF.from(string: myString)
+let forecast = try await TAF.from(string: myString)
 for group in forecast.groups {
     switch group.period {
         case let .from(from):

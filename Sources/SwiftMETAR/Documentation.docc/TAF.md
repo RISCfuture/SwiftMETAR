@@ -1,9 +1,5 @@
 # ``SwiftMETAR/TAF``
 
-@Metadata {
-    @DocumentationExtension(mergeBehavior: append)
-}
-
 ## Topics
 
 ### Parsing

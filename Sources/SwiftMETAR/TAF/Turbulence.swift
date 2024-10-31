@@ -1,7 +1,7 @@
 import Foundation
 
 /// Forecasted turbulence conditions in a military TAF.
-public struct Turbulence: Codable, Equatable {
+public struct Turbulence: Codable, Equatable, Sendable {
     
     /// The location associated with the turbulence.
     public var location: Location?
@@ -37,8 +37,8 @@ public struct Turbulence: Codable, Equatable {
     }
     
     /// Turbulence locations
-    public enum Location: Codable {
-        
+    public enum Location: Codable, Sendable {
+
         /// Clear-air turbulence
         case clearAir
         
@@ -47,8 +47,8 @@ public struct Turbulence: Codable, Equatable {
     }
     
     /// Turbulence intensities
-    public enum Intensity: Codable {
-        
+    public enum Intensity: Codable, Sendable {
+
         /// No turbulence is forecasted.
         case none
         
@@ -69,7 +69,7 @@ public struct Turbulence: Codable, Equatable {
     }
     
     /// Turbulence frequencies
-    public enum Frequency: Codable {
+    public enum Frequency: Codable, Sendable {
         
         /// Turbulence will occur less than 1/3 of the time.
         case occasional

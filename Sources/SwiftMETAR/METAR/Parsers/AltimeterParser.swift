@@ -1,44 +1,60 @@
 import Foundation
-import Regex
+@preconcurrency import RegexBuilder
 
-fileprivate let METARAltRx = Regex(#"^([AQ])(\d+)$"#)
+class AltimeterParser {
+    private let unitRef = Reference<Substring>()
+    private let valueRef = Reference<UInt16>()
 
-func parseMETARAltimeter(_ parts: inout Array<String.SubSequence>) throws -> Altimeter? {
-    guard !parts.isEmpty else { return nil }
-    
-    let altStr = String(parts[0])
-    guard let match = METARAltRx.firstMatch(in: altStr) else { return nil }
-    parts.removeFirst()
-    
-    guard let valueStr = match.captures[1],
-          let value = UInt16(valueStr) else { throw Error.invalidAltimeter(String(altStr)) }
-    
-    guard let units = match.captures[0] else { throw Error.invalidAltimeter(String(altStr)) }
-    switch units {
-        case "A": return .inHg(value)
-        case "Q": return .hPa(value)
-        default: throw Error.invalidAltimeter(String(altStr))
+    private lazy var METARAltRx = Regex {
+        Anchor.startOfSubject
+        Capture(as: unitRef) { CharacterClass.anyOf("AQ") }
+        Capture(as: valueRef) { Repeat(.digit, count: 4) } transform: { UInt16($0)! }
+        Anchor.endOfSubject
     }
-}
 
-fileprivate let TAFAltRx = Regex(#"^QNH(\d+)(INS|HPA)$"#)
+    func parseMETAR(_ parts: inout Array<String.SubSequence>) throws -> Altimeter? {
+        guard !parts.isEmpty else { return nil }
 
-func parseTAFAltimeter(_ parts: inout Array<String.SubSequence>) throws -> Altimeter? {
-    guard !parts.isEmpty else { return nil }
-    
-    let altStr = String(parts[0])
-    guard let match = TAFAltRx.firstMatch(in: altStr) else {
-        return nil
+        let altStr = String(parts[0])
+        guard let match = try METARAltRx.wholeMatch(in: altStr) else { return nil }
+        parts.removeFirst()
+
+        let value = match[valueRef]
+
+        switch match[unitRef] {
+            case "A": return .inHg(value)
+            case "Q": return .hPa(value)
+            default: throw Error.invalidAltimeter(String(altStr))
+        }
     }
-    parts.removeFirst()
-    
-    guard let valueStr = match.captures[0],
-          let value = UInt16(valueStr) else { throw Error.invalidAltimeter(String(altStr)) }
-    
-    guard let units = match.captures[1] else { throw Error.invalidAltimeter(String(altStr)) }
-    switch units {
-        case "INS": return .inHg(value)
-        case "HPA": return .hPa(value)
-        default: throw Error.invalidAltimeter(String(altStr))
+
+    private lazy var TAFAltRx = Regex {
+        Anchor.startOfSubject
+        "QNH"
+        Capture(as: valueRef) { Repeat(.digit, count: 4) } transform: { UInt16($0)! }
+        Capture(as: unitRef) {
+            ChoiceOf {
+                "INS"
+                "HPA"
+            }
+        }
+    }
+
+    func parseTAF(_ parts: inout Array<String.SubSequence>) throws -> Altimeter? {
+        guard !parts.isEmpty else { return nil }
+
+        let altStr = String(parts[0])
+        guard let match = try TAFAltRx.wholeMatch(in: altStr) else {
+            return nil
+        }
+        parts.removeFirst()
+
+        let value = match[valueRef]
+
+        switch match[unitRef] {
+            case "INS": return .inHg(value)
+            case "HPA": return .hPa(value)
+            default: throw Error.invalidAltimeter(String(altStr))
+        }
     }
 }

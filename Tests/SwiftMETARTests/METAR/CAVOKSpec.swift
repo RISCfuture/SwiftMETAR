@@ -5,12 +5,12 @@ import Nimble
 
 @testable import SwiftMETAR
 
-class CAVOKSpec: QuickSpec {
-    override func spec() {
+class CAVOKSpec: AsyncSpec {
+    override class func spec() {
         describe("CAVOK") {
             it("parses a 'CAVOK' note") {
                 let string = "LOWK 031520Z AUTO VRB01KT CAVOK 05/02 Q1005 NOSIG"
-                let observation = try! METAR.from(string: string, lenientRemarks: true)
+                let observation = try await METAR.from(string: string, lenientRemarks: true)
                 
                 expect(observation.conditions).to(contain(.cavok))
                 expect(observation.visibility).to(equal(.greaterThan(.meters(9999))))
@@ -21,7 +21,7 @@ class CAVOKSpec: QuickSpec {
             it("parses a 'CAVOK' with remark") {
                 let string = "METAR LFSB 031600Z AUTO 22008KT 150V260 CAVOK 12/05 Q1002 TEMPO 26025G50KT 1200 +SHRA SCT035CB"
                 
-                let observation = try! METAR.from(string: string, lenientRemarks: true)
+                let observation = try await METAR.from(string: string, lenientRemarks: true)
                 
                 expect(observation.conditions).to(contain(.cavok))
                 expect(observation.visibility).to(equal(.greaterThan(.meters(9999))))

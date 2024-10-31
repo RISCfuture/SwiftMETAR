@@ -47,7 +47,7 @@ To parse a METAR in String format, simply call `METAR.from`. You will get back a
 that you can query for weather information:
 
 ```swift
-let observation = try METAR.from(string: myString)
+let observation = try await METAR.from(string: myString)
 if let winds = observation.winds {
     switch winds {
         case let .direction(heading, speed, gust):

@@ -22,10 +22,10 @@ jobs:
     name: Generate Documentation
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: swift-actions/setup-swift@v2
         with:
-          swift-version: "5.10"
+          swift-version: "6.0"
       - name: Build
         run: |
           swift package \
@@ -35,7 +35,7 @@ jobs:
            --transform-for-static-hosting \
            --hosting-base-path SwiftMETAR
       - name: Upload
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: "docs/"
 
@@ -49,4 +49,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v2
+        uses: actions/deploy-pages@v4

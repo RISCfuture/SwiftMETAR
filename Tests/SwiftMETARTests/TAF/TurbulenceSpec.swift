@@ -4,8 +4,8 @@ import Nimble
 
 @testable import SwiftMETAR
 
-class TurbulenceSpec: QuickSpec {
-    override func spec() {
+class TurbulenceSpec: AsyncSpec {
+    override class func spec() {
         describe("turbulence") {
             it("parses turbulence") {
                 let string = """
@@ -14,7 +14,7 @@ class TurbulenceSpec: QuickSpec {
                     BECMG 2614/2615 31012G22KT 9999 NSW SCT040 520004 510909 QNH2952INS
                     BECMG 2614/2615 30008KT 9999 SKC QNH2950INS
                 """
-                let forecast = try! TAF.from(string: string)
+                let forecast = try await TAF.from(string: string)
                 expect(forecast.groups[0].turbulence).to(beEmpty())
                 expect(forecast.groups[1].turbulence).to(equal([
                     .init(location: .clearAir, intensity: .moderate, frequency: .occasional, base: 0, depth: 4000),

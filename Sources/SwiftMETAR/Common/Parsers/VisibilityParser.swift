@@ -1,153 +1,177 @@
 import Foundation
 import NumberKit
-import Regex
+@preconcurrency import RegexBuilder
 
-fileprivate let fractionalRx = Regex(#"^([PM])?(\d+)\/(\d+)SM$"#)
-fileprivate let integerRx = Regex(#"^([PM])?(\d+)(SM|FT|M)$"#)
-fileprivate let metersRx = Regex(#"^(\d{3,4})$"#)
-fileprivate let notRecordedRx = Regex(#"^\/{2,}(SM|FT|M)$"#)
+class VisibilityParser {
+    private let integerParser = IntegerDistanceParser()
+    private let fractionParser = FractionalDistanceParser()
+    private let visibilityRef = Reference<Substring>()
 
-func parseVisibility(_ parts: inout Array<String.SubSequence>) throws -> Visibility? {
-    guard !parts.isEmpty else { return nil }
-    let vizStr = String(parts[0])
-    
-    if vizStr == "CAVOK" {
-        return .greaterThan(.meters(9999))
+    lazy private var integerRx = Regex {
+        Anchor.startOfSubject
+        integerParser.rx
+        Anchor.endOfSubject
     }
-    if vizStr == "M" {
-        parts.removeFirst()
-        return nil
+    lazy private var fractionRx = Regex {
+        Anchor.startOfSubject
+        fractionParser.rx
+        Anchor.endOfSubject
     }
-    if vizStr == "10SM" {
-        parts.removeFirst()
-        return .greaterThan(.statuteMiles(10))
+
+    lazy private var notRecordedRx = Regex {
+        Anchor.startOfSubject
+        Repeat("/", 2...)
+        ChoiceOf {
+            "SM"
+            "FT"
+            "M"
+        }
+        Anchor.endOfSubject
     }
-    if vizStr == "9999" {
-        parts.removeFirst()
-        return .greaterThan(.meters(9999))
+
+    lazy var rx = Regex {
+        Capture(as: visibilityRef) {
+            ChoiceOf {
+                ChoiceOf {
+                    "10SM"
+                    "9999"
+                }
+                notRecordedRx
+                fractionRx
+                integerRx
+            }
+        }
     }
-    
-    if notRecordedRx.firstMatch(in: vizStr) != nil {
-        parts.removeFirst()
-        return nil
-    }
-    
-    if let whole = UInt16(vizStr) {
-        parts.removeFirst()
-        if parts.isEmpty { return .equal(.meters(whole)) }
-        let vizStr2 = String(parts[0])
-        
-        if let fractionalParts = try parseFraction(vizStr2) {
+
+    func parse(_ parts: inout Array<String.SubSequence>) throws -> Visibility? {
+        guard !parts.isEmpty else { return nil }
+
+        if parts.count >= 2 {
+            if let visibility = try parse("\(parts[0]) \(parts[1])") {
+                parts.removeFirst(2)
+                return visibility
+            }
+        }
+
+        if let visibility = try parse(String(parts[0])) {
             parts.removeFirst()
-            
-            let value = Ratio(Int(whole), 1) + fractionalParts.value
-            switch fractionalParts.rangeValue {
-                case .lessThan: return .lessThan(.statuteMiles(value))
-                case .equal: return .equal(.statuteMiles(value))
-                case .greaterThan: return .greaterThan(.statuteMiles(value))
-            }
-        } else {
-            return .equal(.meters(whole))
+            return visibility
         }
-    } else if let fractionalParts = try parseFraction(vizStr) {
-        parts.removeFirst()
-        switch fractionalParts.rangeValue {
-            case .lessThan: return .lessThan(.statuteMiles(fractionalParts.value))
-            case .equal: return .equal(.statuteMiles(fractionalParts.value))
-            case .greaterThan: return .greaterThan(.statuteMiles(fractionalParts.value))
-        }
-    } else if let integerParts = try parseInteger(vizStr) {
-        parts.removeFirst()
-        
-        switch integerParts.units {
-            case "SM":
-                let value = Ratio(Int(integerParts.value), 1)
-                switch integerParts.rangeValue {
-                    case .lessThan: return .lessThan(.statuteMiles(value))
-                    case .equal: return .equal(.statuteMiles(value))
-                    case .greaterThan: return .greaterThan(.statuteMiles(value))
-                }
-            case "M":
-                switch integerParts.rangeValue {
-                    case .lessThan: return .lessThan(.meters(integerParts.value))
-                    case .equal: return .equal(.meters(integerParts.value))
-                    case .greaterThan: return .greaterThan(.meters(integerParts.value))
-                }
-            case "FT":
-                switch integerParts.rangeValue {
-                    case .lessThan: return .lessThan(.feet(integerParts.value))
-                    case .equal: return .equal(.feet(integerParts.value))
-                    case .greaterThan: return .greaterThan(.feet(integerParts.value))
-                }
-            default: preconditionFailure("Unknown units")
-        }
-    } else if metersRx.matches(vizStr) {
-        return .equal(.meters(UInt16(vizStr)!))
-    } else {
+
         return nil
     }
-}
 
-fileprivate enum RangeValue {
-    case lessThan, equal, greaterThan
-}
+    func parse<T>(_ match: Regex<T>.Match) throws -> Visibility? {
+        let visStr = match[visibilityRef]
+        guard let visibility = try parse(String(visStr)) else {
+            preconditionFailure("Visibility rx should have captured parseable substring")
+        }
+        return visibility
+    }
 
-fileprivate struct FractionResult {
-    let value: Ratio
-    let rangeValue: RangeValue
-}
+    private func parse(_ vizStr: String) throws -> Visibility? {
+        if vizStr == "CAVOK" {
+            return .greaterThan(.meters(9999))
+        }
+        if vizStr == "10SM" {
+            return .greaterThan(.statuteMiles(10))
+        }
+        if vizStr == "9999" {
+            return .greaterThan(.meters(9999))
+        }
 
-fileprivate func parseFraction(_ string: String) throws -> FractionResult? {
-    var rangeValue = RangeValue.equal
-    
-    if let match = fractionalRx.firstMatch(in: string) {
-        if let signStr = match.captures[0] {
-            switch signStr {
-                case "P": rangeValue = .greaterThan
-                case "M": rangeValue = .lessThan
-                default: throw Error.invalidVisibility(string)
+        if try notRecordedRx.wholeMatch(in: vizStr) != nil {
+            return .notRecorded
+        }
+
+        if let match = try fractionRx.wholeMatch(in: vizStr) {
+            return fractionParser.parse(match)
+        }
+
+        if let match = try integerRx.wholeMatch(in: vizStr) {
+            return integerParser.parse(match)
+        }
+
+        return nil
+    }
+
+    enum OpenRange: String, RegexCases {
+        case greaterThan = "P"
+        case lessThan = "M"
+        case equal = ""
+    }
+
+    class OpenRangeParser {
+        private let boundRef = Reference<OpenRange>()
+
+        lazy var rx = Regex {
+            Capture(as: boundRef) { try! OpenRange.rx } transform: { .init(rawValue: String($0))! }
+        }
+
+        func parse<T>(_ match: Regex<T>.Match) -> OpenRange {
+            match[boundRef]
+        }
+    }
+
+    enum VisibilityDistanceUnit: String, RegexCases {
+        case statuteMiles = "SM"
+        case feet = "FT"
+        case meters = "M"
+        
+        public static func from(raw: String) -> Self? {
+            if raw == "" { return .meters }
+            else { return .init(rawValue: raw) }
+        }
+    }
+
+    class IntegerDistanceParser {
+        private let openRangeParser = OpenRangeParser()
+
+        private let valueRef = Reference<UInt16>()
+        private let unitRef = Reference<VisibilityDistanceUnit>()
+
+        lazy var rx = Regex {
+            openRangeParser.rx
+            Capture(as: valueRef) { Repeat(.digit, 1...4) } transform: { UInt16($0)! }
+            Capture(as: unitRef) {
+                try! Optionally(VisibilityDistanceUnit.rx)
+            } transform: { .from(raw: String($0))! }
+        }
+
+        func parse<T>(_ match: Regex<T>.Match) -> Visibility {
+            let distance: Visibility.Value = switch match[unitRef] {
+                case .feet: .feet(match[valueRef])
+                case .meters: .meters(match[valueRef])
+                case .statuteMiles: .statuteMiles(Ratio(Int(match[valueRef])))
+            }
+
+            switch openRangeParser.parse(match) {
+                case .greaterThan: return .greaterThan(distance)
+                case .lessThan: return .lessThan(distance)
+                case .equal: return .equal(distance)
             }
         }
-        
-        guard let numStr = match.captures[1],
-              let numerator = UInt8(numStr),
-              let denStr = match.captures[2],
-              let denominator = UInt8(denStr) else { throw Error.invalidVisibility(string) }
-        
-        return FractionResult(value: Ratio(Int(numerator), Int(denominator)),
-                              rangeValue: rangeValue)
     }
-    
-    return nil
-}
 
-fileprivate struct IntegerResult {
-    let value: UInt16
-    let units: String
-    let rangeValue: RangeValue
-}
+    class FractionalDistanceParser {
+        private let openRangeParser = OpenRangeParser()
+        private let fractionParser = FractionParser()
 
-fileprivate func parseInteger(_ string: String) throws -> IntegerResult? {
-    var rangeValue = RangeValue.equal
-    
-    if let match = integerRx.firstMatch(in: string) {
-        if let signStr = match.captures[0] {
-            switch signStr {
-                case "P": rangeValue = .greaterThan
-                case "M": rangeValue = .lessThan
-                default: throw Error.invalidVisibility(string)
+        lazy var rx = Regex {
+            openRangeParser.rx
+            fractionParser.rx
+            "SM"
+        }
+
+        func parse<T>(_ match: Regex<T>.Match) -> Visibility {
+            let value = fractionParser.parse(match)
+            let distance = Visibility.Value.statuteMiles(value)
+
+            switch openRangeParser.parse(match) {
+                case .greaterThan: return .greaterThan(distance)
+                case .lessThan: return .lessThan(distance)
+                case .equal: return .equal(distance)
             }
         }
-        
-        guard let valueStr = match.captures[1],
-              let value = UInt16(valueStr) else { throw Error.invalidVisibility(string) }
-        var units = "M"
-        if let unitsStr = match.captures[2] {
-            units = unitsStr
-        }
-        
-        return IntegerResult(value: value, units: units, rangeValue: rangeValue)
     }
-    
-    return nil
 }

@@ -1,20 +1,30 @@
 import Foundation
-import Regex
+@preconcurrency import RegexBuilder
 
-fileprivate let icingRx = Regex(#"\b6(\d)(\d{3})(\d)\b"#)
+class IcingParser {
+    private let typeRef = Reference<Icing.IcingType?>()
+    private let baseRef = Reference<UInt>()
+    private let depthRef = Reference<UInt>()
 
-func parseIcing(_ parts: inout Array<String.SubSequence>) throws -> Icing? {
-    guard !parts.isEmpty else { return nil }
-    let icingStr = String(parts[0])
-    guard let result = icingRx.firstMatch(in: icingStr) else { return nil }
-    parts.removeFirst()
-    
-    guard let typeStr = result.captures[0],
-          let type = Icing.IcingType(rawValue: typeStr),
-          let baseStr = result.captures[1],
-          let base = UInt(baseStr),
-          let depthStr = result.captures[2],
-          let depth = UInt(depthStr) else { throw Error.invalidIcing(icingStr) }
-    
-    return Icing(type: type, base: base*100, depth: depth*1000)
+    private lazy var rx = Regex {
+        Anchor.wordBoundary
+        "6"
+        Capture(as: typeRef) { .digit } transform: { .init(rawValue: String($0)) }
+        Capture(as: baseRef) { Repeat(.digit, count: 3) } transform: { UInt($0)!*100 }
+        Capture(as: depthRef) { .digit } transform: { UInt($0)!*1000 }
+        Anchor.wordBoundary
+    }
+
+    func parse(_ parts: inout Array<String.SubSequence>) throws -> Icing? {
+        guard !parts.isEmpty else { return nil }
+        let icingStr = String(parts[0])
+        guard let result = try rx.wholeMatch(in: icingStr) else { return nil }
+        parts.removeFirst()
+
+        guard let type = result[typeRef] else { throw Error.invalidIcing(icingStr) }
+        let base = result[baseRef],
+            depth = result[depthRef]
+
+        return Icing(type: type, base: base, depth: depth)
+    }
 }

@@ -1,9 +1,5 @@
 # ``SwiftMETAR/METAR``
 
-@Metadata {
-    @DocumentationExtension(mergeBehavior: append)
-}
-
 ## Topics
 
 ### Parsing

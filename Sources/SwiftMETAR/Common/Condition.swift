@@ -1,8 +1,8 @@
 import Foundation
 
 /// A sky condition, either a cloud layer or the presence of a clear sky.
-public enum Condition: Codable, Equatable {
-    
+public enum Condition: Codable, Equatable, Sendable {
+
     /// Sky clear below 12,000 feet (USA) or 25,000 feet (Canada). Typically
     /// reported by automated ceilometers.
     case clear
@@ -135,7 +135,7 @@ public enum Condition: Codable, Equatable {
     }
     
     /// Types of vertical development that a cloud layer can have.
-    public enum CeilingType: String, Codable, CaseIterable {
+    public enum CeilingType: String, Codable, RegexCases, Sendable {
         
         /// Layer consists of cumulonimbus clouds.
         case cumulonimbus = "CB"

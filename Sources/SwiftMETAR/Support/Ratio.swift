@@ -8,3 +8,9 @@ extension Float {
         self = ratio.floatValue
     }
 }
+
+extension Ratio {
+    init(_ whole: Int, numerator: Int, denominator: Int) {
+        self.init(denominator*whole + numerator, denominator)
+    }
+}

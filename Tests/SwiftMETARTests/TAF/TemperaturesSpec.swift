@@ -4,8 +4,8 @@ import Nimble
 
 @testable import SwiftMETAR
 
-class TemperaturesSpec: QuickSpec {
-    override func spec() {
+class TemperaturesSpec: AsyncSpec {
+    override class func spec() {
         describe("temperatures") {
             it("parses temperatures") {
                 let string = """
@@ -17,7 +17,7 @@ class TemperaturesSpec: QuickSpec {
                     BECMG 2618/2619 23010G15KT 9999 SKC 510005 QNH3007INS
                     TX33/2522Z TN16/2514Z T18/2517Z
                 """
-                let forecast = try! TAF.from(string: string)
+                let forecast = try await TAF.from(string: string)
                 expect(forecast.temperatures).to(equal([
                     .init(type: .maximum, value: 33, time: Date().this(day: 25, hour: 22)!),
                     .init(type: .minimum, value: 16, time: Date().this(day: 25, hour: 14)!),

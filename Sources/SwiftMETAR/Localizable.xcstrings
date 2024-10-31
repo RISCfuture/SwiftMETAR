@@ -43,9 +43,6 @@
     "METAR or TAF format is incorrect." : {
       "comment" : "failure reason"
     },
-    "Unknown report type ‘%@’." : {
-      "comment" : "failure reason"
-    },
     "Verify the format of the METAR or TAF string." : {
       "comment" : "recovery suggestion"
     }

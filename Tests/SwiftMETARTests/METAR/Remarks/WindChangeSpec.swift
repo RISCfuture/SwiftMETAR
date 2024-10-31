@@ -4,8 +4,8 @@ import Nimble
 
 @testable import SwiftMETAR
 
-class WindChangeSpec: QuickSpec {
-    override func spec() {
+class WindChangeSpec: AsyncSpec {
+    override class func spec() {
         describe("wind change") {
             it("parses a 'WND 14006KT AFT 2701' remark") {
                 let string = """
@@ -14,7 +14,7 @@ class WindChangeSpec: QuickSpec {
                     BECMG 2621/2622 24012G18KT 9999 FEW300 QNH2978INS WND VRB06KT AFT 2707
                     TX39/2621Z TN24/2612Z
                 """
-                let forecast = try! TAF.from(string: string)
+                let forecast = try await TAF.from(string: string)
                 
                 expect(forecast.groups[1].remarks.map { $0.remark }).to(contain(.windChange(wind: .variable(speed: .knots(6)), after: Date().this(day: 27, hour: 7)!)))
             }
@@ -27,7 +27,7 @@ class WindChangeSpec: QuickSpec {
                     BECMG 2714/2715 18007KT 9999 FEW030 QNH2988INS
                     TX35/2622Z TN21/2712Z
                 """
-                let forecast = try! TAF.from(string: string)
+                let forecast = try await TAF.from(string: string)
                 
                 expect(forecast.groups[0].remarks.map { $0.remark }).to(contain(.windChange(wind: .direction(140, speed: .knots(6)), after: Date().this(day: 27, hour: 1)!)))
             }

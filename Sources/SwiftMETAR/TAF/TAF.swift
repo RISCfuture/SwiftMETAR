@@ -10,7 +10,7 @@ import Foundation
  that is forecasted during that valid period.
  */
 
-public struct TAF: Codable {
+public struct TAF: Codable, Sendable {
     
     /// The raw text of the TAF.
     public let text: String?
@@ -55,8 +55,8 @@ public struct TAF: Codable {
      - Returns: The parsed TAF.
      - Throws: If a parsing error occurs.
      */
-    public static func from(string: String, on date: Date? = nil) throws -> TAF {
-        return try parseTAF(string, on: date)
+    public static func from(string: String, on date: Date? = nil) async throws -> TAF {
+        return try await TAFParser.shared.parse(string, on: date)
     }
     
     /**
@@ -136,7 +136,7 @@ public struct TAF: Codable {
     }
     
     /// Reasons for a TAF issuance.
-    public enum Issuance: String, Codable {
+    public enum Issuance: String, Codable, Sendable {
         
         /// Routine 6-hour issuance.
         case routine = ""
@@ -149,7 +149,7 @@ public struct TAF: Codable {
     }
     
     /// A forecasted temperature value.
-    public struct Temperature: Codable, Equatable {
+    public struct Temperature: Codable, Equatable, Sendable {
         
         /// Whether this is a forecasted temperature or temperature extreme.
         public let type: TemperatureType?
@@ -167,19 +167,19 @@ public struct TAF: Codable {
         }
         
         /// Temperature extreme types
-        public enum TemperatureType: Codable {
+        public enum TemperatureType: String, Codable, Sendable {
             
             /// Minimum temperature for the forecast period.
-            case minimum
-            
+            case minimum = "N"
+
             /// Maximum temperature for the forecast period.
-            case maximum
+            case maximum = "X"
         }
     }
     
     /// A snapshot of weather conditions for a forecast period. Not all weather
     /// information need be supplied.
-    public struct Group: Codable, Equatable {
+    public struct Group: Codable, Equatable, Sendable {
         
         /// The raw text of the Group.
         public var text: String? = nil
@@ -222,7 +222,7 @@ public struct TAF: Codable {
         public var remarksString: String?
         
         /// A valid period for a TAF or one of its groups.
-        public enum Period: Codable, Equatable {
+        public enum Period: Codable, Equatable, Sendable {
             
             /**
              Forecast is valid between two dates.

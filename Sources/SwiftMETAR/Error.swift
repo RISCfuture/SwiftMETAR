@@ -6,9 +6,6 @@ public enum Error: Swift.Error {
     /// Format was bad in general, so that no groups could be parsed.
     case badFormat
     
-    /// Report type could not be parsed.
-    case unknownReportType(_ type: String)
-    
     /// Date could not be parsed.
     case invalidDate(_ date: String)
     
@@ -55,8 +52,6 @@ extension Error: LocalizedError {
         switch self {
             case .badFormat:
                 return String(localized: "METAR or TAF format is incorrect.", comment: "failure reason")
-            case let .unknownReportType(type):
-                return String(localized: "Unknown report type ‘\(type)’.", comment: "failure reason")
             case let .invalidDate(date):
                 return String(localized: "Invalid date ‘\(date)’.", comment: "failure reason")
             case let .invalidWinds(winds):

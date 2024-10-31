@@ -16,11 +16,11 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        swift: ["5.9", "5.10"]
-        os: [macos-14]
+        swift: ["6.0"]
+        os: [macos-15]
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - uses: swift-actions/setup-swift@v2
         with:
           swift-version: ${{ matrix.swift }}

@@ -4,8 +4,8 @@ import Nimble
 
 @testable import SwiftMETAR
 
-class TAFSpec: QuickSpec {
-    override func spec() {
+class TAFSpec: AsyncSpec {
+    override class func spec() {
         it("parses example #1") {
             let string = """
             TAF KPIR
@@ -17,7 +17,7 @@ class TAFSpec: QuickSpec {
                 FM120400 14008KT P6SM SCT040 OVC080
                     TEMPO 1204/1208 3SM TSRA OVC030CB
             """
-            let forecast = try! TAF.from(string: string)
+            let forecast = try await TAF.from(string: string)
             
             expect(forecast.issuance).to(equal(.routine))
             expect(forecast.airportID).to(equal("KPIR"))
@@ -131,7 +131,7 @@ class TAFSpec: QuickSpec {
                 FM140000 VRB03KT P6SM VCTS SCT020CB BKN120
                     TEMPO 1408/1412 BKN020CB
             """
-            let forecast = try! TAF.from(string: string)
+            let forecast = try await TAF.from(string: string)
             
             expect(forecast.issuance).to(equal(.amended))
             expect(forecast.airportID).to(equal("KEYW"))
@@ -233,7 +233,7 @@ class TAFSpec: QuickSpec {
                 FM121500 17007KT P6SM SCT025
             RMK NXT FCST BY 00Z=
             """
-            let forecast = try! TAF.from(string: string)
+            let forecast = try await TAF.from(string: string)
             
             expect(forecast.issuance).to(equal(.routine))
             expect(forecast.airportID).to(equal("KCRP"))
@@ -331,7 +331,7 @@ class TAFSpec: QuickSpec {
                     FM120400 14008KT P6SM SCT040 OVC080
                         TEMPO 1204/1208 3SM TSRA OVC030CB
                 """
-                let forecast = try! TAF.from(string: string)
+                let forecast = try await TAF.from(string: string)
                 
                 let components = DateComponents.this(day: 12, hour: 2)!
                 let date = zuluCal.date(from: components)!
@@ -360,7 +360,7 @@ class TAFSpec: QuickSpec {
                     FM120400 14008KT P6SM SCT040 OVC080
                         TEMPO 1204/1208 3SM TSRA OVC030CB
                 """
-                let forecast = try! TAF.from(string: string)
+                let forecast = try await TAF.from(string: string)
                 
                 let components = DateComponents.this(day: 10, hour: 2)!
                 let date = zuluCal.date(from: components)!
@@ -377,7 +377,7 @@ class TAFSpec: QuickSpec {
                     FM261830 VRB05KT 9999 SCT015 QNH2994INS
                     T20/2522Z T12/2611Z
                 """
-                let forecast = try! TAF.from(string: string)
+                let forecast = try await TAF.from(string: string)
                 
                 expect(forecast.originCalendarDate).to(beNil())
                 expect(forecast.groups[0].period).to(equal(.range(.init(start: Date().this(day: 25, hour: 21)!,
@@ -399,8 +399,8 @@ class TAFSpec: QuickSpec {
                     BECMG 2620/2622 21020G32KT 9999 BKN250 520009 520909 QNH2977INS LAST NO AMD AFT 2605 NEXT 2615
                     T18/2612Z T38/2623Z
                 """
-                let forecast = try! TAF.from(string: string)
-                
+                let forecast = try await TAF.from(string: string)
+
                 expect(forecast.groups[0].remarks).to(beEmpty())
                 expect(forecast.groups[0].remarksString).to(beNil())
                 

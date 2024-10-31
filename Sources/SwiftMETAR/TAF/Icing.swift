@@ -1,7 +1,7 @@
 import Foundation
 
 /// Forecasted icing conditions in a military TAF.
-public struct Icing: Codable, Equatable {
+public struct Icing: Codable, Equatable, Sendable {
     
     /// The type of icing forecasted.
     public var type: IcingType
@@ -31,7 +31,7 @@ public struct Icing: Codable, Equatable {
     }
     
     /// Type of icing forecasted.
-    public enum IcingType: String, RawRepresentable, CaseIterable, Codable, Equatable {
+    public enum IcingType: String, RawRepresentable, CaseIterable, Codable, Equatable, Sendable {
         
         /// Trace icing (USAF forecasts) or no icing (WMO forecasts)
         case traceNone = "0"

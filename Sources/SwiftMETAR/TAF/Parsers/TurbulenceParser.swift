@@ -1,65 +1,78 @@
 import Foundation
-import Regex
+@preconcurrency import RegexBuilder
 
-fileprivate let turbulenceRx = Regex(#"\b5([0-9X])(\d{3})(\d)\b"#)
+class TurbulenceParser {
+    private let typeRef = Reference<Character>()
+    private let baseRef = Reference<UInt>()
+    private let depthRef = Reference<UInt>()
 
-func parseTurbulence(_ parts: inout Array<String.SubSequence>) throws -> Turbulence? {
-    guard !parts.isEmpty else { return nil }
-    let turbStr = String(parts[0])
-    guard let result = turbulenceRx.firstMatch(in: turbStr) else { return nil }
-    parts.removeFirst()
-    
-    guard let typeStr = result.captures[0],
-          let baseStr = result.captures[1],
-          let base = UInt(baseStr),
-          let depthStr = result.captures[2],
-          let depth = UInt(depthStr) else { throw Error.invalidTurbulence(turbStr) }
-    
-    var intensity = Turbulence.Intensity.none
-    var location: Turbulence.Location? = nil
-    var frequency: Turbulence.Frequency? = nil
-    switch typeStr {
-        case "0":
-            break
-        case "1":
-            intensity = .light
-        case "2":
-            intensity = .moderate
-            location = .clearAir
-            frequency = .occasional
-        case "3":
-            intensity = .moderate
-            location = .clearAir
-            frequency = .frequent
-        case "4":
-            intensity = .moderate
-            location = .inCloud
-            frequency = .occasional
-        case "5":
-            intensity = .moderate
-            location = .inCloud
-            frequency = .frequent
-        case "6":
-            intensity = .severe
-            location = .clearAir
-            frequency = .occasional
-        case "7":
-            intensity = .severe
-            location = .clearAir
-            frequency = .frequent
-        case "8":
-            intensity = .severe
-            location = .inCloud
-            frequency = .occasional
-        case "9":
-            intensity = .severe
-            location = .inCloud
-            frequency = .frequent
-        case "X":
-            intensity = .extreme
-        default:
-            throw Error.invalidTurbulence(turbStr)
+    private lazy var rx = Regex {
+        Anchor.wordBoundary
+        "5"
+        Capture(as: typeRef) {
+            CharacterClass("0"..."9", .anyOf("X"))
+        } transform: { $0.first! }
+        Capture(as: baseRef) { Repeat(.digit, count: 3) } transform: { UInt($0)!*100 }
+        Capture(as: depthRef) { .digit } transform: { UInt($0)!*1000 }
+        Anchor.wordBoundary
     }
-    
-    return Turbulence(location: location, intensity: intensity, frequency: frequency, base: base*100, depth: depth*1000)
+
+    func parse(_ parts: inout Array<String.SubSequence>) throws -> Turbulence? {
+        guard !parts.isEmpty else { return nil }
+        let turbStr = String(parts[0])
+        guard let result = try rx.wholeMatch(in: turbStr) else { return nil }
+        parts.removeFirst()
+
+        let type = result[typeRef],
+            base = result[baseRef],
+            depth = result[depthRef]
+
+        var intensity = Turbulence.Intensity.none
+        var location: Turbulence.Location? = nil
+        var frequency: Turbulence.Frequency? = nil
+        switch type {
+            case "0":
+                break
+            case "1":
+                intensity = .light
+            case "2":
+                intensity = .moderate
+                location = .clearAir
+                frequency = .occasional
+            case "3":
+                intensity = .moderate
+                location = .clearAir
+                frequency = .frequent
+            case "4":
+                intensity = .moderate
+                location = .inCloud
+                frequency = .occasional
+            case "5":
+                intensity = .moderate
+                location = .inCloud
+                frequency = .frequent
+            case "6":
+                intensity = .severe
+                location = .clearAir
+                frequency = .occasional
+            case "7":
+                intensity = .severe
+                location = .clearAir
+                frequency = .frequent
+            case "8":
+                intensity = .severe
+                location = .inCloud
+                frequency = .occasional
+            case "9":
+                intensity = .severe
+                location = .inCloud
+                frequency = .frequent
+            case "X":
+                intensity = .extreme
+            default:
+                throw Error.invalidTurbulence(turbStr)
+        }
+
+        return Turbulence(location: location, intensity: intensity, frequency: frequency, base: base, depth: depth)
+    }
 }

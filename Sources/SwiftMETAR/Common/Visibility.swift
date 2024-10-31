@@ -2,8 +2,8 @@ import Foundation
 import NumberKit
 
 /// A visibility report, made by a human or a transmissometer.
-public enum Visibility: Codable, Equatable {
-    
+public enum Visibility: Codable, Equatable, Sendable {
+
     /**
      Visibility is equal to this value.
      
@@ -32,7 +32,10 @@ public enum Visibility: Codable, Equatable {
      - Parameter high: The high value.
      */
     indirect case variable(_ low: Visibility, _ high: Visibility)
-    
+
+    /// Visibility was not recorded.
+    case notRecorded
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         switch try container.decode(String.self, forKey: .constraint) {
@@ -70,6 +73,8 @@ public enum Visibility: Codable, Equatable {
                 try container.encode("<>", forKey: .constraint)
                 try container.encode(low, forKey: .low)
                 try container.encode(high, forKey: .high)
+            case .notRecorded:
+                try container.encode("no", forKey: .constraint)
         }
     }
     
@@ -87,11 +92,14 @@ public enum Visibility: Codable, Equatable {
             case let .variable(lhsLow, lhsHigh):
                 guard case let .variable(rhsLow, rhsHigh) = rhs else { return false }
                 return lhsLow == rhsLow && lhsHigh == rhsHigh
+            case .notRecorded:
+                guard case .notRecorded = rhs else { return false }
+                return true
         }
     }
     
     /// A distance as used in a visibility report.
-    public enum Value: Codable, Comparable {
+    public enum Value: Codable, Comparable, Sendable {
         
         /**
          A distance reported in statute miles, as a vulgar fraction.

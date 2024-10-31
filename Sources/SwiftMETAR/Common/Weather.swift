@@ -25,7 +25,7 @@
  instance.
  */
 
-public struct Weather: Codable, Equatable {
+public struct Weather: Codable, Equatable, Sendable {
     
     /// The intensity of the phenomena.
     public let intensity: Intensity
@@ -43,7 +43,7 @@ public struct Weather: Codable, Equatable {
     }
     
     /// The intensity associated with a phenomenon.
-    public enum Intensity: String, Codable, CaseIterable {
+    public enum Intensity: String, Codable, RegexCases, Sendable {
         case light = "-"
         case moderate = ""
         case heavy = "+"
@@ -63,8 +63,8 @@ public struct Weather: Codable, Equatable {
     
     /// Qualifiers for precipitation phenomena. Most are not applied to
     /// phenomena that aren't a form of precipitation.
-    public enum Descriptor: String, Codable, CaseIterable {
-        
+    public enum Descriptor: String, Codable, RegexCases, Sendable {
+
         /// Visibility impedance (e.g., fog) has a low ceiling.
         case shallow = "MI"
         
@@ -96,8 +96,8 @@ public struct Weather: Codable, Equatable {
     /// An observed weather phenomenon. These phenomena are either
     /// precipitation, particulates suspended in the air, or dynamic weather
     /// phenomena.
-    public enum Phenomenon: String, Codable, CaseIterable {
-        
+    public enum Phenomenon: String, Codable, RegexCases, Sendable {
+
         /// Small raindrops that are light enough to be carried by the wind.
         case drizzle = "DZ"
         

@@ -1,75 +1,145 @@
 import Foundation
-import Regex
+@preconcurrency import RegexBuilder
 
-let noAnchorWindRx = #"(\d{3}|VRB)(\d+)(?:G(\d+))?(KTS?|MPS|KPH)"#
-fileprivate let windRx = try! Regex(string: "^\(noAnchorWindRx)$")
-fileprivate let variableRx = Regex(#"^(\d+)V(\d+)$"#)
-
-let variable = "VRB"
-
-func parseWind(_ parts: inout Array<String.SubSequence>) throws -> Wind? {
-    guard !parts.isEmpty else { return nil }
-    let dirAndSpeed = String(parts[0])
-    
-    if dirAndSpeed == "00000KT" {
-        parts.removeFirst()
-        return .calm
+class WindParser {
+    enum DirectionString {
+        case variable
+        case heading(_ value: UInt16)
     }
-    
-    guard let match = windRx.firstMatch(in: dirAndSpeed) else { return nil }
-    parts.removeFirst()
-    
-    guard let speed = try parseSpeed(dirAndSpeed, from: match, index: 1) else {
-        throw Error.invalidWinds(String(dirAndSpeed))
-    }
-    
-    guard let dirStr = match.captures[0] else { throw Error.invalidWinds(String(dirAndSpeed)) }
-    if dirStr == variable {
-        guard let rangeSeq = parts.first else {
-            return .variable(speed: speed)
+
+    let directionRef = Reference<DirectionString>()
+    let direction1Ref = Reference<UInt16?>()
+    let direction2Ref = Reference<UInt16?>()
+    let speedRef = Reference<UInt16>()
+    let gustRef = Reference<UInt16?>()
+    let unitRef = Reference<Substring>()
+
+    lazy var noAnchorRx = Regex {
+        Capture(as: directionRef) {
+            ChoiceOf {
+                Repeat(.digit, count: 3)
+                "VRB"
+            }
+        } transform: { value in
+            switch value {
+                case "VRB": return .variable
+                default: return .heading(UInt16(value)!)
+            }
         }
-        let range = try parseDirectionRange(&parts, rangeSeq: rangeSeq)
-        return .variable(speed: speed, headingRange: range)
+        Capture(as: speedRef) { Repeat(.digit, 2...3) } transform: { UInt16($0)! }
+        Optionally {
+            "G"
+            Capture(as: gustRef) { Repeat(.digit, 2...3) } transform: { UInt16($0) }
+        }
+        Capture(as: unitRef) {
+            ChoiceOf {
+                "KTS"
+                "KT"
+                "MPS"
+                "KPH"
+            }
+        }
     }
-    
-    guard let heading = UInt16(dirStr) else { throw Error.invalidWinds(String(dirAndSpeed)) }
-    
-    let gust = try parseSpeed(dirAndSpeed, from: match, index: 2)
-    
-    guard let rangeSeq = parts.first else {
-        return .direction(heading, speed: speed, gust: gust)
+    private lazy var rx = Regex {
+        Anchor.startOfSubject
+        noAnchorRx
+        Anchor.endOfSubject
     }
-    
-    if let range = try parseDirectionRange(&parts, rangeSeq: rangeSeq) {
-        return .directionRange(heading, headingRange: range, speed: speed, gust: gust)
-    } else {
-        return .direction(heading, speed: speed, gust: gust)
+    private lazy var variableRx = Regex {
+        Anchor.startOfSubject
+        Capture(as: direction1Ref) { Repeat(.digit, count: 3) } transform: { UInt16($0) }
+        "V"
+        Capture(as: direction2Ref) { Repeat(.digit, count: 3) } transform: { UInt16($0) }
+        Anchor.endOfSubject
     }
-}
 
-func parseDirectionRange(_ parts: inout Array<String.SubSequence>, rangeSeq: String.SubSequence) throws -> (UInt16, UInt16)? {
-    let rangeStr = String(rangeSeq)
-    
-    guard let variableMatch = variableRx.firstMatch(in: rangeStr) else { return nil }
-    parts.removeFirst()
-    
-    guard let dir1Str = variableMatch.captures[0],
-          let dir2Str = variableMatch.captures[1],
-          let dir1 = UInt16(dir1Str),
-          let dir2 = UInt16(dir2Str) else { throw Error.invalidWinds(rangeStr) }
-    
-    return (dir1, dir2)
-}
+    func parse(_ parts: inout Array<String.SubSequence>) throws -> Wind? {
+        guard !parts.isEmpty else { return nil }
+        let dirAndSpeed = String(parts[0])
 
-func parseSpeed(_ string: String, from match: MatchResult, index: Int) throws -> Wind.Speed? {
-    guard let speedStr = match.captures[index] else { return nil }
-    guard let speed = UInt16(speedStr),
-          let units = match.captures[3] else { throw Error.invalidWinds(string) }
-    
-    switch units {
-        case "KT", "KTS": return .knots(speed)
-        case "KPH": return .kph(speed)
-        case "MPS": return .mps(speed)
-        default: throw Error.invalidWinds(string)
+        if dirAndSpeed == "00000KT" {
+            parts.removeFirst()
+            return .calm
+        }
+
+        guard let match = try rx.wholeMatch(in: dirAndSpeed) else { return nil }
+        parts.removeFirst()
+
+        let speedValue = match[speedRef]
+        let speed: Wind.Speed = switch match[unitRef] {
+            case "KT", "KTS": .knots(speedValue)
+            case "KPH": .kph(speedValue)
+            case "MPS": .mps(speedValue)
+            default: throw Error.invalidWinds(dirAndSpeed)
+        }
+
+        switch match[directionRef] {
+            case .variable:
+                guard let rangeSeq = parts.first else {
+                    return .variable(speed: speed)
+                }
+                let range = try parseDirectionRange(&parts, rangeSeq: rangeSeq)
+                return .variable(speed: speed, headingRange: range)
+            case let .heading(heading):
+                let gustValue = match[gustRef]
+                var gust: Wind.Speed? = nil
+                if let gustValue {
+                    gust = switch match[unitRef] {
+                        case "KT", "KTS": .knots(gustValue)
+                        case "KPH": .kph(gustValue)
+                        case "MPS": .mps(gustValue)
+                        default: throw Error.invalidWinds(dirAndSpeed)
+                    }
+                }
+
+                guard let rangeSeq = parts.first else {
+                    return .direction(heading, speed: speed, gust: gust)
+                }
+
+                if let range = try parseDirectionRange(&parts, rangeSeq: rangeSeq) {
+                    return .directionRange(heading, headingRange: range, speed: speed, gust: gust)
+                } else {
+                    return .direction(heading, speed: speed, gust: gust)
+                }
+        }
+    }
+
+    func parse<T>(match: Regex<T>.Match, originalString: String) throws -> Wind {
+        let speedValue = match[speedRef]
+        let speed: Wind.Speed = switch match[unitRef] {
+            case "KT", "KTS": .knots(speedValue)
+            case "KPH": .kph(speedValue)
+            case "MPS": .mps(speedValue)
+            default: throw Error.invalidWinds(originalString)
+        }
+
+        switch match[directionRef] {
+            case .variable:
+                return .variable(speed: speed)
+            case let .heading(heading):
+                let gustValue = match[gustRef]
+                var gust: Wind.Speed? = nil
+                if let gustValue {
+                    gust = switch match[unitRef] {
+                        case "KT", "KTS": .knots(gustValue)
+                        case "KPH": .kph(gustValue)
+                        case "MPS": .mps(gustValue)
+                        default: throw Error.invalidWinds(originalString)
+                    }
+                }
+
+                return .direction(heading, speed: speed, gust: gust)
+        }
+    }
+
+    fileprivate func parseDirectionRange(_ parts: inout Array<String.SubSequence>, rangeSeq: String.SubSequence) throws -> (UInt16, UInt16)? {
+        let rangeStr = String(rangeSeq)
+
+        guard let variableMatch = try variableRx.wholeMatch(in: rangeStr),
+              let dir1 = variableMatch[direction1Ref],
+              let dir2 = variableMatch[direction2Ref] else { return nil }
+
+        parts.removeFirst()
+        return (dir1, dir2)
     }
 }
