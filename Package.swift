@@ -26,7 +26,8 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "SwiftMETAR",
-            dependencies: [.product(name: "NumberKit", package: "swift-numberkit")]),
+            dependencies: [.product(name: "NumberKit", package: "swift-numberkit")],
+            resources: [.process("Resources")]),
         .testTarget(
             name: "SwiftMETARTests",
             dependencies: ["SwiftMETAR", "Quick", "Nimble"]),
