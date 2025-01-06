@@ -5,7 +5,7 @@ import PackageDescription
 let package = Package(
     name: "SwiftMETAR",
     defaultLocalization: "en",
-    platforms: [.macOS(.v15), .iOS(.v18), .watchOS(.v11), .tvOS(.v18)],
+    platforms: [.macOS(.v13), .iOS(.v16), .tvOS(.v16), .watchOS(.v9), .visionOS(.v1)],
     products: [
         // Products define the executables and libraries a package produces, and make them visible to other packages.
         .library(
