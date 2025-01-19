@@ -59,6 +59,11 @@ public struct Weather: Codable, Equatable, Sendable {
         
         /// Another "pseudo-intensity" for heavy phenomena in the vicinity.
         case vicinityHeavy = "+VC"
+        
+        /// `true` if this is an "in the vicinity" pseudo-intensity.
+        public var isVicinity: Bool {
+            self == .vicinity || self == .vicinityLight || self == .vicinityHeavy
+        }
     }
     
     /// Qualifiers for precipitation phenomena. Most are not applied to

@@ -430,6 +430,11 @@ public enum Remark: Codable, Equatable, Sendable {
         
         /// The distance, in statute miles.
         public let distance: UInt
+        
+        /// The distance, as a measurement.
+        public var distanceMeasurement: Measurement<UnitLength> {
+            .init(value: Double(distance), unit: .miles)
+        }
     }
     
     /// A proximity from an observation station.
