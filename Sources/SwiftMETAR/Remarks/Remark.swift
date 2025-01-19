@@ -486,8 +486,8 @@ public enum Remark: Codable, Equatable, Sendable {
     }
     
     /// How critical a remark is to aviation safety.
-    public enum Urgency: Codable, Equatable, Sendable {
-
+    public enum Urgency: Int, Codable, Equatable, Sendable, Comparable {
+        
         /// Remark could not be parsed.
         case unknown
         
@@ -499,6 +499,10 @@ public enum Remark: Codable, Equatable, Sendable {
         
         /// Remark is almost certainly critical to aviation safety.
         case urgent
+        
+        public static func < (lhs: Remark.Urgency, rhs: Remark.Urgency) -> Bool {
+            lhs.rawValue < rhs.rawValue
+        }
     }
 }
 
