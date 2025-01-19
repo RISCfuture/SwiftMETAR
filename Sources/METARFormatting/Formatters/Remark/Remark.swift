@@ -45,7 +45,7 @@ public extension Remark {
         public var pressureFormat = Measurement<UnitPressure>.FormatStyle(
             width: .abbreviated,
             usage: .asProvided,
-            numberFormatStyle: .number.precision(.fractionLength(0)))
+            numberFormatStyle: .number.precision(.fractionLength(1)))
         
         /// The format to use when printing wind information.
         public var windFormat = Wind.FormatStyle()
@@ -172,7 +172,7 @@ public extension Remark {
                     return ListFormatStyle.list(memberStyle: .event(dateFormat: dateFormat), type: .and).format(events)
                     
                 case let .pressureTendency(character, _):
-                    return String(localized: "\(character, format: .pressureCharacter) (currently \(value.pressureMeasurement!, format: pressureFormat))", comment: "remark")
+                    return String(localized: "\(character, format: .pressureCharacter) (change: \(value.pressureMeasurement!, format: pressureFormat))", comment: "remark")
                     
                 case let .rapidPressureChange(change):
                     switch change {
