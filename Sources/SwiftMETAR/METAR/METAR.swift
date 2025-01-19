@@ -14,7 +14,7 @@ public struct METAR: Codable, Sendable {
     /// The raw text of the METAR.
     public let text: String?
     
-    /// The nature of this METAR's publivation.
+    /// The nature of this METAR's publication.
     public let issuance: Issuance
     
     /// The ICAO ID of the reporting station (typically an airport).

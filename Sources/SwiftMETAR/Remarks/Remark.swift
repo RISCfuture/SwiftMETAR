@@ -358,6 +358,7 @@ public enum Remark: Codable, Equatable, Sendable {
      
      - Parameter low: The thinnest cloud coverage.
      - Parameter high: The thickest cloud coverage.
+     - Parameter height: The height of the ceiling.
      - SeeAlso: ``heightMeasurement``
      */
     case variableSkyCondition(low: Coverage, high: Coverage, height: UInt?)
@@ -423,7 +424,11 @@ public enum Remark: Codable, Equatable, Sendable {
     
     /// A direction and distance.
     public struct Location: Codable, Equatable, Sendable {
+        
+        /// The direction.
         public let direction: Direction
+        
+        /// The distance, in statute miles.
         public let distance: UInt
     }
     
