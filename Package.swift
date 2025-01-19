@@ -11,7 +11,11 @@ let package = Package(
         .library(
             name: "SwiftMETAR",
             targets: ["SwiftMETAR"]),
-        .executable(name: "SwiftMETARGauntlet", targets: ["SwiftMETARGauntlet"])
+        .library(
+            name: "METARFormatting",
+            targets: ["METARFormatting"]),
+        .executable(name: "decode-metar", targets: ["DecodeMETAR"]),
+        .executable(name: "decode-taf", targets: ["DecodeTAF"]),
     ],
     dependencies: [
         // Dependencies declare other packages that this package depends on.
@@ -19,7 +23,8 @@ let package = Package(
         .package(url: "https://github.com/Quick/Nimble.git", from: "13.6.0"),
         .package(url: "https://github.com/objecthub/swift-numberkit.git", from: "2.6.0"),
         .package(url: "https://github.com/apple/swift-docc-plugin.git", from: "1.4.3"),
-        .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.5.0")
+        .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.5.0"),
+        .package(url: "https://github.com/Mr-Alirezaa/BuildableMacro.git", from: "0.5.0"),
     ],
     targets: [
         // Targets are the basic building blocks of a package. A target can define a module or a test suite.
@@ -28,15 +33,27 @@ let package = Package(
             name: "SwiftMETAR",
             dependencies: [.product(name: "NumberKit", package: "swift-numberkit")],
             resources: [.process("Resources")]),
+        .target(
+            name: "METARFormatting",
+            dependencies: [
+                "SwiftMETAR",
+                .product(name: "BuildableMacro", package: "BuildableMacro")],
+            resources: [.process("Resources")]),
         .testTarget(
             name: "SwiftMETARTests",
             dependencies: ["SwiftMETAR", "Quick", "Nimble"]),
         .executableTarget(
-            name: "SwiftMETARGauntlet",
+            name: "DecodeMETAR",
             dependencies: [
                 "SwiftMETAR",
-                .product(name: "ArgumentParser", package: "swift-argument-parser")
-            ])
+                "METARFormatting",
+                .product(name: "ArgumentParser", package: "swift-argument-parser")]),
+        .executableTarget(
+            name: "DecodeTAF",
+            dependencies: [
+                "SwiftMETAR",
+                "METARFormatting",
+                .product(name: "ArgumentParser", package: "swift-argument-parser")])
     ],
     swiftLanguageModes: [.v5, .v6]
 )

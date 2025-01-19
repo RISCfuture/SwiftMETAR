@@ -73,6 +73,11 @@ original data (day-hour-minute) rather than generating timestamps. Both `METAR` 
 have vars allowing you to retrieve these values as `Date`s, but the data is stored as
 components.
 
+### Formatting and Localization
+
+See the `METARFormatting` package (which has its own documentation bundle) for
+information on how to use SwiftMETAR classes with localization libraries.
+
 ## Documentation
 
 Online API documentation and tutorials are available at
@@ -91,11 +96,17 @@ docarchive file in Xcode for browseable API documentation. Or, within Xcode,
 open the SwiftMETAR package in Xcode and choose **Build Documentation** from the
 **Product** menu.
 
+To generate documentation for METARFormatting, run
+
+```sh
+swift package generate-documentation --target METARFormatting
+```
+
 ## Tests
 
 Unit testing is done using Nimble and Quick. Simply test the `SwiftMETAR` target to run
 tests.
 
-A `SwiftMETAR_Gauntlet` target is also available to do an end-to-end test with live data.
-This will download METARs and TAFs from the AWC server and attempt to parse them. Any
-failures will be logged with the failing string.
+The `DecodeMETAR` and `DecodeTAF` targets provide command-line tools that allow
+you to decode METARs and TAFs into human-readable text. They demonstrate the
+locale-aware formatting tools available with the `METARFormatting` library.

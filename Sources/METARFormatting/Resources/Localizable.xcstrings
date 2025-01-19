@@ -1,0 +1,1247 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "%@ – %@" : {
+      "comment" : "visibility",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ – %2$@"
+          }
+        }
+      }
+    },
+    "%@ (augmented)" : {
+      "comment" : "observation type remark"
+    },
+    "%@ (currently %@)" : {
+      "comment" : "remark",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ (currently %2$@)"
+          }
+        }
+      }
+    },
+    "%@ %@" : {
+      "comment" : "distance, direction\nobserved precip remark (type, directions)\nobserved viz remark (source, distance)\nweather phenomena (descriptor, phenomena)\nweather phenomena (intensity, phenomena)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@"
+          }
+        }
+      }
+    },
+    "%@ %@ %@" : {
+      "comment" : "observed precip remark (proximity, type, directions)\nweather phenomena (intensity, descriptor, phenomena)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@ %3$@"
+          }
+        }
+      }
+    },
+    "%@ %@ %@ from %@ to %@" : {
+      "comment" : "turbulence (frequency, intensity, location, base, top)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@ %3$@ from %4$@ to %5$@"
+          }
+        }
+      }
+    },
+    "%@ %@ %@ in the vicinity" : {
+      "comment" : "weather phenomena (intensity, descriptor, phenomena)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@ %3$@ in the vicinity"
+          }
+        }
+      }
+    },
+    "%@ %@ at %@" : {
+      "comment" : "obscurstion remark (coverage, type, height)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@ at %3$@"
+          }
+        }
+      }
+    },
+    "%@ %@ began at %@" : {
+      "comment" : "precipitation event (descriptor, phenomenon, time)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@ began at %3$@"
+          }
+        }
+      }
+    },
+    "%@ %@ ended at %@" : {
+      "comment" : "precipitation event (descriptor, phenomenon, time)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@ ended at %3$@"
+          }
+        }
+      }
+    },
+    "%@ %@ from %@ to %@" : {
+      "comment" : "turbulence (intensity, location, base, top)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@ from %3$@ to %4$@"
+          }
+        }
+      }
+    },
+    "%@ %@ in the vicinity" : {
+      "comment" : "weather phenomena (descriptor, phenomena)\nweather phenomena (intensity, phenomena)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ %2$@ in the vicinity"
+          }
+        }
+      }
+    },
+    "%@ at %@" : {
+      "comment" : "obscuration remark (type, height)\nwinds (heading at speed)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ at %2$@"
+          }
+        }
+      }
+    },
+    "%@ at %@ (%@–%@)" : {
+      "comment" : "winds (heading at speed, variable heading–heading)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ at %2$@ (%3$@–%4$@)"
+          }
+        }
+      }
+    },
+    "%@ at %@ gusting %@" : {
+      "comment" : "winds (heading at speed gusting)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ at %2$@ gusting %3$@"
+          }
+        }
+      }
+    },
+    "%@ at %@ gusting %@ (%@–%@)" : {
+      "comment" : "winds (heading at speed gusting, variable heading–heading)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ at %2$@ gusting %3$@ (%4$@–%5$@)"
+          }
+        }
+      }
+    },
+    "%@ began at %@" : {
+      "comment" : "precipitation event (phenomenon, time)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ began at %2$@"
+          }
+        }
+      }
+    },
+    "%@ ceiling sensor" : {
+      "comment" : "sensor type"
+    },
+    "%@ chance from %@" : {
+      "comment" : "TAF period (date range)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ chance from %2$@"
+          }
+        }
+      }
+    },
+    "%@ ended at %@" : {
+      "comment" : "precipitation event (phenomenon, time",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ ended at %2$@"
+          }
+        }
+      }
+    },
+    "%@ forecaster %llu" : {
+      "comment" : "remark",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ forecaster %2$llu"
+          }
+        }
+      }
+    },
+    "%@ from %@ to %@" : {
+      "comment" : "icing layer (type, base, top)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ from %2$@ to %3$@"
+          }
+        }
+      }
+    },
+    "%@ in the vicinity" : {
+      "comment" : "weather phenomena (phenomena)"
+    },
+    "%@ inoperative" : {
+      "comment" : "sensor inoperative remark"
+    },
+    "%@ through %@" : {
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@ through %2$@"
+          }
+        }
+      }
+    },
+    "%@ visibility sensor" : {
+      "comment" : "sensor type"
+    },
+    "%@-hour ice accretion %@" : {
+      "comment" : "remark",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@-hour ice accretion %2$@"
+          }
+        }
+      }
+    },
+    "%@-hour precipitation amount %@" : {
+      "comment" : "remark",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@-hour precipitation amount %2$@"
+          }
+        }
+      }
+    },
+    "%@-hour precipitation amount unknown" : {
+      "comment" : "remark"
+    },
+    "%@–%@ at %@" : {
+      "comment" : "winds (heading–heading at speed)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@–%2$@ at %3$@"
+          }
+        }
+      }
+    },
+    "%@/%@" : {
+      "comment" : "ratio (numerator/denominator)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "%1$@/%2$@"
+          }
+        }
+      }
+    },
+    "< %@" : {
+      "comment" : "visibility"
+    },
+    "<unknown direction>" : {
+
+    },
+    "> %@" : {
+      "comment" : "visibility"
+    },
+    "6-hour temperature high %@" : {
+      "comment" : "remark"
+    },
+    "6-hour temperature low %@" : {
+      "comment" : "remark"
+    },
+    "aircraft mishap" : {
+      "comment" : "remark"
+    },
+    "all quadrants" : {
+      "comment" : "direction"
+    },
+    "altocumulus" : {
+      "comment" : "middle cloud type"
+    },
+    "altocumulus castellanus" : {
+      "comment" : "cloud type"
+    },
+    "altocumulus castellanus/floccus" : {
+      "comment" : "middle cloud type"
+    },
+    "altocumulus chaotic sky" : {
+      "comment" : "middle cloud type"
+    },
+    "altocumulus cumulogenitus/cumulonimbogenitus" : {
+      "comment" : "middle cloud type"
+    },
+    "altocumulus lenticularis" : {
+      "comment" : "cloud type"
+    },
+    "altocumulus translucidus" : {
+      "comment" : "middle cloud type"
+    },
+    "altocumulus translucidus/opacus" : {
+      "comment" : "middle cloud type"
+    },
+    "altostratus opacus" : {
+      "comment" : "middle cloud type"
+    },
+    "altostratus translucidus" : {
+      "comment" : "middle cloud type"
+    },
+    "amended" : {
+      "comment" : "TAF issuance"
+    },
+    "apparent" : {
+      "comment" : "signific. clouds remark part"
+    },
+    "automated observation station" : {
+      "comment" : "remark"
+    },
+    "automated observation station with precipitation recording" : {
+      "comment" : "remark"
+    },
+    "automated observer" : {
+      "comment" : "METAR observer type"
+    },
+    "becoming from %@" : {
+      "comment" : "TAF period (date range)"
+    },
+    "began %@" : {
+      "comment" : "remark part"
+    },
+    "began at %@" : {
+      "comment" : "thunderstorm event (time)"
+    },
+    "blowing" : {
+      "comment" : "precipitation descriptor"
+    },
+    "broken" : {
+      "comment" : "coverage"
+    },
+    "broken clouds at %@" : {
+      "comment" : "sky condition"
+    },
+    "broken clouds at %@ (%@)" : {
+      "comment" : "sky condition",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "broken clouds at %1$@ (%2$@)"
+          }
+        }
+      }
+    },
+    "calm" : {
+      "comment" : "winds"
+    },
+    "CAVOK" : {
+      "comment" : "sky condition"
+    },
+    "ceiling variable from %@ to %@" : {
+      "comment" : "remark",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "ceiling variable from %1$@ to %2$@"
+          }
+        }
+      }
+    },
+    "changing altocumulus" : {
+      "comment" : "middle cloud type"
+    },
+    "cirrocumulus" : {
+      "comment" : "high cloud type"
+    },
+    "cirrocumulus lenticularis" : {
+      "comment" : "cloud type"
+    },
+    "cirrostratus" : {
+      "comment" : "high cloud type"
+    },
+    "cirrostratus extending <45° above the horizon" : {
+      "comment" : "high cloud type"
+    },
+    "cirrostratus extending >45° above the horizon" : {
+      "comment" : "high cloud type"
+    },
+    "cirrus fibratus/uncinus" : {
+      "comment" : "high cloud type"
+    },
+    "cirrus spissatus cumulonimbogenitus" : {
+      "comment" : "high cloud type"
+    },
+    "cirrus spissatus non-cumulonimbogenitus/castellanus/floccus" : {
+      "comment" : "high cloud type"
+    },
+    "cirrus uncinus/fibratus" : {
+      "comment" : "high cloud type"
+    },
+    "clear" : {
+      "comment" : "icing intensity"
+    },
+    "clear below 12,000 ft." : {
+      "comment" : "sky condition"
+    },
+    "clear icing" : {
+      "comment" : "icing intensity"
+    },
+    "clear-air turbulence" : {
+      "comment" : "turbulence type"
+    },
+    "cloud-to-air" : {
+      "comment" : "lightning type"
+    },
+    "cloud-to-cloud" : {
+      "comment" : "lightning type"
+    },
+    "cloud-to-ground" : {
+      "comment" : "lightning type"
+    },
+    "constant" : {
+      "comment" : "lightning frequency"
+    },
+    "corrected" : {
+      "comment" : "TAF issuance"
+    },
+    "corrected issuance" : {
+      "comment" : "METAR observer type"
+    },
+    "correction issued" : {
+      "comment" : "remark"
+    },
+    "correction issued at %@" : {
+      "comment" : "remark"
+    },
+    "cumulonimbus" : {
+      "comment" : "ceiling type\ncloud type"
+    },
+    "cumulonimbus calvus" : {
+      "comment" : "low cloud type"
+    },
+    "cumulonimbus capillatus" : {
+      "comment" : "low cloud type"
+    },
+    "cumulonimbus mammatus" : {
+      "comment" : "cloud type"
+    },
+    "cumulus congestus" : {
+      "comment" : "cloud type"
+    },
+    "cumulus humilis/fractus" : {
+      "comment" : "low cloud type"
+    },
+    "cumulus mediocris or congestus" : {
+      "comment" : "low cloud type"
+    },
+    "cumulus stratocumulus" : {
+      "comment" : "low cloud type"
+    },
+    "daily precipitation amount: %@" : {
+      "comment" : "remark"
+    },
+    "daily precipitation amount: trace" : {
+      "comment" : "remark"
+    },
+    "daily precipitation amount: unknown" : {
+      "comment" : "remark"
+    },
+    "daily temperature extremes: low %@, high %@" : {
+      "comment" : "remark",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "daily temperature extremes: low %1$@, high %2$@"
+          }
+        }
+      }
+    },
+    "distant" : {
+      "comment" : "lightning proximity\nsignific. clouds remark part"
+    },
+    "drizzle" : {
+      "comment" : "weather phenomenon"
+    },
+    "dust" : {
+      "comment" : "weather phenomenon"
+    },
+    "dust storm" : {
+      "comment" : "weather phenomenon"
+    },
+    "dust whirls" : {
+      "comment" : "weather phenomenon"
+    },
+    "E" : {
+      "comment" : "direction"
+    },
+    "east" : {
+      "comment" : "direction"
+    },
+    "ended %@" : {
+      "comment" : "remark part"
+    },
+    "ended at %@" : {
+      "comment" : "thunderstorm event (time)"
+    },
+    "equivalent water depth of snowfall %@" : {
+      "comment" : "remark"
+    },
+    "extreme" : {
+      "comment" : "turbulence intensity"
+    },
+    "few" : {
+      "comment" : "coverage"
+    },
+    "few clouds at %@" : {
+      "comment" : "sky condition"
+    },
+    "few clouds at %@ (%@)" : {
+      "comment" : "sky condition",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "few clouds at %1$@ (%2$@)"
+          }
+        }
+      }
+    },
+    "final METAR/TAF" : {
+      "comment" : "remark"
+    },
+    "Fleet Naval Weather Center Norfolk" : {
+      "comment" : "naval weather center"
+    },
+    "Fleet Naval Weather Center San Diego" : {
+      "comment" : "naval weather center"
+    },
+    "fog" : {
+      "comment" : "weather phenomenon"
+    },
+    "freezing" : {
+      "comment" : "precipitation descriptor"
+    },
+    "freezing rain sensor" : {
+      "comment" : "sensor type"
+    },
+    "frequent" : {
+      "comment" : "lightning frequency\nturbulence frequency"
+    },
+    "from %@" : {
+      "comment" : "TAF period (date range)\nTAF period (date)"
+    },
+    "from <unknown>" : {
+      "comment" : "TAF period (date)"
+    },
+    "funnel cloud" : {
+      "comment" : "tornadic phenomenon\nweather phenomenon"
+    },
+    "FWC-N" : {
+      "comment" : "naval weather center"
+    },
+    "FWC-SD" : {
+      "comment" : "naval weather center"
+    },
+    "greater than %@" : {
+      "comment" : "visibility"
+    },
+    "hail" : {
+      "comment" : "weather phenomenon"
+    },
+    "hailstone size: %@" : {
+      "comment" : "remark"
+    },
+    "haze" : {
+      "comment" : "weather phenomenon"
+    },
+    "heavy" : {
+      "comment" : "weather intensity"
+    },
+    "hourly precipitation amount: %@" : {
+      "comment" : "remark"
+    },
+    "human observer" : {
+      "comment" : "METAR observer type"
+    },
+    "ice crystals" : {
+      "comment" : "weather phenomenon"
+    },
+    "ice pellets" : {
+      "comment" : "weather phenomenon"
+    },
+    "in the vicinity" : {
+      "comment" : "lightning proximity"
+    },
+    "indefinite ceiling; vertical visibility %@" : {
+
+    },
+    "intra-cloud" : {
+      "comment" : "lightning type"
+    },
+    "layer at %@ variable from %@ to %@" : {
+      "comment" : "remark (height, coverage, coverage)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "layer at %1$@ variable from %2$@ to %3$@"
+          }
+        }
+      }
+    },
+    "less than %@" : {
+      "comment" : "visibility"
+    },
+    "light" : {
+      "comment" : "turbulence intensity\nweather intensity"
+    },
+    "light clear" : {
+      "comment" : "icing intensity"
+    },
+    "light clear icing" : {
+      "comment" : "icing intensity"
+    },
+    "light mixed" : {
+      "comment" : "icing intensity"
+    },
+    "light mixed icing" : {
+      "comment" : "icing intensity"
+    },
+    "light rime" : {
+      "comment" : "icing intensity"
+    },
+    "light rime icing" : {
+      "comment" : "icing intensity"
+    },
+    "lightning" : {
+      "comment" : "lightning remark part"
+    },
+    "lightning sensor" : {
+      "comment" : "sensor type"
+    },
+    "low drifting" : {
+      "comment" : "precipitation descriptor"
+    },
+    "maximum temperature %@" : {
+      "comment" : "forecast temperature"
+    },
+    "maximum temperature %@ at %@" : {
+      "comment" : "forecast temperature",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "maximum temperature %1$@ at %2$@"
+          }
+        }
+      }
+    },
+    "minimum temperature %@" : {
+      "comment" : "forecast temperature"
+    },
+    "minimum temperature %@ at %@" : {
+      "comment" : "forecast temperature",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "minimum temperature %1$@ at %2$@"
+          }
+        }
+      }
+    },
+    "mist" : {
+      "comment" : "weather phenomenon"
+    },
+    "mixed" : {
+      "comment" : "icing intensity"
+    },
+    "mixed icing" : {
+      "comment" : "icing intensity"
+    },
+    "moderate" : {
+      "comment" : "turbulence intensity\nweather intensity"
+    },
+    "moving %@" : {
+      "comment" : "remark part"
+    },
+    "N" : {
+      "comment" : "direction"
+    },
+    "n/a" : {
+      "comment" : "visibility"
+    },
+    "NE" : {
+      "comment" : "direction"
+    },
+    "next issuance %@" : {
+      "comment" : "remark"
+    },
+    "next issuance <unknown>" : {
+      "comment" : "remark"
+    },
+    "no" : {
+      "comment" : "turbulence intensity"
+    },
+    "no amendments after %@" : {
+      "comment" : "remark"
+    },
+    "no amendments after <unknown>" : {
+      "comment" : "remark"
+    },
+    "no significant clouds" : {
+      "comment" : "sky condition"
+    },
+    "no significant weather" : {
+      "comment" : "remark"
+    },
+    "no SPECI issuances" : {
+      "comment" : "remark"
+    },
+    "none observed" : {
+      "comment" : "high cloud type\nlow cloud type\nmiddle cloud type"
+    },
+    "north" : {
+      "comment" : "direction"
+    },
+    "northeast" : {
+      "comment" : "direction"
+    },
+    "northwest" : {
+      "comment" : "direction"
+    },
+    "not recorded" : {
+      "comment" : "visibility"
+    },
+    "NW" : {
+      "comment" : "direction"
+    },
+    "obscured" : {
+      "comment" : "high cloud type\nlow cloud type\nmiddle cloud type"
+    },
+    "observed cloud types, low: %@, middle: %@, high: %@" : {
+      "comment" : "remark",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "observed cloud types, low: %1$@, middle: %2$@, high: %3$@"
+          }
+        }
+      }
+    },
+    "occasional" : {
+      "comment" : "lightning frequency\nturbulence frequency"
+    },
+    "overcast" : {
+      "comment" : "coverage"
+    },
+    "overcast clouds at %@" : {
+      "comment" : "sky condition"
+    },
+    "overcast clouds at %@ (%@)" : {
+      "comment" : "sky condition",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "overcast clouds at %1$@ (%2$@)"
+          }
+        }
+      }
+    },
+    "overhead" : {
+      "comment" : "lightning proximity"
+    },
+    "partial" : {
+      "comment" : "precipitation descriptor"
+    },
+    "partial cirrostratus" : {
+      "comment" : "high cloud type"
+    },
+    "patchy" : {
+      "comment" : "precipitation descriptor"
+    },
+    "peak winds %@ at %@" : {
+      "comment" : "remark",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "peak winds %1$@ at %2$@"
+          }
+        }
+      }
+    },
+    "peak winds %@ at <unknown time>" : {
+      "comment" : "remark"
+    },
+    "present weather sensor" : {
+      "comment" : "sensor type"
+    },
+    "pressure is decreasing" : {
+      "comment" : "pressure character"
+    },
+    "pressure is decreasing more rapidly" : {
+      "comment" : "pressure character"
+    },
+    "pressure is decreasing more slowly" : {
+      "comment" : "pressure character"
+    },
+    "pressure is increasing" : {
+      "comment" : "pressure character"
+    },
+    "pressure is increasing more rapidly" : {
+      "comment" : "pressure character"
+    },
+    "pressure is increasing more slowly" : {
+      "comment" : "pressure character"
+    },
+    "pressure rapidly falling" : {
+      "comment" : "remark"
+    },
+    "pressure rapidly rising" : {
+      "comment" : "remark"
+    },
+    "pressure unchanged" : {
+      "comment" : "pressure character"
+    },
+    "pressure was decreasing, now increasing" : {
+      "comment" : "pressure character"
+    },
+    "pressure was increasing, now decreasing" : {
+      "comment" : "pressure character"
+    },
+    "prevailing visibility variable from %@ to %@" : {
+      "comment" : "remark",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "prevailing visibility variable from %1$@ to %2$@"
+          }
+        }
+      }
+    },
+    "previous day sunshine duration %@" : {
+      "comment" : "remark"
+    },
+    "rain" : {
+      "comment" : "weather phenomenon"
+    },
+    "rain sensor" : {
+      "comment" : "sensor type"
+    },
+    "rapid snow increase (%@ increase, %@ total)" : {
+      "comment" : "remark",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "rapid snow increase (%1$@ increase, %2$@ total)"
+          }
+        }
+      }
+    },
+    "relative humidity %@" : {
+      "comment" : "remark"
+    },
+    "rime" : {
+      "comment" : "icing intensity"
+    },
+    "rime icing" : {
+      "comment" : "icing intensity"
+    },
+    "rotor or roll cloud" : {
+      "comment" : "cloud type"
+    },
+    "routine" : {
+      "comment" : "METAR issuance\nTAF issuance"
+    },
+    "runway %@ ceiling %@" : {
+      "comment" : "remark",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "runway %1$@ ceiling %2$@"
+          }
+        }
+      }
+    },
+    "runway %@ visibility %@" : {
+      "comment" : "remark\nrunway visibility",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "runway %1$@ visibility %2$@"
+          }
+        }
+      }
+    },
+    "RVR sensor" : {
+      "comment" : "sensor type"
+    },
+    "S" : {
+      "comment" : "direction"
+    },
+    "sand" : {
+      "comment" : "weather phenomenon"
+    },
+    "sandstorm" : {
+      "comment" : "weather phenomenon"
+    },
+    "scattered" : {
+      "comment" : "coverage"
+    },
+    "scattered clouds at %@" : {
+      "comment" : "sky condition"
+    },
+    "scattered clouds at %@ (%@)" : {
+      "comment" : "sky condition",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "scattered clouds at %1$@ (%2$@)"
+          }
+        }
+      }
+    },
+    "SE" : {
+      "comment" : "direction"
+    },
+    "sea-level pressure %@" : {
+      "comment" : "remark"
+    },
+    "sea-level pressure unknown" : {
+      "comment" : "remark"
+    },
+    "severe" : {
+      "comment" : "turbulence intensity"
+    },
+    "severe clear" : {
+      "comment" : "icing intensity"
+    },
+    "severe clear icing" : {
+      "comment" : "icing intensity"
+    },
+    "severe mixed" : {
+      "comment" : "icing intensity"
+    },
+    "severe mixed icing" : {
+      "comment" : "icing intensity"
+    },
+    "severe rime" : {
+      "comment" : "icing intensity"
+    },
+    "severe rime icing" : {
+      "comment" : "icing intensity"
+    },
+    "shallow" : {
+      "comment" : "precipitation descriptor"
+    },
+    "showering" : {
+      "comment" : "precipitation descriptor"
+    },
+    "showering rain" : {
+      "comment" : "precipitation"
+    },
+    "showers" : {
+      "comment" : "precipitation"
+    },
+    "sky clear" : {
+      "comment" : "sky condition"
+    },
+    "smoke" : {
+      "comment" : "weather phenomenon"
+    },
+    "snow" : {
+      "comment" : "weather phenomenon"
+    },
+    "snow depth %@" : {
+      "comment" : "remark"
+    },
+    "snow grains" : {
+      "comment" : "weather phenomenon"
+    },
+    "snow pellets" : {
+      "comment" : "weather phenomenon"
+    },
+    "south" : {
+      "comment" : "direction"
+    },
+    "southeast" : {
+      "comment" : "direction"
+    },
+    "southwest" : {
+      "comment" : "direction"
+    },
+    "special" : {
+      "comment" : "METAR issuance"
+    },
+    "spray" : {
+      "comment" : "weather phenomenon"
+    },
+    "squalls" : {
+      "comment" : "weather phenomenon"
+    },
+    "station requires maintenance" : {
+      "comment" : "remark"
+    },
+    "stratocumulus cumulogenitus" : {
+      "comment" : "low cloud type"
+    },
+    "stratocumulus lenticularis" : {
+      "comment" : "cloud type"
+    },
+    "stratocumulus non-cumulogenitus" : {
+      "comment" : "low cloud type"
+    },
+    "stratus nebulosus/fractus" : {
+      "comment" : "low cloud type"
+    },
+    "stratus/cumulus fractus" : {
+      "comment" : "low cloud type"
+    },
+    "surface" : {
+      "comment" : "visibility source"
+    },
+    "surface visibility" : {
+      "comment" : "visibility sourcer"
+    },
+    "SW" : {
+      "comment" : "direction"
+    },
+    "temperature %@" : {
+      "comment" : "forecast temperature\nremark"
+    },
+    "temperature %@ at %@" : {
+      "comment" : "forecast temperature",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "temperature %1$@ at %2$@"
+          }
+        }
+      }
+    },
+    "temperature %@, dewpoint %@" : {
+      "comment" : "remark",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "temperature %1$@, dewpoint %2$@"
+          }
+        }
+      }
+    },
+    "temporarily from %@" : {
+      "comment" : "TAF period (date range)"
+    },
+    "thunderstorm-associated" : {
+      "comment" : "precipitation descriptor"
+    },
+    "thunderstorms" : {
+      "comment" : "thunderstorm remark part\nweather phenomenon"
+    },
+    "thunderstorms %@" : {
+      "comment" : "thunderstorm events remark"
+    },
+    "thunderstorms began at %@" : {
+      "comment" : "thunderstorm event (time)"
+    },
+    "thunderstorms ended at %@" : {
+      "comment" : "thunderstorm event (time)"
+    },
+    "tornado" : {
+      "comment" : "tornadic phenomenon"
+    },
+    "tower" : {
+      "comment" : "visibility source"
+    },
+    "tower visibility" : {
+      "comment" : "visibility sourcer"
+    },
+    "towering cumulonimbus" : {
+      "comment" : "ceiling type"
+    },
+    "trace or no icing" : {
+      "comment" : "icing intensity"
+    },
+    "trace or none" : {
+      "comment" : "icing intensity"
+    },
+    "turbulence" : {
+      "comment" : "turbulence type"
+    },
+    "unknown precipitation" : {
+      "comment" : "weather phenomenon"
+    },
+    "variable at %@" : {
+      "comment" : "winds (variable at speed)"
+    },
+    "variable between %@ and %@" : {
+      "comment" : "visibility",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "variable between %1$@ and %2$@"
+          }
+        }
+      }
+    },
+    "variable from %@ to %@" : {
+      "comment" : "remark (coverage, coverage)",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "variable from %1$@ to %2$@"
+          }
+        }
+      }
+    },
+    "virga" : {
+      "comment" : "precipitation"
+    },
+    "visibility %@ %@" : {
+      "comment" : "remark",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "visibility %1$@ %2$@"
+          }
+        }
+      }
+    },
+    "volcanic ash" : {
+      "comment" : "weather phenomenon"
+    },
+    "W" : {
+      "comment" : "direction"
+    },
+    "waterspout" : {
+      "comment" : "tornadic phenomenon"
+    },
+    "west" : {
+      "comment" : "direction"
+    },
+    "wind data estimated" : {
+      "comment" : "remark"
+    },
+    "wind shear %@ at %@" : {
+      "comment" : "windshear",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "wind shear %1$@ at %2$@"
+          }
+        }
+      }
+    },
+    "wind shift at %@" : {
+      "comment" : "remark"
+    },
+    "wind shift at %@ (frontal passage)" : {
+      "comment" : "remark"
+    },
+    "wind shift at <unknown>" : {
+      "comment" : "remark"
+    },
+    "wind shift at <unknown> (frontal passage)" : {
+      "comment" : "remark"
+    },
+    "wind variable from %@ to %@" : {
+      "comment" : "remark",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "wind variable from %1$@ to %2$@"
+          }
+        }
+      }
+    },
+    "winds change to %@ after %@" : {
+      "comment" : "remark",
+      "localizations" : {
+        "en" : {
+          "stringUnit" : {
+            "state" : "new",
+            "value" : "winds change to %1$@ after %2$@"
+          }
+        }
+      }
+    },
+    "winds change to %@ after <unknown>" : {
+      "comment" : "remark"
+    }
+  },
+  "version" : "1.0"
+}

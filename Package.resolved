@@ -1,6 +1,15 @@
 {
-  "originHash" : "8ce2daf30b9c0cc18fda1c52302f2556a1198fca16c5d432d24dff34d3d17766",
+  "originHash" : "032f8d1d0ebc5cafc1ea563b7009db9c9a569df93e751d5516b8dcb06124f4d0",
   "pins" : [
+    {
+      "identity" : "buildablemacro",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/Mr-Alirezaa/BuildableMacro.git",
+      "state" : {
+        "revision" : "06e536cd8ed5ab795c8760f8354348d7398f20f6",
+        "version" : "0.5.0"
+      }
+    },
     {
       "identity" : "cwlcatchexception",
       "kind" : "remoteSourceControl",
@@ -89,6 +98,15 @@
       "state" : {
         "revision" : "0a5bc04095a675662cf24757cc0640aa2204253b",
         "version" : "1.0.2"
+      }
+    },
+    {
+      "identity" : "swift-syntax",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-syntax.git",
+      "state" : {
+        "revision" : "2bc86522d115234d1f588efe2bcb4ce4be8f8b82",
+        "version" : "510.0.3"
       }
     }
   ],

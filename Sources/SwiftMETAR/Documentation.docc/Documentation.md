@@ -52,9 +52,9 @@ dependencies: [
 Unit testing is done using Nimble and Quick. Simply test the `SwiftMETAR` target
 to run tests.
 
-A `SwiftMETAR_Gauntlet` target is also available to do an end-to-end test with
-live data. This will download METARs and TAFs from the AWC server and attempt to
-parse them. Any failures will be logged with the failing string.
+The `DecodeMETAR` and `DecodeTAF` targets provide command-line tools that allow
+you to decode METARs and TAFs into human-readable text. They demonstrate the
+locale-aware formatting tools available with the `METARFormatting` library.
 
 ## Topics
 
