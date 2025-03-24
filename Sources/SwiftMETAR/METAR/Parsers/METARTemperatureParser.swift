@@ -16,14 +16,12 @@ class METARTemperatureParser {
         if parts.isEmpty { return (nil, nil) }
         let tempStr = String(parts[0])
 
-        if let match = try rx.wholeMatch(in: tempStr) {
+        return try rx.wholeMatch(in: tempStr).map { match in
             guard let temp = tempParser.parse(match) else { return (nil, nil) }
             let dp = dewpointParser.parse(match)
 
             parts.removeFirst()
             return (temp, dp)
-        }
-
-        return (nil, nil)
+        } ?? (nil, nil)
     }
 }

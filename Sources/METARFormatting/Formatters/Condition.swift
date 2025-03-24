@@ -64,11 +64,7 @@ public extension Condition {
 
 public extension FormatStyle where Self == Condition.FormatStyle {
     static func condition(heightFormatter: Measurement<UnitLength>.FormatStyle? = nil) -> Self {
-        if let heightFormatter {
-            .init(heightFormatter: heightFormatter)
-        } else {
-            .init()
-        }
+        heightFormatter.map { .init(heightFormatter: $0) } ?? .init()
     }
     
     static var condition: Self { .init() }

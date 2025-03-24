@@ -24,11 +24,7 @@ public extension RemarkEntry {
 
 public extension FormatStyle where Self == RemarkEntry.FormatStyle {
     static func remark(dateFormat: Date.FormatStyle? = nil) -> Self {
-        if let dateFormat {
-            .init(dateFormat: dateFormat)
-        } else {
-            .init()
-        }
+        dateFormat.map { .init(dateFormat: $0) } ?? .init()
     }
     
     static var remark: Self { .init() }

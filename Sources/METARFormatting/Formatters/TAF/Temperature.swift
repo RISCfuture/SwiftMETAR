@@ -48,15 +48,10 @@ public extension TAF.Temperature {
 public extension FormatStyle where Self == TAF.Temperature.FormatStyle {
     static func temperature(tempFormat: Measurement<UnitTemperature>.FormatStyle? = nil,
                             dateFormat: Date.FormatStyle? = nil) -> Self {
-        if let tempFormat, let dateFormat {
-            .init(tempFormat: tempFormat, dateFormat: dateFormat)
-        } else if let tempFormat {
-            .init(tempFormat: tempFormat)
-        } else if let dateFormat {
-            .init(dateFormat: dateFormat)
-        } else {
+        zipOptionals(tempFormat, dateFormat).map { .init(tempFormat: $0, dateFormat: $1) } ??
+            tempFormat.map { .init(tempFormat: $0) } ??
+            dateFormat.map { .init(dateFormat: $0) } ??
             .init()
-        }
     }
     
     static var temperature: Self { .init() }

@@ -317,8 +317,7 @@ public extension Remark {
 
 public extension FormatStyle where Self == Remark.FormatStyle {
     static func remark(dateFormat: Date.FormatStyle? = nil) -> Self {
-        if let dateFormat { return .init(dateFormat: dateFormat) }
-        else { return .init() }
+        dateFormat.map { .init(dateFormat: $0) } ?? .init()
     }
     
     static var remark: Self { .init() }

@@ -64,15 +64,10 @@ public extension Visibility {
 public extension FormatStyle where Self == Visibility.FormatStyle {
     static func visibility(distanceFormat: Measurement<UnitLength>.FormatStyle? = nil,
                            width: Visibility.FormatStyle.Width? = nil) -> Self {
-        if let distanceFormat, let width {
-            .init(width: width, distanceFormat: distanceFormat)
-        } else if let distanceFormat {
-            .init(distanceFormat: distanceFormat)
-        } else if let width {
-            .init(width: width)
-        } else {
+        zipOptionals(width, distanceFormat).map { .init(width: $0, distanceFormat: $1) } ??
+            distanceFormat.map { .init(distanceFormat: $0) } ??
+            width.map { .init(width: $0) } ??
             .init()
-        }
     }
     
     static var visibility: Self { .init() }

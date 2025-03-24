@@ -25,11 +25,7 @@ public extension Turbulence {
 
 public extension FormatStyle where Self == Turbulence.FormatStyle {
     static func turbulence(heightFormat: Measurement<UnitLength>.FormatStyle? = nil) -> Self {
-        if let heightFormat {
-            .init(heightFormat: heightFormat)
-        } else {
-            .init()
-        }
+        heightFormat.map { .init(heightFormat: $0) } ?? .init()
     }
     
     static var turbulence: Self { .init() }

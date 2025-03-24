@@ -55,15 +55,10 @@ public extension Wind {
 public extension FormatStyle where Self == Wind.FormatStyle {
     static func wind(directionFormat: Measurement<UnitAngle>.FormatStyle? = nil,
                      speedFormat: Measurement<UnitSpeed>.FormatStyle? = nil) -> Self {
-        if let directionFormat, let speedFormat {
-            .init(directionFormat: directionFormat, speedFormat: speedFormat)
-        } else if let directionFormat {
-            .init(directionFormat: directionFormat)
-        } else if let speedFormat {
-            .init(speedFormat: speedFormat)
-        } else {
+        zipOptionals(directionFormat, speedFormat).map { .init(directionFormat: $0, speedFormat: $1) } ??
+            directionFormat.map { .init(directionFormat: $0) } ??
+            speedFormat.map { .init(speedFormat: $0) } ??
             .init()
-        }
     }
     
     static var wind: Self { .init() }

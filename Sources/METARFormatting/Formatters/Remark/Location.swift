@@ -17,10 +17,7 @@ public extension Remark.Location {
 public extension FormatStyle where Self == Remark.Location.FormatStyle {
     static func location(distanceWidth: Measurement<UnitLength>.FormatStyle.UnitWidth,
                          directionWidth: Remark.Direction.FormatStyle.Width? = nil) -> Self {
-        if let directionWidth {
-            .init(distanceWidth: distanceWidth, directionWidth: directionWidth)
-        } else {
+        directionWidth.map { .init(distanceWidth: distanceWidth, directionWidth: $0) } ??
             .init(distanceWidth: distanceWidth)
-        }
     }
 }

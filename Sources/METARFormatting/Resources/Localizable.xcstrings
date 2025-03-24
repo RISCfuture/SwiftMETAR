@@ -15,13 +15,13 @@
     "%@ (augmented)" : {
       "comment" : "observation type remark"
     },
-    "%@ (currently %@)" : {
+    "%@ (change: %@)" : {
       "comment" : "remark",
       "localizations" : {
         "en" : {
           "stringUnit" : {
             "state" : "new",
-            "value" : "%1$@ (currently %2$@)"
+            "value" : "%1$@ (change: %2$@)"
           }
         }
       }

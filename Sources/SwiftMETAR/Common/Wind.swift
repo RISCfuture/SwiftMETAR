@@ -46,8 +46,8 @@ public enum Wind: Codable, Equatable, Sendable {
                 let speed = try container.decode(Speed.self, forKey: .speed)
                 let headingLow = try container.decode(Optional<UInt16>.self, forKey: .headingLow)
                 let headingHigh = try container.decode(Optional<UInt16>.self, forKey: .headingHigh)
-                if let low = headingLow, let high = headingHigh {
-                    self = .variable(speed: speed, headingRange: (low, high))
+                if let headingLow, let headingHigh {
+                    self = .variable(speed: speed, headingRange: (headingLow, headingHigh))
                 } else {
                     self = .variable(speed: speed)
                 }
@@ -100,17 +100,8 @@ public enum Wind: Codable, Equatable, Sendable {
             case .calm: if case .calm = rhs { return true } else { return false }
             case let .variable(lhsSpeed, lhsRange):
                 guard case let .variable(rhsSpeed, rhsRange) = rhs else { return false }
-                if let lhsRange = lhsRange {
-                    if let rhsRange = rhsRange {
-                        // both not nil
-                        return lhsSpeed == rhsSpeed
-                        && lhsRange.0 == rhsRange.0 && lhsRange.1 == rhsRange.1
-                    }
-                    else { return false } // one nil, one not
-                } else {
-                    if let _ = rhsRange { return false } // one nil, one not
-                    else { return lhsSpeed == rhsSpeed } // both nil
-                }
+                if lhsRange == nil && rhsRange == nil { return true }
+                return zipOptionals(lhsRange, rhsRange).map { $0 == $1 && lhsSpeed == rhsSpeed } ?? false
             case let .direction(lhsHeading, lhsSpeed, lhsGust):
                 guard case let .direction(rhsHeading, rhsSpeed, rhsGust) = rhs else { return false }
                 return lhsHeading == rhsHeading && lhsSpeed == rhsSpeed && lhsGust == rhsGust

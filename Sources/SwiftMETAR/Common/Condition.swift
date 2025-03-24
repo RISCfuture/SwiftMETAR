@@ -150,12 +150,13 @@ public enum Condition: Codable, Equatable, Sendable {
 }
 
 fileprivate func decodeHeightAndTypeFrom(container: KeyedDecodingContainer<Condition.CodingKeys>) throws -> (UInt, Condition.CeilingType?) {
-    let height = try container.decode(UInt.self, forKey: .height)
-    if let typeStr = try container.decode(Optional<String>.self, forKey: .type) {
+    let height = try container.decode(UInt.self, forKey: .height),
+        type = try container.decode(Optional<String>.self, forKey: .type).map { typeStr in
         guard let type = Condition.CeilingType(rawValue: typeStr) else {
             throw DecodingError.dataCorruptedError(forKey: .type, in: container, debugDescription: "Unknown enum value")
         }
-        return (height, type)
+        return type
     }
-    return (height, nil)
+
+    return (height, type)
 }

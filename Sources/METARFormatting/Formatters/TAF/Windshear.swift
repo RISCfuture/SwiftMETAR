@@ -25,15 +25,10 @@ public extension Windshear {
 public extension FormatStyle where Self == Windshear.FormatStyle {
     static func windshear(windFormat: Wind.FormatStyle? = nil,
                           heightFormat: Measurement<UnitLength>.FormatStyle? = nil) -> Self {
-        if let windFormat, let heightFormat {
-            .init(windFormat: windFormat, heightFormat: heightFormat)
-        } else if let windFormat {
-            .init(windFormat: windFormat)
-        } else if let heightFormat {
-            .init(heightFormat: heightFormat)
-        } else {
+        zipOptionals(windFormat, heightFormat).map { .init(windFormat: $0, heightFormat: $1) } ??
+            windFormat.map { .init(windFormat: $0) } ??
+            heightFormat.map { .init(heightFormat: $0) } ??
             .init()
-        }
     }
     
     static var windshear: Self { .init() }

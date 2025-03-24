@@ -23,11 +23,7 @@ public extension Ratio {
 
 public extension FormatStyle where Self == Ratio.FormatStyle {
     static func ratio(numberFormatter: IntegerFormatStyle<Int>? = nil) -> Self {
-        if let numberFormatter {
-            .init(numberFormatter: numberFormatter)
-        } else {
-            .init()
-        }
+        numberFormatter.map { .init(numberFormatter: $0) } ?? .init()
     }
     
     static var ratio: Self { .init() }

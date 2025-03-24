@@ -18,11 +18,7 @@ public extension RunwayVisibility {
 
 public extension FormatStyle where Self == RunwayVisibility.FormatStyle {
     static func visibility(visibilityFormat: Visibility.FormatStyle? = nil) -> Self {
-        if let visibilityFormat {
-            .init(visibilityFormat: visibilityFormat)
-        } else {
-            .init()
-        }
+        visibilityFormat.map { .init(visibilityFormat: $0) } ?? .init()
     }
     
     static var visibility: Self { .init() }
