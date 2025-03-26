@@ -6,13 +6,13 @@ public enum Condition: Codable, Equatable, Sendable {
     /// Sky clear below 12,000 feet (USA) or 25,000 feet (Canada). Typically
     /// reported by automated ceilometers.
     case clear
-    
+
     /// Sky clear. Typically reported by human observers.
     case skyClear
-    
+
     /// No significant clouds below 5,000 feet and no TCU or CB.
     case noSignificantClouds
-    
+
     /**
      Included outside US region as a replacement of
      visibility, cloud, and weather groups.
@@ -24,7 +24,7 @@ public enum Condition: Codable, Equatable, Sendable {
      or low drifting dust, sand or snow is occurring (no significant weather).
      */
     case cavok
-    
+
     /**
      Cloud coverage between 1 and 2 oktas.
      
@@ -32,7 +32,7 @@ public enum Condition: Codable, Equatable, Sendable {
      - Parameter type: The vertical development, if any.
      */
     case few(_ height: UInt, type: CeilingType? = nil)
-    
+
     /**
      Cloud coverage between 3 and 4 oktas.
      
@@ -40,7 +40,7 @@ public enum Condition: Codable, Equatable, Sendable {
      - Parameter type: The vertical development, if any.
      */
     case scattered(_ height: UInt, type: CeilingType? = nil)
-    
+
     /**
      Cloud coverage between 5 and 7 oktas.
      
@@ -48,7 +48,7 @@ public enum Condition: Codable, Equatable, Sendable {
      - Parameter type: The vertical development, if any.
      */
     case broken(_ height: UInt, type: CeilingType? = nil)
-    
+
     /**
      Cloud coverage of 8 oktas.
      
@@ -56,7 +56,7 @@ public enum Condition: Codable, Equatable, Sendable {
      - Parameter type: The vertical development, if any.
      */
     case overcast(_ height: UInt, type: CeilingType? = nil)
-    
+
     /**
      Cloud coverage is obscured by low-visibility conditions; the height of the
      obscuration layer is reported instead.
@@ -65,7 +65,7 @@ public enum Condition: Codable, Equatable, Sendable {
                           AGL.
      */
     case indefinite(_ ceiling: UInt)
-    
+
     /// The cloud height as a `Measurement`, which can be converted to other
     /// units. Returns `nil` for conditions without cloud heights.
     public var heightMeasurement: Measurement<UnitLength>? {
@@ -78,7 +78,7 @@ public enum Condition: Codable, Equatable, Sendable {
             default: nil
         }
     }
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         switch try container.decode(String.self, forKey: .coverage) {
@@ -104,7 +104,7 @@ public enum Condition: Codable, Equatable, Sendable {
                 throw DecodingError.dataCorruptedError(forKey: .type, in: container, debugDescription: "Unknown enum value")
         }
     }
-        
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
@@ -133,23 +133,23 @@ public enum Condition: Codable, Equatable, Sendable {
             try container.encode(height, forKey: .height)
         }
     }
-    
+
     /// Types of vertical development that a cloud layer can have.
     public enum CeilingType: String, Codable, RegexCases, Sendable {
-        
+
         /// Layer consists of cumulonimbus clouds.
         case cumulonimbus = "CB"
-        
+
         /// Layer consists of towering cumulus clouds.
         case toweringCumulus = "TCU"
     }
-    
+
     enum CodingKeys: String, CodingKey {
         case coverage, height, type
     }
 }
 
-fileprivate func decodeHeightAndTypeFrom(container: KeyedDecodingContainer<Condition.CodingKeys>) throws -> (UInt, Condition.CeilingType?) {
+private func decodeHeightAndTypeFrom(container: KeyedDecodingContainer<Condition.CodingKeys>) throws -> (UInt, Condition.CeilingType?) {
     let height = try container.decode(UInt.self, forKey: .height),
         type = try container.decode(Optional<String>.self, forKey: .type).map { typeStr in
         guard let type = Condition.CeilingType(rawValue: typeStr) else {

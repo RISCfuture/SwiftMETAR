@@ -9,6 +9,7 @@ final class LightningParser: RemarkParser {
     private let typesRef = Reference<Substring?>()
     private let proximityRef = Reference<Remark.Proximity?>()
 
+    // swiftlint:disable force_try
     private lazy var rx = Regex {
         Anchor.wordBoundary
         Optionally {
@@ -29,8 +30,9 @@ final class LightningParser: RemarkParser {
         }
         Anchor.wordBoundary
     }
+    // swiftlint:enable force_try
 
-    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
+    func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
         guard let result = try rx.firstMatch(in: remarks) else { return nil }
 
         let frequency = result[frequencyRef],

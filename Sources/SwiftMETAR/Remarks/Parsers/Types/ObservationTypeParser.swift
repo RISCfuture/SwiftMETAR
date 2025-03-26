@@ -17,8 +17,8 @@ final class ObservationTypeParser: RemarkParser {
         Capture(as: augmentedRef) { Optionally { "A" } } transform: { $0 == "A" }
         Anchor.wordBoundary
     }
-    
-    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
+
+    func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
         guard let result = try rx.firstMatch(in: remarks) else { return nil }
         let typeStr = String(result[typeRef]).replacingOccurrences(of: "0", with: "O"),
             augmented = result[augmentedRef]

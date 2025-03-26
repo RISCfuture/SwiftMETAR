@@ -6,6 +6,7 @@ class WeatherParser {
     private let descriptorRef = Reference<Weather.Descriptor?>()
     private let phenomenaRef = Reference<Substring>()
 
+    // swiftlint:disable force_try
     private lazy var weatherRx = Regex {
         Anchor.startOfSubject
         Capture(as: intensityRef) {
@@ -24,9 +25,10 @@ class WeatherParser {
         Repeat("/", 2...)
         Anchor.endOfSubject
     }
+    // swiftlint:enable force_try
 
-    func parse(_ parts: inout Array<String.SubSequence>) throws -> Array<Weather>? {
-        var weather = Array<Weather>()
+    func parse(_ parts: inout [String.SubSequence]) throws -> [Weather]? {
+        var weather = [Weather]()
 
         while true {
             if parts.isEmpty { return weather }

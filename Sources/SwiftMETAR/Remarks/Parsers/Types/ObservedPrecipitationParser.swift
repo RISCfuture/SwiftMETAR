@@ -8,6 +8,7 @@ final class ObservedPrecipitationParser: RemarkParser {
     private let proximityRef = Reference<Remark.Proximity?>()
     private let directionsParser = RemarkDirectionsParser()
 
+    // swiftlint:disable force_try
     private lazy var rx = Regex {
         Anchor.wordBoundary
         Capture(as: precipRef) {
@@ -25,8 +26,9 @@ final class ObservedPrecipitationParser: RemarkParser {
         }
         Anchor.wordBoundary
     }
+    // swiftlint:enable force_try
 
-    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
+    func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
         guard let result = try rx.firstMatch(in: remarks) else { return nil }
 
         let precip = result[precipRef],

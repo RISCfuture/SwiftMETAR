@@ -2,7 +2,7 @@ import Foundation
 import SwiftMETAR
 
 public extension Remark.TornadicActivityType {
-    
+
     /// Formatter for `Remark.TornadicActivity`
     struct FormatStyle: Foundation.FormatStyle, Sendable {
         public func format(_ value: Remark.TornadicActivityType) -> String {
@@ -15,6 +15,8 @@ public extension Remark.TornadicActivityType {
     }
 }
 
+// swiftlint:disable missing_docs
 public extension FormatStyle where Self == Remark.TornadicActivityType.FormatStyle {
     static var tornadicActivity: Self { .init() }
 }
+// swiftlint:enable missing_docs

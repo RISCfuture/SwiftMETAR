@@ -8,6 +8,7 @@ final class CloudTypesParser: RemarkParser {
     private let midRef = Reference<Remark.MiddleCloudType>()
     private let highRef = Reference<Remark.HighCloudType>()
 
+    // swiftlint:disable force_try
     private lazy var rx = Regex {
         Anchor.wordBoundary
         "8/"
@@ -15,8 +16,9 @@ final class CloudTypesParser: RemarkParser {
         Capture(as: midRef) { try! Remark.MiddleCloudType.rx } transform: { .init(rawValue: String($0))! }
         Capture(as: highRef) { try! Remark.HighCloudType.rx } transform: { .init(rawValue: String($0))! }
     }
+    // swiftlint:enable force_try
 
-    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
+    func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
         guard let result = try rx.firstMatch(in: remarks) else { return nil }
         let low = result[lowRef], mid = result[midRef], high = result[highRef]
 

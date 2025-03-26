@@ -12,12 +12,12 @@ class TurbulenceParser {
         Capture(as: typeRef) {
             CharacterClass("0"..."9", .anyOf("X"))
         } transform: { $0.first! }
-        Capture(as: baseRef) { Repeat(.digit, count: 3) } transform: { UInt($0)!*100 }
-        Capture(as: depthRef) { .digit } transform: { UInt($0)!*1000 }
+        Capture(as: baseRef) { Repeat(.digit, count: 3) } transform: { .init($0)! * 100 }
+        Capture(as: depthRef) { .digit } transform: { .init($0)! * 1000 }
         Anchor.wordBoundary
     }
 
-    func parse(_ parts: inout Array<String.SubSequence>) throws -> Turbulence? {
+    func parse(_ parts: inout [String.SubSequence]) throws -> Turbulence? {
         guard !parts.isEmpty else { return nil }
         let turbStr = String(parts[0])
         guard let result = try rx.wholeMatch(in: turbStr) else { return nil }
@@ -28,8 +28,8 @@ class TurbulenceParser {
             depth = result[depthRef]
 
         var intensity = Turbulence.Intensity.none
-        var location: Turbulence.Location? = nil
-        var frequency: Turbulence.Frequency? = nil
+        var location: Turbulence.Location?
+        var frequency: Turbulence.Frequency?
         switch type {
             case "0":
                 break

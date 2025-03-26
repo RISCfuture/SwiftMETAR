@@ -26,14 +26,14 @@ extension Date {
             default:
                 preconditionFailure("Can't get start of \(period)")
         }
-        
+
         return zuluCal.date(from: components)
     }
-    
+
     func next(_ components: DateComponents) -> Date? {
         return zuluCal.nextDate(after: self, matching: components, matchingPolicy: .nextTime)
     }
-    
+
     func next(year: Int? = nil, month: Int? = nil, day: Int? = nil, hour: Int? = nil, minute: Int? = nil, second: Int? = nil) -> Date? {
         return next(.init(year: year, month: month, day: day, hour: hour, minute: minute, second: second))
     }
@@ -46,6 +46,6 @@ func applyComponents(_ components: DateComponents, within component: Calendar.Co
     guard let date = referenceStart.next(components) else {
         return nil
     }
-    
+
     return zuluCal.dateComponents(in: zulu, from: date)
 }

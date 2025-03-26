@@ -9,11 +9,11 @@ final class HourlyPrecipitationAmountParser: RemarkParser {
     private lazy var rx = Regex {
         Anchor.wordBoundary
         "P"
-        Capture(as: amountRef) { Repeat(.digit, count: 4) } transform: { Float($0)!/100.0 }
+        Capture(as: amountRef) { Repeat(.digit, count: 4) } transform: { .init($0)! / 100.0 }
         Anchor.wordBoundary
     }
 
-    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
+    func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
         guard let result = try rx.firstMatch(in: remarks) else { return nil }
         let amount = result[amountRef]
 

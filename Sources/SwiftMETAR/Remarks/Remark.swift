@@ -9,10 +9,10 @@ public enum Remark: Codable, Equatable, Sendable {
      following the publication of the METAR.
      */
     case nosig
-    
+
     /// An aircraft mishap has occurred.
     case aircraftMishap
-    
+
     /**
      Observed cloud types.
      
@@ -21,14 +21,14 @@ public enum Remark: Codable, Equatable, Sendable {
      - Parameter high: Observed cloud types above 20,000 feet AGL.
      */
     case cloudTypes(low: LowCloudType, middle: MiddleCloudType, high: HighCloudType)
-    
+
     /**
      METAR correction was issued.
      
      - Parameter time: The time that the correction was issued.
      */
     case correction(time: DateComponents)
-    
+
     /**
      Daily accumulated precipitation amount.
      
@@ -36,7 +36,7 @@ public enum Remark: Codable, Equatable, Sendable {
      - SeeAlso: ``precipitationAmountMeasurement``
      */
     case dailyPrecipitationAmount(_ amount: Float?)
-    
+
     /**
      Daily temperature extremes.
      
@@ -45,7 +45,7 @@ public enum Remark: Codable, Equatable, Sendable {
      - SeeAlso: ``lowTemperatureMeasurement``, ``highTemperatureMeasurement``
      */
     case dailyTemperatureExtremes(low: Float, high: Float)
-    
+
     /**
      Largest recorded hailstone size.
      
@@ -53,7 +53,7 @@ public enum Remark: Codable, Equatable, Sendable {
      - SeeAlso: ``hailstoneSizeMeasurement``
      */
     case hailstoneSize(_ size: Ratio)
-    
+
     /**
      Hourly accumulated precipitation amount.
      
@@ -61,10 +61,10 @@ public enum Remark: Codable, Equatable, Sendable {
      - SeeAlso: ``precipitationAmountMeasurement``
      */
     case hourlyPrecipitationAmount(_ amount: Float)
-    
+
     /// Last METAR or TAF before regular reporting stops for the night.
     case last
-    
+
     /**
      Observed or detected lightning.
      
@@ -75,35 +75,35 @@ public enum Remark: Codable, Equatable, Sendable {
                              be empty is lightning is overhead.
      */
     case lightning(frequency: Frequency?, types: Set<LightningType>, proximity: Proximity?, directions: Set<Direction>)
-    
+
     /// An automated system detects that maintenance is needed on the system.
     case maintenance
-    
+
     /**
      The ID of the naval weather center forecaster who produced this TAF.
      
      - Parameter center: The naval weather center that produced this TAF.
      - Parameter ID: The forecaster ID.
      */
-    case navalForecaster(center: Remark.NavalWeatherCenter, ID: UInt)
-    
+    case navalForecaster(center: Self.NavalWeatherCenter, ID: UInt)
+
     /**
      Time of next forecast, when regular forecasting has stopped for the day.
      
      - Parameter date: The time that forecasting will resume.
      */
     case next(_ date: DateComponents)
-    
+
     /**
      No forecast amendments will be made after the given date.
      
      - Parameter date: The last time that forecast amendments will be published.
      */
     case noAmendmentsAfter(_ date: DateComponents)
-    
+
     /// No changes in weather conditions will be reported until the next METAR.
     case noSPECI
-    
+
     /**
      Weather obscuration was observed in the vicinity.
      
@@ -113,7 +113,7 @@ public enum Remark: Codable, Equatable, Sendable {
      - SeeAlso: ``heightMeasurement``
      */
     case obscuration(type: Weather.Phenomenon, amount: Coverage?, height: UInt)
-    
+
     /**
      The type of automated observing station.
      
@@ -121,7 +121,7 @@ public enum Remark: Codable, Equatable, Sendable {
      - Parameter augmented: `true` if a human observer has augmented the report.
      */
     case observationType(_ type: ObservationType, augmented: Bool)
-    
+
     /**
      Precipitation was observed in the vicinity.
      
@@ -131,7 +131,7 @@ public enum Remark: Codable, Equatable, Sendable {
                              May be blank if proximity is overhead.
      */
     case observedPrecipitation(type: ObservedPrecipitationType, proximity: Proximity?, directions: Set<Direction>)
-    
+
     /**
      Observed visibility at a location.
      
@@ -140,7 +140,7 @@ public enum Remark: Codable, Equatable, Sendable {
      - SeeAlso: ``distanceMeasurement``
      */
     case observedVisibility(source: VisibilitySource, distance: Ratio)
-    
+
     /**
      Maximum recorded wind speed for the observation period.
      
@@ -148,7 +148,7 @@ public enum Remark: Codable, Equatable, Sendable {
      - Parameter time: The time that peak wind speed occurred.
      */
     case peakWinds(_ wind: Wind, time: DateComponents)
-    
+
     /**
      Measured ice accretion for a recording period.
      
@@ -157,7 +157,7 @@ public enum Remark: Codable, Equatable, Sendable {
      - SeeAlso: ``precipitationAmountMeasurement``
      */
     case periodicIceAccretionAmount(period: UInt8, amount: Float)
-    
+
     /**
      Measured precipitation for a recording period.
      
@@ -166,7 +166,7 @@ public enum Remark: Codable, Equatable, Sendable {
      - SeeAlso: ``precipitationAmountMeasurement``
      */
     case periodicPrecipitationAmount(period: UInt, amount: Float?)
-    
+
     /**
      Precipitation beginning and/or ending during the recording period.
      Precipitation could have began or ended multiple times.
@@ -174,7 +174,7 @@ public enum Remark: Codable, Equatable, Sendable {
      - Parameter events: Individual events of precipitation beginning or ending.
      */
     case precipitationBeginEnd(events: Array<PrecipitationEvent>)
-    
+
     /**
      Sea-level pressure trend over the past three hours.
      
@@ -184,14 +184,14 @@ public enum Remark: Codable, Equatable, Sendable {
      - SeeAlso: ``pressureChangeMeasurement
      */
     case pressureTendency(character: PressureCharacter, change: Float)
-    
+
     /**
      Pressure was rising or falling rapidly.
      
      - Parameter change: Whether the pressure was rising or falling.
      */
     case rapidPressureChange(_ change: RapidPressureChange)
-    
+
     /**
      Snow depth increased by 1+ inches in the past hour.
      
@@ -200,7 +200,7 @@ public enum Remark: Codable, Equatable, Sendable {
      - SeeAlso: ``depthIncreaseMeasurment``, ``totalDepthMeasurement``
      */
     case rapidSnowIncrease(_ depthIncrease: UInt, totalDepth: UInt)
-    
+
     /**
      The relative humidity, derived from temperature and dewpoint.
      
@@ -208,7 +208,7 @@ public enum Remark: Codable, Equatable, Sendable {
                           saturated air.
      */
     case relativeHumidity(_ percent: UInt)
-    
+
     /**
      The recorded ceiling at a runway departure end.
      
@@ -217,7 +217,7 @@ public enum Remark: Codable, Equatable, Sendable {
      - SeeAlso: ``heightMeasurement``
      */
     case runwayCeiling(runway: String, height: UInt)
-    
+
     /**
      The recorded visibility at a runway departure end.
      
@@ -226,7 +226,7 @@ public enum Remark: Codable, Equatable, Sendable {
      - SeeAlso: ``distanceMeasurement``
      */
     case runwayVisibility(runway: String, distance: Ratio)
-    
+
     /**
      Recorded sea-level pressure.
      
@@ -234,7 +234,7 @@ public enum Remark: Codable, Equatable, Sendable {
      - SeeAlso: ``pressureMeasurement``
      */
     case seaLevelPressure(_ pressure: Float?)
-    
+
     /**
      Recorded visibility in a certain direction.
      
@@ -243,14 +243,14 @@ public enum Remark: Codable, Equatable, Sendable {
      - SeeAlso: ``distanceMeasurement``
      */
     case sectorVisibility(direction: Direction, distance: Ratio)
-    
+
     /**
      A weather sensor is inoperative.
      
      - Parameter type: The inoperative sensor.
      */
     case inoperativeSensor(_ type: SensorType)
-    
+
     /**
      Significant clouds observed in the vicinity.
      
@@ -264,7 +264,7 @@ public enum Remark: Codable, Equatable, Sendable {
      - Parameter apparent: `true` if cloud type is not confirmed.
      */
     case significantClouds(type: SignificantCloudType, directions: Set<Direction>, movingDirection: Direction?, distant: Bool, apparent: Bool)
-    
+
     /**
      Highest or lowest temperature recorded in the last six-hour observation
      period.
@@ -274,7 +274,7 @@ public enum Remark: Codable, Equatable, Sendable {
      - SeeAlso: ``temperatureMeasurement``
      */
     case sixHourTemperatureExtreme(type: Extreme, temperature: Float)
-    
+
     /**
      Current recorded snow depth.
      
@@ -282,7 +282,7 @@ public enum Remark: Codable, Equatable, Sendable {
     - SeeAlso: ``depthMeasurement``
      */
     case snowDepth(_ depth: UInt)
-    
+
     /**
      Total duration of unobscured sunshine for the previous day. Typically
      recorded with the 0800 UTC report or first 6-hourly period report.
@@ -291,7 +291,7 @@ public enum Remark: Codable, Equatable, Sendable {
      - SeeAlso: ``durationMeasurement``
      */
     case sunshineDuration(_ duration: UInt)
-    
+
     /**
      Exact recorded temperature and dewpoint.
      
@@ -300,7 +300,7 @@ public enum Remark: Codable, Equatable, Sendable {
      - SeeAlso: ``temperatureMeasurement``, ``dewpointMeasurement``
      */
     case temperatureDewpoint(temperature: Float, dewpoint: Float?)
-    
+
     /**
      Thunderstorms beginning and/or ending during the recording period.
      Thunderstorms could have began or ended multiple times.
@@ -308,7 +308,7 @@ public enum Remark: Codable, Equatable, Sendable {
      - Parameter events: Individual events of thunderstorms beginning or ending.
      */
     case thunderstormBeginEnd(events: Array<ThunderstormEvent>)
-    
+
     /**
      Observed thunderstorms in the vicinity of the station.
      
@@ -320,7 +320,7 @@ public enum Remark: Codable, Equatable, Sendable {
                                   direction is unknown.
      */
     case thunderstormLocation(proximity: Proximity?, directions: Set<Direction>, movingDirection: Direction?)
-    
+
     /**
      A columnar vortex was observed in the vicinity of the station.
      
@@ -334,7 +334,7 @@ public enum Remark: Codable, Equatable, Sendable {
                                   if direction is stationary or unknown.
      */
     case tornadicActivity(type: TornadicActivityType, begin: DateComponents?, end: DateComponents?, location: Location, movingDirection: Direction?)
-    
+
     /**
      Ceiling height varies across the observation area.
      
@@ -343,7 +343,7 @@ public enum Remark: Codable, Equatable, Sendable {
      - SeeAlso: ``lowHeightMeasurement``, ``highHeightMeasurement``
      */
     case variableCeilingHeight(low: UInt, high: UInt)
-    
+
     /**
      Prevailing visibility varies across the observation area.
      
@@ -352,7 +352,7 @@ public enum Remark: Codable, Equatable, Sendable {
      - SeeAlso: ``lowVisibilityMeasurement``, ``highVisibilityMeasurement``
      */
     case variablePrevailingVisibility(low: Ratio, high: Ratio)
-    
+
     /**
      Cloud coverage varies across the observation area.
      
@@ -362,7 +362,7 @@ public enum Remark: Codable, Equatable, Sendable {
      - SeeAlso: ``heightMeasurement``
      */
     case variableSkyCondition(low: Coverage, high: Coverage, height: UInt?)
-    
+
     /**
      Wind direction varies during the forecast period. This remark is
      exclusively used in TAFs. Variable winds in a METAR would be encoded in the
@@ -372,7 +372,7 @@ public enum Remark: Codable, Equatable, Sendable {
      - Parameter heading2: A variable wind direction extreme.
      */
     case variableWindDirection(_ heading1: UInt16, _ heading2: UInt16)
-    
+
     /**
      The equivalent water depth of snow on the ground.
      
@@ -380,7 +380,7 @@ public enum Remark: Codable, Equatable, Sendable {
      - SeeAlso: ``depthMeasurement``
      */
     case waterEquivalentDepth(_ depth: Float)
-    
+
     /**
      Wind direction/speed will change after a certain time within the forecast
      period. This remark is used exclusively in TAFs.
@@ -390,10 +390,10 @@ public enum Remark: Codable, Equatable, Sendable {
                         effect.
      */
     case windChange(wind: Wind, after: DateComponents)
-    
+
     /// Wind data is estimated instead of recorded from an anemometer.
     case windDataEstimated
-    
+
     /**
      The wind has shifted during the observation period.
      
@@ -402,54 +402,54 @@ public enum Remark: Codable, Equatable, Sendable {
                                  frontal passage.
      */
     case windShift(time: DateComponents, frontalPassage: Bool)
-    
+
     /**
      A remark that couldn't be parsed.
      
      - Parameter remark: The raw text remark.
      */
     case unknown(_ remark: String)
-    
+
     public enum Frequency: String, Codable, RegexCases, Sendable {
-        
+
         /// For lightning, less than one flash per minute.
         case occasional = "OCNL"
-        
+
         /// For lightning, one to six flashes per minute.
         case frequent = "FRQ"
-        
+
         /// For lightning, more than six flashes per minute.
         case constant = "CONS"
     }
-    
+
     /// A direction and distance.
     public struct Location: Codable, Equatable, Sendable {
-        
+
         /// The direction.
         public let direction: Direction
-        
+
         /// The distance, in statute miles.
         public let distance: UInt
-        
+
         /// The distance, as a measurement.
         public var distanceMeasurement: Measurement<UnitLength> {
             .init(value: Double(distance), unit: .miles)
         }
     }
-    
+
     /// A proximity from an observation station.
     public enum Proximity: String, Codable, RegexCases, Sendable {
 
         /// Within 5 miles of the observer.
         case overhead = "OHD"
-        
+
         /// Between 5 and 10 miles from the observer.
         case vicinity = "VC"
-        
+
         /// Between 10 and 30 miles from the observer.
         case distant = "DSNT"
     }
-    
+
     /// A direction from an observation station.
     public enum Direction: Codable, Sendable {
         case all
@@ -462,44 +462,44 @@ public enum Remark: Codable, Equatable, Sendable {
         case west
         case northwest
     }
-    
+
     /// Cloud coverage amounts, as used in remarks.
     public enum Coverage: String, Codable, Equatable, RegexCases, Sendable {
 
         /// Cloud coverage between 1 and 2 oktas.
         case few = "FEW"
-        
+
         /// Cloud coverage between 3 and 4 oktas.
         case scattered = "SCT"
-        
+
         /// Cloud coverage between 5 and 7 oktas.
         case broken = "BKN"
-        
+
         /// Cloud coverage is 8 oktas.
         case overcast = "OVC"
     }
-    
+
     /// Whether an event began or ended.
     public enum EventType: String, Codable, Equatable, RegexCases, Sendable {
         case began = "B"
         case ended = "E"
     }
-    
+
     /// How critical a remark is to aviation safety.
     public enum Urgency: Int, Codable, Equatable, Sendable, Comparable {
-        
+
         /// Remark could not be parsed.
         case unknown
-        
+
         /// Remark is not critical to aviation safety.
         case routine
-        
+
         /// Remark may be critical to aviation safety.
         case caution
-        
+
         /// Remark is almost certainly critical to aviation safety.
         case urgent
-        
+
         public static func < (lhs: Remark.Urgency, rhs: Remark.Urgency) -> Bool {
             lhs.rawValue < rhs.rawValue
         }

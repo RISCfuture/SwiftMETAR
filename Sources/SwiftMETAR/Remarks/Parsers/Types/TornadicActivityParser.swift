@@ -11,6 +11,7 @@ final class TornadicActivityParser: RemarkParser {
     private let directionParser = RemarkDirectionParser()
     private let movingDirectionParser = RemarkDirectionParser()
 
+    // swiftlint:disable force_try
     private lazy var rx = Regex {
         Anchor.wordBoundary
         Capture(as: typeRef) { try! Remark.TornadicActivityType.rx } transform: { .init(rawValue: String($0))! }
@@ -18,7 +19,7 @@ final class TornadicActivityParser: RemarkParser {
         Capture(as: eventTypeRef) { try! Remark.EventType.rx } transform: { .init(rawValue: String($0))! }
         timeParser.hourOptionalRx
         " "
-        Capture(as: distanceRef) { OneOrMore(.digit) } transform: { UInt($0)! }
+        Capture(as: distanceRef) { OneOrMore(.digit) } transform: { .init($0)! }
         " "
         directionParser.rx
         Optionally {
@@ -30,6 +31,7 @@ final class TornadicActivityParser: RemarkParser {
 
         Anchor.wordBoundary
     }
+    // swiftlint:enable force_try
 
     func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
         guard let result = try rx.firstMatch(in: remarks),
@@ -42,8 +44,8 @@ final class TornadicActivityParser: RemarkParser {
             distance = result[distanceRef],
             movingDirection = movingDirectionParser.parse(result)
 
-        var begin: DateComponents? = nil
-        var end: DateComponents? = nil
+        var begin: DateComponents?
+        var end: DateComponents?
         switch eventType {
             case .began: begin = time
             case .ended: end = time

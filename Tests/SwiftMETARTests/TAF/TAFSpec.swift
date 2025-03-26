@@ -1,6 +1,6 @@
 import Foundation
-import Quick
 import Nimble
+import Quick
 
 @testable import SwiftMETAR
 
@@ -18,13 +18,13 @@ class TAFSpec: AsyncSpec {
                     TEMPO 1204/1208 3SM TSRA OVC030CB
             """
             let forecast = try await TAF.from(string: string)
-            
+
             expect(forecast.issuance).to(equal(.routine))
             expect(forecast.airportID).to(equal("KPIR"))
             expect(forecast.originCalendarDate).to(equal(.this(day: 11, hour: 11, minute: 40)))
             expect(forecast.groups.count).to(equal(7))
-            
-            let groups: Array<TAF.Group> = [
+
+            let groups: [TAF.Group] = [
                 .init(
                     text: "1112/1212 13012KT P6SM BKN100 WS020/35035KT",
                     period: .range(.init(start: .this(day: 11, hour: 12)!, end: .this(day: 12, hour: 12)!)),
@@ -117,10 +117,10 @@ class TAFSpec: AsyncSpec {
                     remarks: [],
                     remarksString: nil)
             ]
-            
+
             expect(forecast.groups).to(equal(groups))
         }
-        
+
         it("parses example #2") {
             let string = """
             TAF AMD KEYW
@@ -132,13 +132,13 @@ class TAFSpec: AsyncSpec {
                     TEMPO 1408/1412 BKN020CB
             """
             let forecast = try await TAF.from(string: string)
-            
+
             expect(forecast.issuance).to(equal(.amended))
             expect(forecast.airportID).to(equal("KEYW"))
             expect(forecast.originCalendarDate).to(equal(.this(day: 13, hour: 15, minute: 55)))
             expect(forecast.groups.count).to(equal(6))
-            
-            let groups: Array<TAF.Group> = [
+
+            let groups: [TAF.Group] = [
                 .init(
                     text: "1316/1412 VRB03KT P6SM VCTS SCT025CB BKN250",
                     period: .range(.init(start: .this(day: 13, hour: 16)!, end: .this(day: 14, hour: 12)!)),
@@ -218,10 +218,10 @@ class TAFSpec: AsyncSpec {
                     remarks: [],
                     remarksString: nil)
             ]
-            
+
             expect(forecast.groups).to(equal(groups))
         }
-        
+
         it("parses example #3") {
             let string = """
             TAF
@@ -234,14 +234,14 @@ class TAFSpec: AsyncSpec {
             RMK NXT FCST BY 00Z=
             """
             let forecast = try await TAF.from(string: string)
-            
+
             expect(forecast.issuance).to(equal(.routine))
             expect(forecast.airportID).to(equal("KCRP"))
             expect(forecast.originCalendarDate).to(equal(.this(day: 11, hour: 17, minute: 30)))
             expect(forecast.groups.count).to(equal(6))
-            expect(forecast.remarks.map { $0.remark }).to(contain(.unknown("NXT FCST BY 00Z=")))
-            
-            let groups: Array<TAF.Group> = [
+            expect(forecast.remarks.map(\.remark)).to(contain(.unknown("NXT FCST BY 00Z=")))
+
+            let groups: [TAF.Group] = [
                 .init(text: "1118/1218 19007KT P6SM SCT030",
                       period: .range(.init(start: .this(day: 11, hour: 18)!, end: .this(day: 12, hour: 18)!)),
                       wind: .direction(190, speed: .knots(7)),
@@ -315,10 +315,10 @@ class TAFSpec: AsyncSpec {
                       remarks: [],
                       remarksString: nil)
             ]
-            
+
             expect(forecast.groups).to(equal(groups))
         }
-        
+
         describe("during") {
             it("returns the conditions active at a time") {
                 let string = """
@@ -332,7 +332,7 @@ class TAFSpec: AsyncSpec {
                         TEMPO 1204/1208 3SM TSRA OVC030CB
                 """
                 let forecast = try await TAF.from(string: string)
-                
+
                 let components = DateComponents.this(day: 12, hour: 2)!
                 let date = zuluCal.date(from: components)!
                 expect(forecast.during(date)).to(equal(
@@ -348,7 +348,7 @@ class TAFSpec: AsyncSpec {
                           remarks: [],
                           remarksString: nil)))
             }
-            
+
             it("returns nil if the time is outside the forecast period") {
                 let string = """
                 TAF KPIR
@@ -361,13 +361,13 @@ class TAFSpec: AsyncSpec {
                         TEMPO 1204/1208 3SM TSRA OVC030CB
                 """
                 let forecast = try await TAF.from(string: string)
-                
+
                 let components = DateComponents.this(day: 10, hour: 2)!
                 let date = zuluCal.date(from: components)!
-                
+
                 expect(forecast.during(date)).to(beNil())
             }
-            
+
             it("parses a TAF without a forecast time") {
                 let string = """
                 TAF KNFG
@@ -378,7 +378,7 @@ class TAFSpec: AsyncSpec {
                     T20/2522Z T12/2611Z
                 """
                 let forecast = try await TAF.from(string: string)
-                
+
                 expect(forecast.originCalendarDate).to(beNil())
                 expect(forecast.groups[0].period).to(equal(.range(.init(start: Date().this(day: 25, hour: 21)!,
                                                                         end: Date().this(day: 26, hour: 21)!))))
@@ -388,7 +388,7 @@ class TAFSpec: AsyncSpec {
                                                                             end: Date().this(day: 26, hour: 12)!))))
                 expect(forecast.groups[3].period).to(equal(.from(Date().this(day: 26, hour: 18, minute: 30)!)))
             }
-            
+
             it("parses group comments") {
                 let string = """
                 TAF KNID
@@ -403,23 +403,23 @@ class TAFSpec: AsyncSpec {
 
                 expect(forecast.groups[0].remarks).to(beEmpty())
                 expect(forecast.groups[0].remarksString).to(beNil())
-                
-                expect(forecast.groups[1].remarks.map { $0.remark }).to(equal([
+
+                expect(forecast.groups[1].remarks.map(\.remark)).to(equal([
                     .windChange(wind: .variable(speed: .knots(5)), after: Date().this(day: 26, hour: 14)!)
                 ]))
                 expect(forecast.groups[1].remarksString).to(equal("WND VRB05KT AFT 2614"))
-                
+
                 expect(forecast.groups[2].remarks).to(beEmpty())
                 expect(forecast.groups[2].remarksString).to(beNil())
-                
+
                 expect(forecast.groups[3].remarks).to(beEmpty())
                 expect(forecast.groups[3].remarksString).to(beNil())
-                
-                expect(forecast.groups[4].remarks.map { $0.remark }).to(contain(.last))
-                expect(forecast.groups[4].remarks.map { $0.remark }).to(contain(.noAmendmentsAfter(Date().this(day: 26, hour: 5)!)))
-                expect(forecast.groups[4].remarks.map { $0.remark }).to(contain(.next(Date().this(day: 26, hour: 15)!)))
+
+                expect(forecast.groups[4].remarks.map(\.remark)).to(contain(.last))
+                expect(forecast.groups[4].remarks.map(\.remark)).to(contain(.noAmendmentsAfter(Date().this(day: 26, hour: 5)!)))
+                expect(forecast.groups[4].remarks.map(\.remark)).to(contain(.next(Date().this(day: 26, hour: 15)!)))
                 expect(forecast.groups[4].remarksString).to(equal("LAST NO AMD AFT 2605 NEXT 2615"))
-                
+
                 expect(forecast.remarks).to(beEmpty())
                 expect(forecast.remarksString).to(beNil())
             }

@@ -5,7 +5,7 @@ public enum Wind: Codable, Equatable, Sendable {
 
     /// No winds detected, or variable winds with speed under 3 knots.
     case calm
-    
+
     /**
      Wind direction is variable.
      
@@ -13,7 +13,7 @@ public enum Wind: Codable, Equatable, Sendable {
      - Parameter headingRange: The range of headings the wind is coming from.
      */
     case variable(speed: Speed, headingRange: (UInt16, UInt16)? = nil)
-    
+
     /**
      Wind has a definite heading and speed.
      
@@ -24,7 +24,7 @@ public enum Wind: Codable, Equatable, Sendable {
                        significantly.
      */
     case direction(_ heading: UInt16, speed: Speed, gust: Speed? = nil)
-    
+
     /**
      Wind has a definite heading range and speed.
      
@@ -36,7 +36,7 @@ public enum Wind: Codable, Equatable, Sendable {
                        significantly.
      */
     case directionRange(_ heading: UInt16, headingRange: (UInt16, UInt16), speed: Speed, gust: Speed? = nil)
-    
+
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         switch try container.decode(String.self, forKey: .type) {
@@ -67,7 +67,25 @@ public enum Wind: Codable, Equatable, Sendable {
                 throw DecodingError.dataCorruptedError(forKey: .type, in: container, debugDescription: "Unknown enum value")
         }
     }
-    
+
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        switch lhs {
+            case .calm:
+                if case .calm = rhs { return true }
+                return false
+            case let .variable(lhsSpeed, lhsRange):
+                guard case let .variable(rhsSpeed, rhsRange) = rhs else { return false }
+                if lhsRange == nil && rhsRange == nil { return true }
+                return zipOptionals(lhsRange, rhsRange).map { $0 == $1 && lhsSpeed == rhsSpeed } ?? false
+            case let .direction(lhsHeading, lhsSpeed, lhsGust):
+                guard case let .direction(rhsHeading, rhsSpeed, rhsGust) = rhs else { return false }
+                return lhsHeading == rhsHeading && lhsSpeed == rhsSpeed && lhsGust == rhsGust
+            case let .directionRange(lhsHeading, lhsRange, lhsSpeed, lhsGust):
+                guard case let .directionRange(rhsHeading, rhsRange, rhsSpeed, rhsGust) = rhs else { return false }
+                return lhsHeading == rhsHeading && lhsRange == rhsRange && lhsSpeed == rhsSpeed && lhsGust == rhsGust
+        }
+    }
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
@@ -94,51 +112,35 @@ public enum Wind: Codable, Equatable, Sendable {
                 try container.encode(headingRange.1, forKey: .headingHigh)
         }
     }
-    
-    public static func == (lhs: Wind, rhs: Wind) -> Bool {
-        switch lhs {
-            case .calm: if case .calm = rhs { return true } else { return false }
-            case let .variable(lhsSpeed, lhsRange):
-                guard case let .variable(rhsSpeed, rhsRange) = rhs else { return false }
-                if lhsRange == nil && rhsRange == nil { return true }
-                return zipOptionals(lhsRange, rhsRange).map { $0 == $1 && lhsSpeed == rhsSpeed } ?? false
-            case let .direction(lhsHeading, lhsSpeed, lhsGust):
-                guard case let .direction(rhsHeading, rhsSpeed, rhsGust) = rhs else { return false }
-                return lhsHeading == rhsHeading && lhsSpeed == rhsSpeed && lhsGust == rhsGust
-            case let .directionRange(lhsHeading, lhsRange, lhsSpeed, lhsGust):
-                guard case let .directionRange(rhsHeading, rhsRange, rhsSpeed, rhsGust) = rhs else { return false }
-                return lhsHeading == rhsHeading && lhsRange == rhsRange && lhsSpeed == rhsSpeed && lhsGust == rhsGust
-        }
-    }
-    
+
     enum CodingKeys: String, CodingKey {
         case type, speed, gust, heading, headingLow, headingHigh
     }
-    
+
     /// A wind speed.
     public enum Speed: Codable, Comparable, Sendable {
-        
+
         /**
          A wind speed in knots.
          
          - Parameter quantity: The wind speed in knots.
          */
         case knots(_ quantity: UInt16)
-        
+
         /**
          A wind speed in kilometers per hour.
          
          - Parameter quantity: The wind speed in KPH.
          */
         case kph(_ quantity: UInt16)
-        
+
         /**
          A wind speed in meters per second.
          
          - Parameter quantity: The wind speed in m/s.
          */
         case mps(_ quantity: UInt16)
-        
+
         /// The speed expressed as a `Measurement`, which is convertible to
         /// other units.
         public var measurement: Measurement<UnitSpeed> {
@@ -148,15 +150,15 @@ public enum Wind: Codable, Equatable, Sendable {
                 case let .mps(quantity): .init(value: Double(quantity), unit: .metersPerSecond)
             }
         }
-        
-        public static func == (lhs: Speed, rhs: Speed) -> Bool {
+
+        public static func == (lhs: Self, rhs: Self) -> Bool {
             return lhs.measurement == rhs.measurement
         }
-        
-        public static func < (lhs: Speed, rhs: Speed) -> Bool {
+
+        public static func < (lhs: Self, rhs: Self) -> Bool {
             return lhs.measurement < rhs.measurement
         }
-        
+
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             switch try container.decode(String.self, forKey: .unit) {
@@ -173,7 +175,7 @@ public enum Wind: Codable, Equatable, Sendable {
                     throw DecodingError.dataCorruptedError(forKey: .unit, in: container, debugDescription: "Unknown enum value")
             }
         }
-        
+
         public func encode(to encoder: Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             switch self {
@@ -188,10 +190,9 @@ public enum Wind: Codable, Equatable, Sendable {
                     try container.encode(quantity, forKey: .quantity)
             }
         }
-        
+
         enum CodingKeys: String, CodingKey {
             case unit, quantity
         }
     }
 }
-

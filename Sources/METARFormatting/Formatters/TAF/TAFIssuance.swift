@@ -2,7 +2,7 @@ import Foundation
 import SwiftMETAR
 
 public extension TAF.Issuance {
-    
+
     /// Formatter for `TAF.Issuance`
     struct FormatStyle: Foundation.FormatStyle, Sendable {
         public func format(_ value: TAF.Issuance) -> String {
@@ -15,6 +15,8 @@ public extension TAF.Issuance {
     }
 }
 
+// swiftlint:disable missing_docs
 public extension FormatStyle where Self == TAF.Issuance.FormatStyle {
     static var issuance: Self { .init() }
 }
+// swiftlint:enable missing_docs

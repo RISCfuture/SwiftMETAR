@@ -1,16 +1,17 @@
-import Foundation
-import SwiftMETAR
-import METARFormatting
 import BuildableMacro
+import Foundation
+import METARFormatting
+import SwiftMETAR
 
 public extension RemarkEntry {
-    
+
     /// Formatter for `RemarkEntry`
-    @Buildable struct FormatStyle: Foundation.FormatStyle, Sendable {
-        
+    @Buildable
+    struct FormatStyle: Foundation.FormatStyle, Sendable {
+
         /// The format to use when printing times.
         public var dateFormat = Date.FormatStyle(date: .omitted, time: .shortened)
-        
+
         public func format(_ value: RemarkEntry) -> String {
             switch value.urgency {
                 case .unknown: String(localized: "(?) \(value.remark, format: .remark(dateFormat: dateFormat))", comment: "unknown remark")
@@ -22,10 +23,12 @@ public extension RemarkEntry {
     }
 }
 
+// swiftlint:disable missing_docs
 public extension FormatStyle where Self == RemarkEntry.FormatStyle {
+    static var remark: Self { .init() }
+
     static func remark(dateFormat: Date.FormatStyle? = nil) -> Self {
         dateFormat.map { .init(dateFormat: $0) } ?? .init()
     }
-    
-    static var remark: Self { .init() }
 }
+// swiftlint:enable missing_docs

@@ -10,13 +10,13 @@ final class VariableWindDirectionParser: RemarkParser {
     private lazy var rx = Regex {
         Anchor.wordBoundary
         "WND "
-        Capture(as: dir1Ref) { Repeat(.digit, count: 3) } transform: { UInt16($0)! }
+        Capture(as: dir1Ref) { Repeat(.digit, count: 3) } transform: { .init($0)! }
         "V"
-        Capture(as: dir2Ref) { Repeat(.digit, count: 3) } transform: { UInt16($0)! }
+        Capture(as: dir2Ref) { Repeat(.digit, count: 3) } transform: { .init($0)! }
         Anchor.wordBoundary
     }
-    
-    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
+
+    func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
         guard let result = try rx.firstMatch(in: remarks) else { return nil }
         let dir1 = result[dir1Ref], dir2 = result[dir2Ref]
 

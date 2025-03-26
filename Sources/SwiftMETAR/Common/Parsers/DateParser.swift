@@ -27,7 +27,7 @@ class DayHourMinuteParser {
         Anchor.endOfSubject
     }
 
-    func parse(_ parts: inout Array<String.SubSequence>, referenceDate: Date? = nil) throws -> DateComponents {
+    func parse(_ parts: inout [String.SubSequence], referenceDate: Date? = nil) throws -> DateComponents {
         guard !parts.isEmpty else { throw Error.badFormat }
 
         let dateStr = String(parts.removeFirst())
@@ -35,7 +35,7 @@ class DayHourMinuteParser {
         return try parse(match: match, referenceDate: referenceDate, originalString: dateStr)
     }
 
-    func matchesNext(_ parts: Array<String.SubSequence>) throws -> Bool {
+    func matchesNext(_ parts: [String.SubSequence]) throws -> Bool {
         guard let str = parts.first else { return false }
         return try anchoredRx.matches(String(str))
     }

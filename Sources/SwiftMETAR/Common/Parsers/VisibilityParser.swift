@@ -7,18 +7,18 @@ class VisibilityParser {
     private let fractionParser = FractionalDistanceParser()
     private let visibilityRef = Reference<Substring>()
 
-    lazy private var integerRx = Regex {
+    private lazy var integerRx = Regex {
         Anchor.startOfSubject
         integerParser.rx
         Anchor.endOfSubject
     }
-    lazy private var fractionRx = Regex {
+    private lazy var fractionRx = Regex {
         Anchor.startOfSubject
         fractionParser.rx
         Anchor.endOfSubject
     }
 
-    lazy private var notRecordedRx = Regex {
+    private lazy var notRecordedRx = Regex {
         Anchor.startOfSubject
         Repeat("/", 2...)
         ChoiceOf {
@@ -43,7 +43,7 @@ class VisibilityParser {
         }
     }
 
-    func parse(_ parts: inout Array<String.SubSequence>) throws -> Visibility? {
+    func parse(_ parts: inout [String.SubSequence]) throws -> Visibility? {
         guard !parts.isEmpty else { return nil }
 
         if parts.count >= 2 {
@@ -104,9 +104,11 @@ class VisibilityParser {
     class OpenRangeParser {
         private let boundRef = Reference<OpenRange>()
 
+        // swiftlint:disable force_try
         lazy var rx = Regex {
             Capture(as: boundRef) { try! OpenRange.rx } transform: { .init(rawValue: String($0))! }
         }
+        // swiftlint:enable force_try
 
         func parse<T>(_ match: Regex<T>.Match) -> OpenRange {
             match[boundRef]
@@ -117,10 +119,10 @@ class VisibilityParser {
         case statuteMiles = "SM"
         case feet = "FT"
         case meters = "M"
-        
-        public static func from(raw: String) -> Self? {
-            if raw == "" { return .meters }
-            else { return .init(rawValue: raw) }
+
+        static func from(raw: String) -> Self? {
+            if raw.isEmpty { return .meters }
+            return .init(rawValue: raw)
         }
     }
 
@@ -130,13 +132,15 @@ class VisibilityParser {
         private let valueRef = Reference<UInt16>()
         private let unitRef = Reference<VisibilityDistanceUnit>()
 
+        // swiftlint:disable force_try
         lazy var rx = Regex {
             openRangeParser.rx
-            Capture(as: valueRef) { Repeat(.digit, 1...4) } transform: { UInt16($0)! }
+            Capture(as: valueRef) { Repeat(.digit, 1...4) } transform: { .init($0)! }
             Capture(as: unitRef) {
                 try! Optionally(VisibilityDistanceUnit.rx)
             } transform: { .from(raw: String($0))! }
         }
+        // swiftlint:enable force_try
 
         func parse<T>(_ match: Regex<T>.Match) -> Visibility {
             let distance: Visibility.Value = switch match[unitRef] {

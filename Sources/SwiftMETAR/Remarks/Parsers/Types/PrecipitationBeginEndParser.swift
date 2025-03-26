@@ -4,17 +4,19 @@ import Foundation
 final class PrecipitationBeginEndParser: RemarkParser {
     var urgency = Remark.Urgency.routine
 
-
     private let typeRef = Reference<Remark.EventType>()
     private let timeParser = HourMinuteParser()
+    // swiftlint:disable force_try
     private lazy var timeRx = Regex {
         Capture(as: typeRef) { try! Remark.EventType.rx } transform: { .init(rawValue: String($0))! }
         timeParser.hourOptionalRx
     }
+    // swiftlint:enable force_try
 
     private let descriptorRef = Reference<Weather.Descriptor?>()
     private let phenomenonRef = Reference<Weather.Phenomenon>()
     private let timesRef = Reference<Substring>()
+    // swiftlint:disable force_try
     private lazy var eventRx = Regex {
         Capture(as: descriptorRef) {
             try! Optionally(Weather.Descriptor.rx)
@@ -22,6 +24,7 @@ final class PrecipitationBeginEndParser: RemarkParser {
         Capture(as: phenomenonRef) { try! Weather.Phenomenon.rx } transform: { .init(rawValue: String($0))! }
         Capture(as: timesRef) { OneOrMore(timeRx) }
     }
+    // swiftlint:enable force_try
 
     private let eventsRef = Reference<Substring>()
     private lazy var rx = Regex {
@@ -44,11 +47,11 @@ final class PrecipitationBeginEndParser: RemarkParser {
         return .precipitationBeginEnd(events: events)
     }
 
-    private func parseEvents(from string: String, referenceDate: Date?, originalString: String) throws -> Array<Remark.PrecipitationEvent> {
+    private func parseEvents(from string: String, referenceDate: Date?, originalString: String) throws -> [Remark.PrecipitationEvent] {
         let result = string.matches(of: eventRx)
         guard !result.isEmpty else { return [] }
 
-        var events = Array<Remark.PrecipitationEvent>()
+        var events = [Remark.PrecipitationEvent]()
         for match in result {
             let eventStr = String(string[match.range])
             guard let eventResult = try eventRx.wholeMatch(in: eventStr) else {
@@ -69,7 +72,7 @@ final class PrecipitationBeginEndParser: RemarkParser {
         return events
     }
 
-    private func parseTimes(from string: String, referenceDate: Date?, originalString: String) throws -> Array<(Remark.EventType, DateComponents)> {
+    private func parseTimes(from string: String, referenceDate: Date?, originalString: String) throws -> [(Remark.EventType, DateComponents)] {
         let result = string.matches(of: timeRx)
         guard !result.isEmpty else { return [] }
         return try result.map { match in

@@ -2,7 +2,7 @@ import Foundation
 import SwiftMETAR
 
 public extension METAR.Observer {
-    
+
     /// Formatter for `METAR.Observer`
     struct FormatStyle: Foundation.FormatStyle, Sendable {
         public func format(_ value: METAR.Observer) -> String {
@@ -15,6 +15,8 @@ public extension METAR.Observer {
     }
 }
 
+// swiftlint:disable missing_docs
 public extension FormatStyle where Self == METAR.Observer.FormatStyle {
     static var observer: Self { .init() }
 }
+// swiftlint:enable missing_docs

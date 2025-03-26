@@ -22,9 +22,9 @@ actor METARParser {
         let wind = try orMissing(&parts, defaultValue: nil) { try windParser.parse(&$0) }
 
         let visibility: Visibility?,
-            runwayViz: Array<RunwayVisibility>,
-            weather: Array<Weather>?,
-            conditions: Array<Condition>
+            runwayViz: [RunwayVisibility],
+            weather: [Weather]?,
+            conditions: [Condition]
         if parts.first == "CAVOK" {
             parts.removeFirst()
             visibility = .greaterThan(.meters(9999))
@@ -58,7 +58,7 @@ actor METARParser {
                      remarksString: remarksString)
     }
 
-    private func parseIssuance(_ parts: inout Array<String.SubSequence>) throws -> METAR.Issuance {
+    private func parseIssuance(_ parts: inout [String.SubSequence]) throws -> METAR.Issuance {
         guard !parts.isEmpty else { throw Error.badFormat }
 
         let typeCode = String(parts[0])
@@ -69,7 +69,7 @@ actor METARParser {
         return type
     }
 
-    private func parseObserver(_ parts: inout Array<String.SubSequence>) throws -> METAR.Observer {
+    private func parseObserver(_ parts: inout [String.SubSequence]) throws -> METAR.Observer {
         guard !parts.isEmpty else { throw Error.badFormat }
 
         let observer = METAR.Observer(rawValue: String(parts[0]))
@@ -77,7 +77,7 @@ actor METARParser {
         return observer ?? .human
     }
 
-    private func orMissing<T>(_ parts: inout Array<Substring>, defaultValue: T, _ parser: (_ parts: inout Array<Substring>) throws -> T) rethrows -> T {
+    private func orMissing<T>(_ parts: inout [Substring], defaultValue: T, _ parser: (_ parts: inout [Substring]) throws -> T) rethrows -> T {
         if parts.first == "M" {
             parts.removeFirst()
             return defaultValue

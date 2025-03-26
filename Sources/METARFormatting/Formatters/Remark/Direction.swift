@@ -1,6 +1,6 @@
+import BuildableMacro
 import Foundation
 import SwiftMETAR
-import BuildableMacro
 
 extension Remark.Direction {
     var next: Self {
@@ -19,13 +19,14 @@ extension Remark.Direction {
 }
 
 public extension Remark.Direction {
-    
+
     /// Formatter for `Remark.Direction`
-    @Buildable struct FormatStyle: Foundation.FormatStyle, Sendable {
-        
+    @Buildable
+    struct FormatStyle: Foundation.FormatStyle, Sendable {
+
         /// The width to use.
         public var width = Width.full
-        
+
         public func format(_ value: Remark.Direction) -> String {
             switch width {
                 case .abbreviated:
@@ -54,25 +55,26 @@ public extension Remark.Direction {
                     }
             }
         }
-        
+
         /// Direction widths
         public enum Width: Sendable, Codable {
-            
+
             /// Abbreviated directions (N, NE, E, etc.)
             case abbreviated
-            
+
             /// Longer directions (north, northeast, east, etc.)
             case full
         }
     }
-     
+
     /// Formatter for `Set<Remark.Direction>`. Consolidates consecutive
     /// directions into ranges (e.g., "north–east").
-    @Buildable struct RangeFormatStyle: Foundation.FormatStyle, Sendable {
-        
+    @Buildable
+    struct RangeFormatStyle: Foundation.FormatStyle, Sendable {
+
         /// The width to use.
         public var width = Remark.Direction.FormatStyle.Width.full
-        
+
         public func format(_ value: Set<Remark.Direction>) -> String {
             let summary = FormatStyle(width: width)
             if value.contains(.all) {
@@ -81,8 +83,8 @@ public extension Remark.Direction {
             if value.isEmpty {
                 return String(localized: "<unknown direction>")
             }
-            
-            var ranges = Array<(Remark.Direction, Remark.Direction)>()
+
+            var ranges = [(Remark.Direction, Remark.Direction)]()
             for direction in value {
                 if ranges.isEmpty {
                     ranges.append((direction, direction))
@@ -101,11 +103,11 @@ public extension Remark.Direction {
                     ranges.append((direction, direction))
                 }
             }
-            
+
             if ranges.count == 1 && ranges[0].0 == ranges[0].1 {
                 return summary.format(.all)
             }
-            
+
             let values = ranges.map { range in
                 if range.0 == range.1 {
                     summary.format(range.0)
@@ -113,24 +115,26 @@ public extension Remark.Direction {
                     String(localized: "\(range.0, format: .direction(width: width)) through \(range.1, format: .direction(width: width))")
                 }
             }
-            
+
             return ListFormatStyle.list(type: .and).format(values)
         }
     }
 }
 
+// swiftlint:disable missing_docs
 public extension FormatStyle where Self == Remark.Direction.FormatStyle {
+    static var direction: Self { .init() }
+
     static func direction(width: Remark.Direction.FormatStyle.Width) -> Self {
         .init(width: width)
     }
-    
-    static var direction: Self { .init() }
 }
 
 public extension FormatStyle where Self == Remark.Direction.RangeFormatStyle {
+    static var range: Self { .init() }
+
     static func range(width: Remark.Direction.FormatStyle.Width) -> Self {
         .init(width: width)
     }
-    
-    static var range: Self { .init() }
 }
+// swiftlint:enable missing_docs

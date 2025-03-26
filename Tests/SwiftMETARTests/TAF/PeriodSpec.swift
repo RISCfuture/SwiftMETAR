@@ -1,6 +1,6 @@
-import Quick
-import Nimble
 import Foundation
+import Nimble
+import Quick
 
 @testable import SwiftMETAR
 

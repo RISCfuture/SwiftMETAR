@@ -7,6 +7,7 @@ final class ObservedVisibilityParser: RemarkParser {
     private let sourceRef = Reference<Remark.VisibilitySource>()
     private let visibilityParser = FractionParser()
 
+    // swiftlint:disable force_try
     private lazy var rx = Regex {
         Anchor.wordBoundary
         Capture(as: sourceRef) {
@@ -16,8 +17,9 @@ final class ObservedVisibilityParser: RemarkParser {
         visibilityParser.rx
         Anchor.wordBoundary
     }
+    // swiftlint:enable force_try
 
-    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
+    func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
         guard let result = try rx.firstMatch(in: remarks) else { return nil }
         let source = result[sourceRef], distance = visibilityParser.parse(result)
 

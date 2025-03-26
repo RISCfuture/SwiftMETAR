@@ -1,6 +1,6 @@
 import Foundation
-import Quick
 import Nimble
+import Quick
 
 @testable import SwiftMETAR
 
@@ -12,13 +12,13 @@ class WindShiftSpec: AsyncSpec {
             it("parses a 'WSHFT 30' remark") {
                 let string = "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 WSHFT 30"
                 let observation = try await METAR.from(string: string)
-                expect(observation.remarks.map { $0.remark }).to(contain(.windShift(time: date, frontalPassage: false)))
+                expect(observation.remarks.map(\.remark)).to(contain(.windShift(time: date, frontalPassage: false)))
             }
-            
+
             it("parses a 'WSHFT 30 FROPA' remark") {
                 let string = "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 WSHFT 30 FROPA"
                 let observation = try await METAR.from(string: string)
-                expect(observation.remarks.map { $0.remark }).to(contain(.windShift(time: date, frontalPassage: true)))
+                expect(observation.remarks.map(\.remark)).to(contain(.windShift(time: date, frontalPassage: true)))
             }
         }
     }

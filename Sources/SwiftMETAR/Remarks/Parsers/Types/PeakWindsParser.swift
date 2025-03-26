@@ -13,8 +13,8 @@ final class PeakWindsParser: RemarkParser {
         "PK W"
         Optionally("I")
         "ND "
-        Capture(as: directionRef) { Repeat(.digit, count: 3) } transform: { UInt16($0)! }
-        Capture(as: speedRef) { Repeat(.digit, 2...3) } transform: { UInt16($0)! }
+        Capture(as: directionRef) { Repeat(.digit, count: 3) } transform: { .init($0)! }
+        Capture(as: speedRef) { Repeat(.digit, 2...3) } transform: { .init($0)! }
         "/"
         timeParser.hourOptionalRx
         Anchor.wordBoundary

@@ -2,31 +2,25 @@ import Foundation
 @preconcurrency import RegexBuilder
 
 class ConditionsParser {
-    private enum Coverage: String, RegexCases {
-        case few = "FEW"
-        case scattered = "SCT"
-        case broken = "BKN"
-        case overcast = "OVC"
-        case verticalVis = "VV"
-    }
-
     private let coverageRef = Reference<Coverage>()
     private let heightRef = Reference<UInt>()
     private let ceilingTypeRef = Reference<Condition.CeilingType?>()
+    // swiftlint:disable force_try
     private lazy var rx = Regex {
         Anchor.startOfSubject
         Capture(as: coverageRef) { try! Coverage.rx } transform: { .init(rawValue: String($0))! }
-        Capture(as: heightRef) { Repeat(.digit, count: 3) } transform: { UInt($0)! * 100 }
+        Capture(as: heightRef) { Repeat(.digit, count: 3) } transform: { .init($0)! * 100 }
         Capture(as: ceilingTypeRef) {
             Optionally(try! Condition.CeilingType.rx)
         } transform: { .init(rawValue: String($0)) }
         Anchor.endOfSubject
     }
+    // swiftlint:enable force_try
 
-    func parse(_ parts: inout Array<String.SubSequence>) throws -> Array<Condition> {
+    func parse(_ parts: inout [String.SubSequence]) throws -> [Condition] {
         if parts.isEmpty { return [] }
 
-        var conditions = Array<Condition>()
+        var conditions = [Condition]()
 
         while true {
             if parts.isEmpty { return conditions }
@@ -67,5 +61,13 @@ class ConditionsParser {
             }
             else { return conditions }
         }
+    }
+
+    private enum Coverage: String, RegexCases {
+        case few = "FEW"
+        case scattered = "SCT"
+        case broken = "BKN"
+        case overcast = "OVC"
+        case verticalVis = "VV"
     }
 }

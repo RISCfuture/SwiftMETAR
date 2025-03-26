@@ -6,10 +6,12 @@ final class ThunderstormBeginEndParser: RemarkParser {
 
     private let typeRef = Reference<Remark.EventType>()
     private let timeParser = HourMinuteParser()
+    // swiftlint:disable force_try
     private lazy var eventRx = Regex {
         Capture(as: typeRef) { try! Remark.EventType.rx } transform: { .init(rawValue: String($0))! }
         timeParser.hourOptionalRx
     }
+    // swiftlint:enable force_try
 
     private let eventsRef = Reference<Substring>()
     private lazy var rx = Regex {
@@ -31,7 +33,7 @@ final class ThunderstormBeginEndParser: RemarkParser {
         return .thunderstormBeginEnd(events: events)
     }
 
-    private func parseEvents(_ string: String, referenceDate: Date? = nil) throws -> Array<Remark.ThunderstormEvent> {
+    private func parseEvents(_ string: String, referenceDate: Date? = nil) throws -> [Remark.ThunderstormEvent] {
         let result = string.matches(of: eventRx)
         return try result.map { match in
             let type = match[typeRef],

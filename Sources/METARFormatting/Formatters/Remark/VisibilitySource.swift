@@ -1,13 +1,14 @@
+import BuildableMacro
 import Foundation
 import SwiftMETAR
-import BuildableMacro
 
 public extension Remark.VisibilitySource {
-    
+
     /// Formatter for `Remark.VisibilitySource`
-    @Buildable struct FormatStyle: Foundation.FormatStyle, Sendable {
+    @Buildable
+    struct FormatStyle: Foundation.FormatStyle, Sendable {
         public var includeVisibility = false
-        
+
         public func format(_ value: Remark.VisibilitySource) -> String {
             if includeVisibility {
                 switch value {
@@ -24,10 +25,12 @@ public extension Remark.VisibilitySource {
     }
 }
 
+// swiftlint:disable missing_docs
 public extension FormatStyle where Self == Remark.VisibilitySource.FormatStyle {
+    static var source: Self { .init() }
+
     static func source(includeVisibility: Bool = false) -> Self {
         .init(includeVisibility: includeVisibility)
     }
-    
-    static var source: Self { .init() }
 }
+// swiftlint:enable missing_docs

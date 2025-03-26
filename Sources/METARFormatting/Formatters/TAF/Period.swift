@@ -1,11 +1,12 @@
+import BuildableMacro
 import Foundation
 import SwiftMETAR
-import BuildableMacro
 
 public extension TAF.Group.Period {
 
     /// Formatter for `TAF.Group.Period`
-    @Buildable struct FormatStyle: Foundation.FormatStyle, Sendable {
+    @Buildable
+    struct FormatStyle: Foundation.FormatStyle, Sendable {
 
         /// The formatter to use for date intervals.
         public var intervalFormat = Date.IntervalFormatStyle(date: .omitted, time: .shortened)
@@ -23,9 +24,8 @@ public extension TAF.Group.Period {
 
                     if let date {
                         return String(localized: "from \(date, format: datetimeFormat)", comment: "TAF period (date)")
-                    } else {
-                        return String(localized: "from <unknown>", comment: "TAF period (date)")
                     }
+                    return String(localized: "from <unknown>", comment: "TAF period (date)")
 
                 case let .temporary(interval):
                     return String(localized: "temporarily from \(interval.dateInterval.range, format: intervalFormat)", comment: "TAF period (date range)")
@@ -40,7 +40,10 @@ public extension TAF.Group.Period {
     }
 }
 
+// swiftlint:disable missing_docs
 public extension FormatStyle where Self == TAF.Group.Period.FormatStyle {
+    static var period: Self { .init() }
+
     static func period(intervalFormat: Date.IntervalFormatStyle? = nil,
                        datetimeFormat: Date.FormatStyle? = nil) -> Self {
         zipOptionals(intervalFormat, datetimeFormat).map { .init(intervalFormat: $0, datetimeFormat: $1) } ??
@@ -48,6 +51,5 @@ public extension FormatStyle where Self == TAF.Group.Period.FormatStyle {
             datetimeFormat.map { .init(datetimeFormat: $0) } ??
             .init()
     }
-
-    static var period: Self { .init() }
 }
+// swiftlint:enable missing_docs

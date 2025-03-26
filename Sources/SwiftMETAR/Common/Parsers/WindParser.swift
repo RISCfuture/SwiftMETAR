@@ -2,11 +2,6 @@ import Foundation
 @preconcurrency import RegexBuilder
 
 class WindParser {
-    enum DirectionString {
-        case variable
-        case heading(_ value: UInt16)
-    }
-
     let directionRef = Reference<DirectionString>()
     let direction1Ref = Reference<UInt16?>()
     let direction2Ref = Reference<UInt16?>()
@@ -26,10 +21,10 @@ class WindParser {
                 default: return .heading(UInt16(value)!)
             }
         }
-        Capture(as: speedRef) { Repeat(.digit, 2...3) } transform: { UInt16($0)! }
+        Capture(as: speedRef) { Repeat(.digit, 2...3) } transform: { .init($0)! }
         Optionally {
             "G"
-            Capture(as: gustRef) { Repeat(.digit, 2...3) } transform: { UInt16($0) }
+            Capture(as: gustRef) { Repeat(.digit, 2...3) } transform: { .init($0) }
         }
         Capture(as: unitRef) {
             ChoiceOf {
@@ -47,13 +42,13 @@ class WindParser {
     }
     private lazy var variableRx = Regex {
         Anchor.startOfSubject
-        Capture(as: direction1Ref) { Repeat(.digit, count: 3) } transform: { UInt16($0) }
+        Capture(as: direction1Ref) { Repeat(.digit, count: 3) } transform: { .init($0) }
         "V"
-        Capture(as: direction2Ref) { Repeat(.digit, count: 3) } transform: { UInt16($0) }
+        Capture(as: direction2Ref) { Repeat(.digit, count: 3) } transform: { .init($0) }
         Anchor.endOfSubject
     }
 
-    func parse(_ parts: inout Array<String.SubSequence>) throws -> Wind? {
+    func parse(_ parts: inout [String.SubSequence]) throws -> Wind? {
         guard !parts.isEmpty else { return nil }
         let dirAndSpeed = String(parts[0])
 
@@ -82,7 +77,7 @@ class WindParser {
                 return .variable(speed: speed, headingRange: range)
             case let .heading(heading):
                 let gustValue = match[gustRef]
-                var gust: Wind.Speed? = nil
+                var gust: Wind.Speed?
                 if let gustValue {
                     gust = switch match[unitRef] {
                         case "KT", "KTS": .knots(gustValue)
@@ -98,9 +93,8 @@ class WindParser {
 
                 if let range = try parseDirectionRange(&parts, rangeSeq: rangeSeq) {
                     return .directionRange(heading, headingRange: range, speed: speed, gust: gust)
-                } else {
-                    return .direction(heading, speed: speed, gust: gust)
                 }
+                return .direction(heading, speed: speed, gust: gust)
         }
     }
 
@@ -118,7 +112,7 @@ class WindParser {
                 return .variable(speed: speed)
             case let .heading(heading):
                 let gustValue = match[gustRef]
-                var gust: Wind.Speed? = nil
+                var gust: Wind.Speed?
                 if let gustValue {
                     gust = switch match[unitRef] {
                         case "KT", "KTS": .knots(gustValue)
@@ -132,7 +126,7 @@ class WindParser {
         }
     }
 
-    fileprivate func parseDirectionRange(_ parts: inout Array<String.SubSequence>, rangeSeq: String.SubSequence) throws -> (UInt16, UInt16)? {
+    private func parseDirectionRange(_ parts: inout [String.SubSequence], rangeSeq: String.SubSequence) throws -> (UInt16, UInt16)? {
         let rangeStr = String(rangeSeq)
 
         guard let variableMatch = try variableRx.wholeMatch(in: rangeStr),
@@ -141,5 +135,10 @@ class WindParser {
 
         parts.removeFirst()
         return (dir1, dir2)
+    }
+
+    enum DirectionString {
+        case variable
+        case heading(_ value: UInt16)
     }
 }

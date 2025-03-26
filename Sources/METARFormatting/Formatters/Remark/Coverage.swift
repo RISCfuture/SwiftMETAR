@@ -2,7 +2,7 @@ import Foundation
 import SwiftMETAR
 
 public extension Remark.Coverage {
-    
+
     /// Formatter for `Remark.Coverage`
     struct FormatStyle: Foundation.FormatStyle, Sendable {
         public func format(_ value: Remark.Coverage) -> String {
@@ -16,6 +16,8 @@ public extension Remark.Coverage {
     }
 }
 
+// swiftlint:disable missing_docs
 public extension FormatStyle where Self == Remark.Coverage.FormatStyle {
     static var coverage: Self { .init() }
 }
+// swiftlint:enable missing_docs

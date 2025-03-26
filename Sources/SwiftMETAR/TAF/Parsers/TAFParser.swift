@@ -29,11 +29,11 @@ actor TAFParser {
         }
         let refDateForRemarks = date ?? zuluCal.dateComponents(in: zulu, from: Date())
 
-        var groups = Array<TAF.Group>()
-        var pendingGroupRemarks = Array<String.SubSequence>()
-        var temperatures = Array<TAF.Temperature>()
-        var TAFRemarks = Array<RemarkEntry>()
-        var TAFRemarksString: String? = nil
+        var groups = [TAF.Group]()
+        var pendingGroupRemarks = [String.SubSequence]()
+        var temperatures = [TAF.Temperature]()
+        var TAFRemarks = [RemarkEntry]()
+        var TAFRemarksString: String?
 
         var originalParts = Array(parts)
 
@@ -42,9 +42,9 @@ actor TAFParser {
                 if !pendingGroupRemarks.isEmpty {
                     guard !groups.isEmpty else { throw Error.badFormat }
                     let (lastGroupRemarks, lastGroupRemarksStr) = try await RemarksParser.shared.parse(&pendingGroupRemarks, date: refDateForRemarks, lenientRemarks: true)
-                    groups.indices.last.map {
-                        groups[$0].remarks = lastGroupRemarks
-                        groups[$0].remarksString = lastGroupRemarksStr
+                    groups.indices.last.map { i in
+                        groups[i].remarks = lastGroupRemarks
+                        groups[i].remarksString = lastGroupRemarksStr
                     }
                 }
 
@@ -58,12 +58,12 @@ actor TAFParser {
                 let windshear = try windshearParser.parse(&parts)
                 let windshearConditions = try parseWindshearConditions(&parts)
 
-                var icingForecasts = Array<Icing>()
+                var icingForecasts = [Icing]()
                 while let icing = try icingParser.parse(&parts) {
                     icingForecasts.append(icing)
                 }
 
-                var turbForecasts = Array<Turbulence>()
+                var turbForecasts = [Turbulence]()
                 while let turbulence = try turbulenceParser.parse(&parts) {
                     turbForecasts.append(turbulence)
                 }
@@ -89,9 +89,9 @@ actor TAFParser {
                 if !pendingGroupRemarks.isEmpty {
                     guard !groups.isEmpty else { throw Error.badFormat }
                     let (lastGroupRemarks, lastGroupRemarksStr) = try await RemarksParser.shared.parse(&pendingGroupRemarks, date: refDateForRemarks, lenientRemarks: true)
-                    groups.indices.last.map {
-                        groups[$0].remarks = lastGroupRemarks
-                        groups[$0].remarksString = lastGroupRemarksStr
+                    groups.indices.last.map { i in
+                        groups[i].remarks = lastGroupRemarks
+                        groups[i].remarksString = lastGroupRemarksStr
                     }
                     TAFRemarks.removeAll()
                     TAFRemarksString = nil
@@ -115,7 +115,7 @@ actor TAFParser {
                    remarksString: TAFRemarksString)
     }
 
-    private func parseIssuance(_ parts: inout Array<String.SubSequence>) throws -> TAF.Issuance {
+    private func parseIssuance(_ parts: inout [String.SubSequence]) throws -> TAF.Issuance {
         guard !parts.isEmpty else { throw Error.badFormat }
 
         if parts[0] != "TAF" { return .routine }

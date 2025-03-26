@@ -8,6 +8,7 @@ final class SensorStatusParser: RemarkParser {
     private let secondarySensorRef = Reference<SecondarySensor?>()
     private let locationRef = Reference<Substring?>()
 
+    // swiftlint:disable force_try
     private lazy var rx = Regex {
         Anchor.wordBoundary
         ChoiceOf {
@@ -20,8 +21,9 @@ final class SensorStatusParser: RemarkParser {
         }
         Anchor.wordBoundary
     }
+    // swiftlint:enable force_try
 
-    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
+    func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
         guard let result = try rx.firstMatch(in: remarks) else { return nil }
         let sensor = result[sensorRef],
             secondarySensor = result[secondarySensorRef],
@@ -38,7 +40,8 @@ final class SensorStatusParser: RemarkParser {
 
             remarks.removeSubrange(result.range)
             return .inoperativeSensor(type)
-        } else if let secondarySensor {
+        }
+        if let secondarySensor {
             guard let location else { return nil }
             let type: Remark.SensorType = switch secondarySensor {
                 case .visibility: .secondaryVisibility(location: String(location))
@@ -47,9 +50,8 @@ final class SensorStatusParser: RemarkParser {
 
             remarks.removeSubrange(result.range)
             return .inoperativeSensor(type)
-        } else {
-            return nil
         }
+        return nil
     }
 
     private enum Sensor: String, RegexCases {

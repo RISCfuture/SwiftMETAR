@@ -13,68 +13,68 @@ public struct METAR: Codable, Sendable {
 
     /// The raw text of the METAR.
     public let text: String?
-    
+
     /// The nature of this METAR's publication.
     public let issuance: Issuance
-    
+
     /// The ICAO ID of the reporting station (typically an airport).
     public let stationID: String
-    
+
     /// The components for the date this METAR was generated.
     public let calendarDate: DateComponents
-    
+
     /// Who or what recorded the observation.
     public let observer: Observer
-    
+
     /// The recorded winds.
     public let wind: Wind?
-    
+
     /// The recorded visibility amount.
     public let visibility: Visibility?
-    
+
     /// Any runway visibilities recorded.
-    public let runwayVisibility: Array<RunwayVisibility>
-    
+    public let runwayVisibility: [RunwayVisibility]
+
     /// Any observed weather phenomena. An empty array means no weather
     /// phenomena exists; `nil` means no data was provided.
-    public let weather: Array<Weather>?
-    
+    public let weather: [Weather]?
+
     /// Any observed cloud layers, or other sky conditions.
-    public let conditions: Array<Condition>
-    
+    public let conditions: [Condition]
+
     /// The current temperature, in degrees Celsius.
     public let temperature: Int8?
-    
+
     /// The dewpoint, in degrees Celsius.
     public let dewpoint: Int8?
-    
+
     /// The sea-level pressure, used by pilots to set their altimeter datum.
     public let altimeter: Altimeter?
-    
+
     /// Remarks published along with the METAR. Remarks are typically
     /// machine-generated, but can also be human-written in plain text.
-    public let remarks: Array<RemarkEntry>
-    
+    public let remarks: [RemarkEntry]
+
     /// Raw remarks, before parsing.
     public let remarksString: String?
-    
+
     /// The date this METAR was generated.
     public var date: Date { calendarDate.date! }
-    
+
     /// The temperature as a `Measurement`, which can be converted to other
     /// units.
     public var temperatureMeasurement: Measurement<UnitTemperature>? {
-        guard let temperature = temperature else { return nil }
+        guard let temperature else { return nil }
         return .init(value: Double(temperature), unit: .celsius)
     }
-    
+
     /// The dewpoint as a `Measurement`, which can be converted to other
     /// units.
     public var dewpointMeasurement: Measurement<UnitTemperature>? {
-        guard let dewpoint = dewpoint else { return nil }
+        guard let dewpoint else { return nil }
         return .init(value: Double(dewpoint), unit: .celsius)
     }
-    
+
     /**
      Parse a METAR from its text.
      
@@ -91,29 +91,29 @@ public struct METAR: Codable, Sendable {
      - Returns: The parsed METAR.
      - Throws: If a parsing error occurs.
      */
-    public static func from(string: String, on date: Date? = nil, lenientRemarks: Bool = false) async throws -> METAR {
+    public static func from(string: String, on date: Date? = nil, lenientRemarks: Bool = false) async throws -> Self {
         return try await METARParser.shared.parse(string, on: date, lenientRemarks: lenientRemarks)
     }
-    
+
     /// Possible reasons for a METAR publication.
     public enum Issuance: String, Codable, Sendable {
 
         /// Routine hourly METAR.
         case routine = "METAR"
-        
+
         /// METAR was generated in response to significant weather.
         case special = "SPECI"
     }
 
     /// Sources for METAR observations.
     public enum Observer: String, Codable, Sendable {
-        
+
         /// A trained observer recorded this METAR.
         case human = ""
-        
+
         /// A meteorological sensor package recorded this METAR.
         case automated = "AUTO"
-        
+
         /// This is a corrected report.
         case corrected = "COR"
     }

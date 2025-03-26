@@ -10,6 +10,7 @@ final class SignificantCloudsParser: RemarkParser {
     private let directionsParser = RemarkDirectionsParser()
     private let movingDirectionParser = RemarkDirectionParser()
 
+    // swiftlint:disable force_try
     private lazy var rx = Regex {
         Anchor.wordBoundary
         Capture(as: apparentRef) { Optionally("APRNT ") } transform: { !$0.isEmpty }
@@ -25,8 +26,9 @@ final class SignificantCloudsParser: RemarkParser {
         }
         Anchor.wordBoundary
     }
-    
-    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
+    // swiftlint:enable force_try
+
+    func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
         guard let result = try rx.firstMatch(in: remarks) else { return nil }
 
         let apparent = result[apparentRef],
@@ -34,7 +36,7 @@ final class SignificantCloudsParser: RemarkParser {
             distant = result[distantRef],
             directions = directionsParser.parse(result),
             movingDirection = movingDirectionParser.parse(result)
-        
+
         remarks.removeSubrange(result.range)
         return .significantClouds(type: type,
                                   directions: directions ?? Set(),
@@ -45,8 +47,8 @@ final class SignificantCloudsParser: RemarkParser {
 }
 
 extension Remark.SignificantCloudType {
-    public static func from(raw: String) -> Self? {
+    static func from(raw: String) -> Self? {
         if raw == "ROTOR CLD" { return .rotor }
-        else { return .init(rawValue: raw) }
+        return .init(rawValue: raw)
     }
 }

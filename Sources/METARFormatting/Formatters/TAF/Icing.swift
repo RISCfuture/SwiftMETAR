@@ -1,11 +1,12 @@
+import BuildableMacro
 import Foundation
 import SwiftMETAR
-import BuildableMacro
 
 public extension Icing {
 
     /// Formatter for `Icing`
-    @Buildable struct FormatStyle: Foundation.FormatStyle, Sendable {
+    @Buildable
+    struct FormatStyle: Foundation.FormatStyle, Sendable {
 
         /// The formatter to use for the icing type.
         public var typeFormat = IcingType.FormatStyle(includeIcing: true)
@@ -22,7 +23,10 @@ public extension Icing {
     }
 }
 
+// swiftlint:disable missing_docs
 public extension FormatStyle where Self == Icing.FormatStyle {
+    static var icing: Self { .init() }
+
     static func icing(typeFormat: Icing.IcingType.FormatStyle? = nil,
                       heightFormat: Measurement<UnitLength>.FormatStyle? = nil) -> Self {
 
@@ -31,6 +35,5 @@ public extension FormatStyle where Self == Icing.FormatStyle {
             heightFormat.map { .init(heightFormat: $0) } ??
             .init()
     }
-
-    static var icing: Self { .init() }
 }
+// swiftlint:enable missing_docs

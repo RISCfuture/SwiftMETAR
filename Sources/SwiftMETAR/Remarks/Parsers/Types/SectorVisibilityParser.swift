@@ -15,8 +15,8 @@ final class SectorVisibilityParser: RemarkParser {
         visibilityParser.rx
         Anchor.wordBoundary
     }
-    
-    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
+
+    func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
         guard let result = try rx.firstMatch(in: remarks),
               let direction = directionParser.parse(result) else { return nil }
         let distance = visibilityParser.parse(result)

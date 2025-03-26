@@ -10,13 +10,13 @@ final class RapidSnowIncreaseParser: RemarkParser {
     private lazy var rx = Regex {
         Anchor.wordBoundary
         "SNINCR "
-        Capture(as: increaseRef) { OneOrMore(.digit) } transform: { UInt($0)! }
+        Capture(as: increaseRef) { OneOrMore(.digit) } transform: { .init($0)! }
         "/"
-        Capture(as: totalRef) { OneOrMore(.digit) } transform: { UInt($0)! }
+        Capture(as: totalRef) { OneOrMore(.digit) } transform: { .init($0)! }
         Anchor.wordBoundary
     }
 
-    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
+    func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
         guard let result = try rx.firstMatch(in: remarks) else { return nil }
         let increase = result[increaseRef],
             total = result[totalRef]

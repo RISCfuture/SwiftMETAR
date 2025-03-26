@@ -3,7 +3,7 @@ import Foundation
 actor RemarksParser {
     static let shared = RemarksParser()
 
-    private let remarkParsers: Array<RemarkParser> = [
+    private let remarkParsers: [RemarkParser] = [
         ThunderstormBeginEndParser(),
 
         AircraftMishapParser(), CloudTypesParser(), DailyPrecipitationAmountParser(),
@@ -30,9 +30,9 @@ actor RemarksParser {
 
     private init() {}
 
-    func parse(_ parts: inout Array<String.SubSequence>, date: DateComponents, lenientRemarks: Bool = false) async throws -> (Array<RemarkEntry>, String?) {
+    func parse(_ parts: inout [String.SubSequence], date: DateComponents, lenientRemarks: Bool = false) throws -> (Array<RemarkEntry>, String?) {
         if parts.isEmpty { return ([], nil) }
-        if parts.count == 1 && parts[0] == "" { return ([], nil) } // extra space after METAR
+        if parts.count == 1 && parts[0].isEmpty { return ([], nil) } // extra space after METAR
 
         if lenientRemarks {
             if parts[0] == "RMK" { parts.removeFirst() }
@@ -43,7 +43,7 @@ actor RemarksParser {
 
         var remarksString = parts.joined(separator: " ")
         let originalRemarksString = String(remarksString)
-        var remarks = Array<RemarkEntry>()
+        var remarks = [RemarkEntry]()
         for parser in remarkParsers {
             while let remark = try parser.parse(remarks: &remarksString, date: date) {
                 remarks.append(.init(remark: remark, urgency: parser.urgency))
@@ -58,5 +58,4 @@ actor RemarksParser {
         parts.removeAll()
         return (remarks, originalRemarksString)
     }
-
 }

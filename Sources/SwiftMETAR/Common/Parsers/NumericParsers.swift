@@ -33,15 +33,15 @@ class FractionParser {
                 numerator = Int(fraction[0])!,
                 denominator = Int(fraction[1])!
             return Ratio(whole, numerator: numerator, denominator: denominator)
-        } else if words[0].contains("/") {
+        }
+        if words[0].contains("/") {
             let fraction = words[0].split(separator: "/"),
                 numerator = Int(fraction[0])!,
                 denominator = Int(fraction[1])!
             return Ratio(numerator, denominator)
-        } else {
-            let whole = Int(words[0])!
-            return Ratio(whole)
         }
+        let whole = Int(words[0])!
+        return Ratio(whole)
     }
 }
 
@@ -54,7 +54,7 @@ class AlphaSignedIntegerParser {
         Capture(as: isNegativeRef) {
             Optionally("M")
         } transform: { $0 == "M" }
-        Capture(as: valueRef) { Repeat(.digit, count: width) } transform: { Int8($0)! }
+        Capture(as: valueRef) { Repeat(.digit, count: width) } transform: { .init($0)! }
     }
 
     init(width: Int) {
@@ -80,7 +80,7 @@ class NumericSignedIntegerParser {
                 "1"
             }
         } transform: { $0 == "1" }
-        Capture(as: valueRef) { Repeat(.digit, count: width) } transform: { Int($0)! }
+        Capture(as: valueRef) { Repeat(.digit, count: width) } transform: { .init($0)! }
     }
 
     init(width: Int) {

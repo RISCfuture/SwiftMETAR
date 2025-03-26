@@ -8,6 +8,7 @@ final class ThunderstormLocationParser: RemarkParser {
     private let directionsParser = RemarkDirectionsParser()
     private let movingDirectionParser = RemarkDirectionParser()
 
+    // swiftlint:disable force_try
     private lazy var rx = Regex {
         Anchor.wordBoundary
         "TS"
@@ -27,8 +28,9 @@ final class ThunderstormLocationParser: RemarkParser {
         }
         Anchor.wordBoundary
     }
-    
-    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
+    // swiftlint:enable force_try
+
+    func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
         guard let result = try rx.firstMatch(in: remarks) else { return nil }
         let proximity = result[proximityRef],
             directions = directionsParser.parse(result),

@@ -8,6 +8,7 @@ final class ObscurationParser: RemarkParser {
     private let coverageRef = Reference<Remark.Coverage?>()
     private let heightRef = Reference<UInt>()
 
+    // swiftlint:disable force_try
     private lazy var rx = Regex {
         Anchor.wordBoundary
         Capture(as: typeRef) { try! Weather.Phenomenon.rx } transform: { .init(rawValue: String($0))! }
@@ -15,11 +16,12 @@ final class ObscurationParser: RemarkParser {
         Optionally {
             Capture(as: coverageRef) { try! Remark.Coverage.rx } transform: { .init(rawValue: String($0)) }
         }
-        Capture(as: heightRef) { Repeat(.digit, count: 3) } transform: { UInt($0)!*100 }
+        Capture(as: heightRef) { Repeat(.digit, count: 3) } transform: { .init($0)! * 100 }
         Anchor.wordBoundary
     }
-    
-    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
+    // swiftlint:enable force_try
+
+    func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
         guard let result = try rx.firstMatch(in: remarks) else { return nil }
         let type = result[typeRef],
             coverage = result[coverageRef],

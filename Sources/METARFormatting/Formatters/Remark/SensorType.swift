@@ -2,7 +2,7 @@ import Foundation
 import SwiftMETAR
 
 public extension Remark.SensorType {
-    
+
     /// Formatter for `Remark.SensorType`
     struct FormatStyle: Foundation.FormatStyle, Sendable {
         public func format(_ value: Remark.SensorType) -> String {
@@ -21,6 +21,8 @@ public extension Remark.SensorType {
     }
 }
 
+// swiftlint:disable missing_docs
 public extension FormatStyle where Self == Remark.SensorType.FormatStyle {
     static var sensor: Self { .init() }
 }
+// swiftlint:enable missing_docs

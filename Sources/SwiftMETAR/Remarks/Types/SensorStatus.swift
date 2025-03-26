@@ -1,23 +1,23 @@
-extension Remark {
-    
+public extension Remark {
+
     /// Types of automated weather sesons that can become inoperative.
-    public enum SensorType: Codable, Equatable, Sendable {
-        
+    enum SensorType: Codable, Equatable, Sendable {
+
         /// Runway visual range transmissometer is inoperative.
         case RVR
-        
+
         /// Ceilometer is inoperative.
         case presentWeather
-        
+
         /// Rain accumulation sensor is inoperative.
         case rain
-        
+
         /// Freezing rain accumulation sensor is inoperative.
         case freezingRain
-        
+
         /// Lightning sensor is inoperative.
         case lightning
-        
+
         /**
          A visibility sensor at a secondary location is inoperative.
          
@@ -25,7 +25,7 @@ extension Remark {
          quadrant direction).
          */
         case secondaryVisibility(location: String)
-        
+
         /**
          A ceilometer at a secondary location is inoperative.
          

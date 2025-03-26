@@ -2,8 +2,8 @@ import Foundation
 @preconcurrency import RegexBuilder
 
 class PeriodParser {
-    func parse(_ parts: inout Array<String.SubSequence>, referenceDate: Date? = nil) throws -> TAF.Group.Period? {
-        let parsers: Array<PeriodParser.Type> = [
+    func parse(_ parts: inout [String.SubSequence], referenceDate: Date? = nil) throws -> TAF.Group.Period? {
+        let parsers: [PeriodParser.Type] = [
             FromPeriodParser.self,
             TemporaryPeriodParser.self,
             BecomingPeriodParser.self,
@@ -22,7 +22,7 @@ class PeriodParser {
 
     private protocol PeriodParser {
         init()
-        func parse(_ parts: inout Array<String.SubSequence>, referenceDate: Date) throws -> TAF.Group.Period?
+        func parse(_ parts: inout [String.SubSequence], referenceDate: Date) throws -> TAF.Group.Period?
     }
 
     private final class FromPeriodParser: PeriodParser {
@@ -34,7 +34,7 @@ class PeriodParser {
             Anchor.endOfSubject
         }
 
-        func parse(_ parts: inout Array<String.SubSequence>, referenceDate: Date) throws -> TAF.Group.Period? {
+        func parse(_ parts: inout [String.SubSequence], referenceDate: Date) throws -> TAF.Group.Period? {
             guard !parts.isEmpty else { return nil }
 
             let periodStr = String(parts[0])
@@ -58,14 +58,14 @@ class PeriodParser {
             Anchor.endOfSubject
         }
 
-        func parse(_ parts: inout Array<String.SubSequence>, referenceDate: Date) throws -> TAF.Group.Period? {
+        func parse(_ parts: inout [String.SubSequence], referenceDate: Date) throws -> TAF.Group.Period? {
             guard let period = try parseRange(&parts, referenceDate: referenceDate) else {
                 return nil
             }
             return .range(period)
         }
 
-        func parseRange(_ parts: inout Array<String.SubSequence>, referenceDate: Date) throws -> DateComponentsInterval? {
+        func parseRange(_ parts: inout [String.SubSequence], referenceDate: Date) throws -> DateComponentsInterval? {
             guard !parts.isEmpty else { return nil }
             let periodStr = String(parts[0])
             guard let match = try rx.wholeMatch(in: periodStr) else { return nil }
@@ -79,7 +79,7 @@ class PeriodParser {
     }
 
     private final class TemporaryPeriodParser: PeriodParser {
-        func parse(_ parts: inout Array<String.SubSequence>, referenceDate: Date) throws -> TAF.Group.Period? {
+        func parse(_ parts: inout [String.SubSequence], referenceDate: Date) throws -> TAF.Group.Period? {
             guard !parts.isEmpty else { return nil }
             guard parts[0] == "TEMPO" else { return nil }
             parts.removeFirst()
@@ -92,7 +92,7 @@ class PeriodParser {
     }
 
     private final class BecomingPeriodParser: PeriodParser {
-        func parse(_ parts: inout Array<String.SubSequence>, referenceDate: Date) throws -> TAF.Group.Period? {
+        func parse(_ parts: inout [String.SubSequence], referenceDate: Date) throws -> TAF.Group.Period? {
             guard !parts.isEmpty else { return nil }
             guard parts[0] == "BECMG" else { return nil }
             parts.removeFirst()
@@ -109,11 +109,11 @@ class PeriodParser {
         private lazy var rx = Regex {
             Anchor.startOfSubject
             "PROB"
-            Capture(as: probabilityRef) { Repeat(.digit, count: 2) } transform: { UInt8($0)! }
+            Capture(as: probabilityRef) { Repeat(.digit, count: 2) } transform: { .init($0)! }
             Anchor.endOfSubject
         }
 
-        func parse(_ parts: inout Array<String.SubSequence>, referenceDate: Date) throws -> TAF.Group.Period? {
+        func parse(_ parts: inout [String.SubSequence], referenceDate: Date) throws -> TAF.Group.Period? {
             guard !parts.isEmpty else { return nil }
 
             let probStr = String(parts[0])

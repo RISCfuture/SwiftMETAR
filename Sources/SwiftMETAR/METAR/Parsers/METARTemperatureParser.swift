@@ -12,7 +12,7 @@ class METARTemperatureParser {
         Optionally { dewpointParser.rx }
     }
 
-    func parse(_ parts: inout Array<String.SubSequence>) throws -> (Int8?, Int8?) {
+    func parse(_ parts: inout [String.SubSequence]) throws -> (Int8?, Int8?) {
         if parts.isEmpty { return (nil, nil) }
         let tempStr = String(parts[0])
 

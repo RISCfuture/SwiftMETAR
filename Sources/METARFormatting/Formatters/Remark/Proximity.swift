@@ -2,7 +2,7 @@ import Foundation
 import SwiftMETAR
 
 public extension Remark.Proximity {
-    
+
     /// Formatter for `Remark.Proximity`
     struct FormatStyle: Foundation.FormatStyle, Sendable {
         public func format(_ value: Remark.Proximity) -> String {
@@ -15,8 +15,8 @@ public extension Remark.Proximity {
     }
 }
 
+// swiftlint:disable missing_docs
 public extension FormatStyle where Self == Remark.Proximity.FormatStyle {
-    static var proximity: Self {
-        .init()
-    }
+    static var proximity: Self { .init() }
 }
+// swiftlint:enable missing_docs

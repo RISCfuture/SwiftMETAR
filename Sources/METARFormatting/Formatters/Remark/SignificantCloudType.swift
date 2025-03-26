@@ -2,7 +2,7 @@ import Foundation
 import SwiftMETAR
 
 public extension Remark.SignificantCloudType {
-    
+
     /// Formatter for `Remark.SignificantCloudType`
     struct FormatStyle: Foundation.FormatStyle, Sendable {
         public func format(_ value: Remark.SignificantCloudType) -> String {
@@ -20,6 +20,8 @@ public extension Remark.SignificantCloudType {
     }
 }
 
+// swiftlint:disable missing_docs
 public extension FormatStyle where Self == Remark.SignificantCloudType.FormatStyle {
     static var cloudType: Self { .init() }
 }
+// swiftlint:enable missing_docs

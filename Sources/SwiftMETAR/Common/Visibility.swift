@@ -10,28 +10,28 @@ public enum Visibility: Codable, Equatable, Sendable {
      - Parameter value: The visibility value.
      */
     case equal(_ value: Value)
-    
+
     /**
      Visibility is less than this value.
      
      - Parameter value: The visibility value.
      */
     case lessThan(_ value: Value)
-    
+
     /**
      Visibility is greater than this value.
      
      - Parameter value: The visibility value.
      */
     case greaterThan(_ value: Value)
-    
+
     /**
      Visibility is variable between these values.
      
      - Parameter low: The low value.
      - Parameter high: The high value.
      */
-    indirect case variable(_ low: Visibility, _ high: Visibility)
+    indirect case variable(_ low: Self, _ high: Self)
 
     /// Visibility was not recorded.
     case notRecorded
@@ -49,14 +49,34 @@ public enum Visibility: Codable, Equatable, Sendable {
                 let value = try container.decode(Value.self, forKey: .value)
                 self = .greaterThan(value)
             case "<>":
-                let low = try container.decode(Visibility.self, forKey: .low)
-                let high = try container.decode(Visibility.self, forKey: .high)
+                let low = try container.decode(Self.self, forKey: .low)
+                let high = try container.decode(Self.self, forKey: .high)
                 self = .variable(low, high)
             default:
                 throw DecodingError.dataCorruptedError(forKey: .constraint, in: container, debugDescription: "Unknown enum value")
         }
     }
-    
+
+    public static func == (lhs: Self, rhs: Self) -> Bool {
+        switch lhs {
+            case let .equal(lhsValue):
+                guard case let .equal(rhsValue) = rhs else { return false }
+                return lhsValue == rhsValue
+            case let .lessThan(lhsValue):
+                guard case let .lessThan(rhsValue) = rhs else { return false }
+                return lhsValue == rhsValue
+            case let .greaterThan(lhsValue):
+                guard case let .greaterThan(rhsValue) = rhs else { return false }
+                return lhsValue == rhsValue
+            case let .variable(lhsLow, lhsHigh):
+                guard case let .variable(rhsLow, rhsHigh) = rhs else { return false }
+                return lhsLow == rhsLow && lhsHigh == rhsHigh
+            case .notRecorded:
+                guard case .notRecorded = rhs else { return false }
+                return true
+        }
+    }
+
     public func encode(to encoder: Encoder) throws {
         var container = encoder.container(keyedBy: CodingKeys.self)
         switch self {
@@ -77,51 +97,31 @@ public enum Visibility: Codable, Equatable, Sendable {
                 try container.encode("no", forKey: .constraint)
         }
     }
-    
-    public static func == (lhs: Visibility, rhs: Visibility) -> Bool {
-        switch lhs {
-            case let .equal(lhsValue):
-                guard case let .equal(rhsValue) = rhs else { return false }
-                return lhsValue == rhsValue
-            case let .lessThan(lhsValue):
-                guard case let .lessThan(rhsValue) = rhs else { return false }
-                return lhsValue == rhsValue
-            case let .greaterThan(lhsValue):
-                guard case let .greaterThan(rhsValue) = rhs else { return false }
-                return lhsValue == rhsValue
-            case let .variable(lhsLow, lhsHigh):
-                guard case let .variable(rhsLow, rhsHigh) = rhs else { return false }
-                return lhsLow == rhsLow && lhsHigh == rhsHigh
-            case .notRecorded:
-                guard case .notRecorded = rhs else { return false }
-                return true
-        }
-    }
-    
+
     /// A distance as used in a visibility report.
     public enum Value: Codable, Comparable, Sendable {
-        
+
         /**
          A distance reported in statute miles, as a vulgar fraction.
          
          - Parameter value: distance, in statute miles.
          */
         case statuteMiles(_ value: Ratio)
-        
+
         /**
          A distance reported in feet.
          
          - Parameter value: The distance, in feet.
          */
         case feet(_ value: UInt16)
-        
+
         /**
          A distance reported in meters.
          
          - Parameter value: The distance, in meters.
          */
         case meters(_ value: UInt16)
-        
+
         /// The distance expressed as a `Measurement`, which is convertible to
         /// other units.
         public var measurement: Measurement<UnitLength> {
@@ -131,7 +131,7 @@ public enum Visibility: Codable, Equatable, Sendable {
                 case let .meters(value): .init(value: Double(value), unit: .meters)
             }
         }
-        
+
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             switch try container.decode(String.self, forKey: .unit) {
@@ -148,7 +148,7 @@ public enum Visibility: Codable, Equatable, Sendable {
                     throw DecodingError.dataCorruptedError(forKey: .unit, in: container, debugDescription: "Unknown enum value")
             }
         }
-        
+
         public func encode(to encoder: Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             switch self {
@@ -163,20 +163,20 @@ public enum Visibility: Codable, Equatable, Sendable {
                     try container.encode(value, forKey: .value)
             }
         }
-        
-        public static func == (lhs: Value, rhs: Value) -> Bool {
+
+        public static func == (lhs: Self, rhs: Self) -> Bool {
             return lhs.measurement == rhs.measurement
         }
-        
-        public static func < (lhs: Value, rhs: Value) -> Bool {
+
+        public static func < (lhs: Self, rhs: Self) -> Bool {
             return lhs.measurement < rhs.measurement
         }
-        
+
         enum CodingKeys: String, CodingKey {
             case unit, value, numerator, denominator
         }
     }
-    
+
     enum CodingKeys: String, CodingKey {
         case constraint, value, low, high
     }

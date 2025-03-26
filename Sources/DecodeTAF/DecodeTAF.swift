@@ -1,7 +1,7 @@
-import Foundation
 import ArgumentParser
-import SwiftMETAR
+import Foundation
 import METARFormatting
+import SwiftMETAR
 
 @available(macOS 15.0, *)
 @main
@@ -13,31 +13,31 @@ struct DecodeTAF: AsyncParsableCommand {
             in which case it will download the latest TAFs from AWC; or it can be used with
             a raw TAF string, in which case that string will be parsed.
             """)
-    
+
     @Argument(help: "The ICAO code of an airport, or a TAF string to decode")
-    var airportCodeOrTAF: String? = nil
-    
-    @Option(name: [.customLong("taf-url"), .short], help: "The URL to load the TAF CSV from.", transform: { URL(string: $0)! })
+    var airportCodeOrTAF: String?
+
+    @Option(name: [.customLong("taf-url"), .short], help: "The URL to load the TAF CSV from.", transform: { .init(string: $0)! })
     var TAF_URL = URL(string: "https://aviationweather.gov/data/cache/tafs.cache.csv")!
-    
+
     @Flag(name: .long, inversion: .prefixedNo, help: "Include raw TAF text")
     var raw = false
-    
+
     @Flag(name: .shortAndLong, inversion: .prefixedNo, help: "Include remarks")
     var remarks = true
-    
+
     @Flag(name: .long, help: "Parse and decode all TAFs (!)")
     var all = false
-    
+
     @Flag(name: .long, help: "Only show stations with parsing errors (intended to be used with `--all`")
     var errorsOnly = false
-    
+
     private var session: URLSession { .init(configuration: .ephemeral) }
-    
+
     func run() async throws {
         try await all ? parseAll() : parsePrompt()
     }
-    
+
     private func parseAll() async throws {
         let TAFs = try await loadTAFs { raw, error in
             print(raw)
@@ -50,50 +50,50 @@ struct DecodeTAF: AsyncParsableCommand {
             }
         }
     }
-    
+
     private func parsePrompt() async throws {
         let airportCodeOrTAF = promptTAF()
         let taf = try await airportCodeOrTAF.count == 4 ? parse(code: airportCodeOrTAF) : parse(raw: airportCodeOrTAF)
         printTAF(taf)
     }
-    
+
     private func promptTAF() -> String {
         var airportCodeOrTAF = self.airportCodeOrTAF
-        
+
         while airportCodeOrTAF == nil || airportCodeOrTAF!.isEmpty {
             print("Enter airport code or TAF: ", terminator: "")
             airportCodeOrTAF = readLine(strippingNewline: true)
         }
-        
+
         return airportCodeOrTAF!
     }
-    
+
     private func parse(code: String) async throws -> TAF {
         guard let taf = try await getTAF(airportCode: code) else {
             throw Errors.unknownAirportID(code)
         }
         return taf
     }
-    
+
     private func parse(raw: String) async throws -> TAF {
         try await TAF.from(string: raw)
     }
-    
-    private func loadTAFs(errorHandler: ((String, Swift.Error) throws -> Void)) async throws -> Dictionary<String, TAF> {
+
+    private func loadTAFs(errorHandler: ((String, Swift.Error) throws -> Void)) async throws -> [String: TAF] {
         print("Loading TAFs…")
         print()
-        
+
         let (data, response) = try await session.bytes(from: TAF_URL)
         guard let response = response as? HTTPURLResponse else {
             throw Errors.badResponse(response)
         }
-        guard response.statusCode/100 == 2 else {
+        guard response.statusCode / 100 == 2 else {
             throw Errors.badStatus(response: response)
         }
-        
-        var TAFs = Dictionary<String, TAF>()
+
+        var TAFs = [String: TAF]()
         for try await line in data.lines {
-            guard let range  = line.rangeOfCharacter(from: CharacterSet(charactersIn: ",")) else { continue }
+            guard let range = line.rangeOfCharacter(from: CharacterSet(charactersIn: ",")) else { continue }
             let string = String(line[line.startIndex..<range.lowerBound])
             guard string.starts(with: "K") else { continue }
             do {
@@ -103,28 +103,28 @@ struct DecodeTAF: AsyncParsableCommand {
                 try errorHandler(string, error)
             }
         }
-        
+
         return TAFs
     }
-    
+
     private func getTAF(airportCode: String) async throws -> TAF? {
-        let TAFs = try await loadTAFs { raw, error in
+        let TAFs = try await loadTAFs { raw, _ in
             if raw.starts(with: airportCode) {
                 throw Errors.badTAF(raw: raw)
             }
         }
-        
+
         return TAFs[airportCode]
     }
-    
+
     private func printTAF(_ taf: TAF) {
         if errorsOnly { return }
-        
+
         print("Airport: \(taf.airportID)")
         if raw, let text = taf.text {
             print(text)
         }
-        
+
         if let date = taf.originDate {
             lprint("Issued: \(date, format: .dateTime) (\(taf.issuance, format: .issuance))")
         }
@@ -135,15 +135,15 @@ struct DecodeTAF: AsyncParsableCommand {
             let temps = taf.temperatures.map { TAF.Temperature.FormatStyle.temperature.format($0) }.joined(separator: ", ")
             print("Temperature: \(temps)")
         }
-        
+
         if remarks {
             print()
             printRemarks(taf: taf)
         }
-        
+
         print()
     }
-    
+
     private func printGroup(_ group: TAF.Group) {
         lprint("\(group.period, format: .period):")
         if let wind = group.wind {
@@ -175,13 +175,13 @@ struct DecodeTAF: AsyncParsableCommand {
             lprint("  Altimeter: \(altimeter.measurement, format: .measurement(width: .abbreviated, usage: .asProvided))")
         }
     }
-    
+
     private func printRemarks(taf: TAF) {
         for remark in taf.remarks.sorted(using: RemarkComparator()) {
             print(RemarkEntry.FormatStyle.remark().format(remark))
         }
     }
-    
+
     private func lprint(_ str: LocalizedStringResource) {
         print(String(localized: str))
     }
@@ -203,7 +203,7 @@ extension Errors: LocalizedError {
             case let .badTAF(raw): "Couldn’t parse TAF: \(raw)"
         }
     }
-    
+
     var failureReason: String? {
         switch self {
             case .badResponse, .badStatus: "The AWC API may have changed, or may not be functioning properly."

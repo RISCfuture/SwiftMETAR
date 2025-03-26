@@ -1,15 +1,16 @@
+import BuildableMacro
 import Foundation
 import SwiftMETAR
-import BuildableMacro
 
 public extension Icing.IcingType {
-    
+
     /// Formatter for `Icing.IcingType`
-    @Buildable struct FormatStyle: Foundation.FormatStyle, Sendable {
-        
+    @Buildable
+    struct FormatStyle: Foundation.FormatStyle, Sendable {
+
         /// Whether to include the word "icing" in the formatted text.
         public var includeIcing = false
-        
+
         public func format(_ value: Icing.IcingType) -> String {
             if includeIcing {
                 switch value {
@@ -42,10 +43,12 @@ public extension Icing.IcingType {
     }
 }
 
+// swiftlint:disable missing_docs
 public extension FormatStyle where Self == Icing.IcingType.FormatStyle {
+    static var type: Self { .init() }
+
     static func type(includeIcing: Bool = false) -> Self {
         .init(includeIcing: includeIcing)
     }
-    
-    static var type: Self { .init() }
 }
+// swiftlint:enable missing_docs

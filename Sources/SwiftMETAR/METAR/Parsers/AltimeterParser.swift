@@ -8,11 +8,23 @@ class AltimeterParser {
     private lazy var METARAltRx = Regex {
         Anchor.startOfSubject
         Capture(as: unitRef) { CharacterClass.anyOf("AQ") }
-        Capture(as: valueRef) { Repeat(.digit, count: 4) } transform: { UInt16($0)! }
+        Capture(as: valueRef) { Repeat(.digit, count: 4) } transform: { .init($0)! }
         Anchor.endOfSubject
     }
 
-    func parseMETAR(_ parts: inout Array<String.SubSequence>) throws -> Altimeter? {
+    private lazy var TAFAltRx = Regex {
+        Anchor.startOfSubject
+        "QNH"
+        Capture(as: valueRef) { Repeat(.digit, count: 4) } transform: { .init($0)! }
+        Capture(as: unitRef) {
+            ChoiceOf {
+                "INS"
+                "HPA"
+            }
+        }
+    }
+
+    func parseMETAR(_ parts: inout [String.SubSequence]) throws -> Altimeter? {
         guard !parts.isEmpty else { return nil }
 
         let altStr = String(parts[0])
@@ -28,19 +40,7 @@ class AltimeterParser {
         }
     }
 
-    private lazy var TAFAltRx = Regex {
-        Anchor.startOfSubject
-        "QNH"
-        Capture(as: valueRef) { Repeat(.digit, count: 4) } transform: { UInt16($0)! }
-        Capture(as: unitRef) {
-            ChoiceOf {
-                "INS"
-                "HPA"
-            }
-        }
-    }
-
-    func parseTAF(_ parts: inout Array<String.SubSequence>) throws -> Altimeter? {
+    func parseTAF(_ parts: inout [String.SubSequence]) throws -> Altimeter? {
         guard !parts.isEmpty else { return nil }
 
         let altStr = String(parts[0])

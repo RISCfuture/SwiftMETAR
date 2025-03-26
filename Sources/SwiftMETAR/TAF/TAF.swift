@@ -11,39 +11,39 @@ import Foundation
  */
 
 public struct TAF: Codable, Sendable {
-    
+
     /// The raw text of the TAF.
     public let text: String?
-    
+
     /// The reason for this TAF's issuance.
     public let issuance: Issuance
-    
+
     /// The reporting station ICAO code (typically an airport).
     public let airportID: String
-    
+
     /// The components of the date that the forecast was generated. If `nil`,
     /// forecast generation date was not provided, and all group dates will be
     /// assumed to be relative to the current month and year.
     public let originCalendarDate: DateComponents?
-    
+
     /// The forecasted weather changes, and the valid periods for each forecast.
-    public let groups: Array<Group>
- 
+    public let groups: [Group]
+
     /// The forecasted temperature changes and temperature extremes.
-    public let temperatures: Array<Temperature>
-    
+    public let temperatures: [Temperature]
+
     /// Additional remarks following the forecast.
-    public let remarks: Array<RemarkEntry>
-    
+    public let remarks: [RemarkEntry]
+
     /// Raw remarks, before parsing
     public let remarksString: String?
-    
+
     /// The date that the forecast was generated.
     public var originDate: Date? {
-        guard let originCalendarDate = originCalendarDate else { return nil }
+        guard let originCalendarDate else { return nil }
         return originCalendarDate.date
     }
-    
+
     /**
      Parse a TAF from its text.
      
@@ -55,10 +55,10 @@ public struct TAF: Codable, Sendable {
      - Returns: The parsed TAF.
      - Throws: If a parsing error occurs.
      */
-    public static func from(string: String, on date: Date? = nil) async throws -> TAF {
+    public static func from(string: String, on date: Date? = nil) async throws -> Self {
         return try await TAFParser.shared.parse(string, on: date)
     }
-    
+
     /**
      Generates a snapshot of the forecasted weather at a given time within the
      forecast period. The closest prior `FM` (from) entry is combined with any
@@ -71,7 +71,7 @@ public struct TAF: Codable, Sendable {
      */
     public func during(_ date: Date) -> Group? {
         guard covers(date) else { return nil }
-        
+
         let components = zuluCal.dateComponents(in: zulu, from: date)
         var combinedGroup = Group(period: .from(components),
                                   wind: nil,
@@ -84,7 +84,7 @@ public struct TAF: Codable, Sendable {
                                   turbulence: [],
                                   remarks: [],
                                   remarksString: nil)
-        
+
         for group in groups {
             switch group.period {
                 case let .from(from):
@@ -100,9 +100,9 @@ public struct TAF: Codable, Sendable {
                     if !period.contains(date) { continue }
             }
             // if we're still here, this period covers the date in question
-            
+
             switch group.period {
-                case .from(_): // reset all the fields
+                case .from: // reset all the fields
                     combinedGroup.wind = group.wind
                     combinedGroup.visibility = group.visibility
                     combinedGroup.weather = group.weather
@@ -116,10 +116,10 @@ public struct TAF: Codable, Sendable {
                     if let windshear = group.windshear { combinedGroup.windshear = windshear }
             }
         }
-        
+
         return combinedGroup
     }
-    
+
     /**
      Returns `true` if the given date is within this TAF's forecast period.
      
@@ -128,47 +128,47 @@ public struct TAF: Codable, Sendable {
      */
     public func covers(_ date: Date) -> Bool {
         guard !groups.isEmpty else { return false }
-        
+
         guard case let .range(period) = groups[0].period else {
-            preconditionFailure("TAF must start with group with range period") //TODO is this too extreme
+            preconditionFailure("TAF must start with group with range period")
         }
         return period.contains(date)
     }
-    
+
     /// Reasons for a TAF issuance.
     public enum Issuance: String, Codable, Sendable {
-        
+
         /// Routine 6-hour issuance.
         case routine = ""
-        
+
         /// Amended TAF with additional forecasts.
         case amended = "AMD"
-        
+
         /// Correction of incorrect information.
         case corrected = "COR"
     }
-    
+
     /// A forecasted temperature value.
     public struct Temperature: Codable, Equatable, Sendable {
-        
+
         /// Whether this is a forecasted temperature or temperature extreme.
         public let type: TemperatureType?
-        
+
         /// The temperature value, in °C.
         public let value: Int
-        
+
         /// The start time of the forecasted temperature.
         public let time: DateComponents
-        
+
         /// The temperature as a `Measurement`, which can be converted to other
         /// units.
         public var measurement: Measurement<UnitTemperature> {
             .init(value: Double(value), unit: .celsius)
         }
-        
+
         /// Temperature extreme types
         public enum TemperatureType: String, Codable, Sendable {
-            
+
             /// Minimum temperature for the forecast period.
             case minimum = "N"
 
@@ -176,68 +176,68 @@ public struct TAF: Codable, Sendable {
             case maximum = "X"
         }
     }
-    
+
     /// A snapshot of weather conditions for a forecast period. Not all weather
     /// information need be supplied.
     public struct Group: Codable, Equatable, Sendable {
-        
+
         /// The raw text of the Group.
-        public var text: String? = nil
-        
+        public var text: String?
+
         /// The period during which these forecasts are valid.
         public let period: Period
-        
+
         /// The forecasted winds.
         public var wind: Wind?
-        
+
         /// The forecasted visibility.
         public var visibility: Visibility?
-        
+
         /// Any forecasted weather phenomena. An empty array means no phenomena
         /// are forecasted; `nil` means data is not available.
-        public var weather: Array<Weather>?
-        
+        public var weather: [Weather]?
+
         /// Any forecasted cloud coverage.
-        public var conditions: Array<Condition>
-        
+        public var conditions: [Condition]
+
         /// Any forecasted windshear.
         public var windshear: Windshear?
-        
+
         /// If windshear conditions are present.
         public var windshearConditions: Bool
-        
+
         /// Any forecasted icing conditions.
-        public var icing: Array<Icing>
-        
+        public var icing: [Icing]
+
         /// Any forecasted turbulence conditions.
-        public var turbulence: Array<Turbulence>
-        
+        public var turbulence: [Turbulence]
+
         /// Forecasted minimum altimeter setting.
         public var altimeter: Altimeter?
-        
+
         /// Additional remarks following the forecast.
-        public var remarks: Array<RemarkEntry>
-        
+        public var remarks: [RemarkEntry]
+
         /// Raw remarks, before parsing
         public var remarksString: String?
-        
+
         /// A valid period for a TAF or one of its groups.
         public enum Period: Codable, Equatable, Sendable {
-            
+
             /**
              Forecast is valid between two dates.
              
              - Parameter period: The valid period.
              */
             case range(_ period: DateComponentsInterval)
-            
+
             /**
              Forecast is valid starting at a date.
              
              - Parameter from: The start date.
              */
             case from(_ from: DateComponents)
-            
+
             /**
              Forecast is valid between two dates within a larger date range
              covered by a ``from(_:)`` entry.
@@ -245,14 +245,14 @@ public struct TAF: Codable, Sendable {
              - Parameter period: The valid period.
              */
             case temporary(_ period: DateComponentsInterval)
-            
+
             /**
              Changing to this forecast within this time period.
              
              - Parameter period: The valid period.
              */
             case becoming(_ period: DateComponentsInterval)
-            
+
             /**
              Forecast has a probability of becoming valid between two dates.
              
@@ -261,7 +261,7 @@ public struct TAF: Codable, Sendable {
              - Parameter period: The valid period.
              */
             case probability(_ probability: UInt8, period: DateComponentsInterval)
-            
+
             public init(from decoder: Decoder) throws {
                 let container = try decoder.container(keyedBy: CodingKeys.self)
                 switch try container.decode(String.self, forKey: .type) {
@@ -285,7 +285,7 @@ public struct TAF: Codable, Sendable {
                         throw DecodingError.dataCorruptedError(forKey: .type, in: container, debugDescription: "Unknown enum value")
                 }
             }
-            
+
             public func encode(to encoder: Encoder) throws {
                 var container = encoder.container(keyedBy: CodingKeys.self)
                 switch self {
@@ -307,8 +307,8 @@ public struct TAF: Codable, Sendable {
                         try container.encode(period, forKey: .period)
                 }
             }
-            
-            public static func == (lhs: Period, rhs: Period) -> Bool {
+
+            public static func == (lhs: Self, rhs: Self) -> Bool {
                 switch lhs {
                     case let .range(lhsPeriod):
                         guard case let .range(rhsPeriod) = rhs else { return false }
@@ -327,7 +327,7 @@ public struct TAF: Codable, Sendable {
                         return lhsProb == rhsProb && lhsPeriod == rhsPeriod
                 }
             }
-            
+
             enum CodingKeys: String, CodingKey {
                 case type, probability, from, period
             }

@@ -2,7 +2,7 @@ import Foundation
 import SwiftMETAR
 
 public extension Remark.LightningType {
-    
+
     /// Formatter for `Remark.LightningType`
     struct FormatStyle: Foundation.FormatStyle, Sendable {
         public func format(_ value: Remark.LightningType) -> String {
@@ -16,6 +16,8 @@ public extension Remark.LightningType {
     }
 }
 
+// swiftlint:disable missing_docs
 public extension FormatStyle where Self == Remark.LightningType.FormatStyle {
     static var lightning: Self { .init() }
 }
+// swiftlint:enable missing_docs

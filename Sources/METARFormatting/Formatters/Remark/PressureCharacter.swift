@@ -2,7 +2,7 @@ import Foundation
 import SwiftMETAR
 
 public extension Remark.PressureCharacter {
-    
+
     /// Formatter for `Remark.PressureCharacter`
     struct FormatStyle: Foundation.FormatStyle, Sendable {
         public func format(_ value: Remark.PressureCharacter) -> String {
@@ -21,6 +21,8 @@ public extension Remark.PressureCharacter {
     }
 }
 
+// swiftlint:disable missing_docs
 public extension FormatStyle where Self == Remark.PressureCharacter.FormatStyle {
     static var pressureCharacter: Self { .init() }
 }
+// swiftlint:enable missing_docs

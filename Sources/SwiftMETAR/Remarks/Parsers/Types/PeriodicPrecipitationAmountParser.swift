@@ -11,7 +11,7 @@ final class PeriodicPrecipitationAmountParser: RemarkParser {
         "6"
         ChoiceOf {
             Regex {
-                Capture(as: amountRef) { Repeat(.digit, count: 4) } transform: { UInt($0) }
+                Capture(as: amountRef) { Repeat(.digit, count: 4) } transform: { .init($0) }
                 Anchor.wordBoundary
             }
             Capture(as: indeterminateRef) { "////" } transform: { _ in true }
@@ -32,12 +32,12 @@ final class PeriodicPrecipitationAmountParser: RemarkParser {
 
         if let amount = result[amountRef] {
             remarks.removeSubrange(result.range)
-            return .periodicPrecipitationAmount(period: period, amount: Float(amount)/100.0)
-        } else if result[indeterminateRef] == true {
+            return .periodicPrecipitationAmount(period: period, amount: Float(amount) / 100.0)
+        }
+        if result[indeterminateRef] == true {
             remarks.removeSubrange(result.range)
             return .periodicPrecipitationAmount(period: period, amount: nil)
-        } else {
-            return nil
         }
+        return nil
     }
 }

@@ -1,13 +1,13 @@
 import Foundation
 
-extension Remark {
-    
+public extension Remark {
+
     /// An occurrence of a thunderstorm beginning or ending.
-    public struct ThunderstormEvent: Codable, Equatable, Sendable {
-        
+    struct ThunderstormEvent: Codable, Equatable, Sendable {
+
         /// Whether the thunderstorm began or ended.
         public let type: Remark.EventType
-        
+
         /// The time when the thunderstorm began or ended.
         public let time: DateComponents
     }

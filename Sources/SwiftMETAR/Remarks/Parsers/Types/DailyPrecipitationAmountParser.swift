@@ -14,14 +14,14 @@ final class DailyPrecipitationAmountParser: RemarkParser {
             Regex {
                 Capture(as: amountRef) {
                     Repeat(.digit, count: 4)
-                } transform: { UInt($0) }
+                } transform: { .init($0) }
                 Anchor.wordBoundary
             }
             Capture(as: missingRef) { Repeat("/", count: 4) } transform: { _ in true }
         }
     }
 
-    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
+    func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
         guard let result = try rx.firstMatch(in: remarks) else { return nil }
 
         if result[missingRef] == true {
@@ -29,7 +29,7 @@ final class DailyPrecipitationAmountParser: RemarkParser {
             return .dailyPrecipitationAmount(nil)
         }
         guard let num = result[amountRef] else { return nil }
-        let amount = Float(num)/100.0
+        let amount = Float(num) / 100.0
 
         remarks.removeSubrange(result.range)
         return .dailyPrecipitationAmount(amount)

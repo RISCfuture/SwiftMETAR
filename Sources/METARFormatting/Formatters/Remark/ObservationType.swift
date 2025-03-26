@@ -13,6 +13,8 @@ public extension Remark.ObservationType {
     }
 }
 
+// swiftlint:disable missing_docs
 public extension FormatStyle where Self == Remark.ObservationType.FormatStyle {
     static var observationType: Self { .init() }
 }
+// swiftlint:enable missing_docs

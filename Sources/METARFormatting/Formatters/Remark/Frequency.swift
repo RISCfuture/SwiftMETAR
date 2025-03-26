@@ -2,7 +2,7 @@ import Foundation
 import SwiftMETAR
 
 public extension Remark.Frequency {
-    
+
     /// Formatter for `Remark.Frequency`
     struct FormatStyle: Foundation.FormatStyle, Sendable {
         public func format(_ value: Remark.Frequency) -> String {
@@ -15,6 +15,8 @@ public extension Remark.Frequency {
     }
 }
 
+// swiftlint:disable missing_docs
 public extension FormatStyle where Self == Remark.Frequency.FormatStyle {
     static var frequency: Self { .init() }
 }
+// swiftlint:enable missing_docs

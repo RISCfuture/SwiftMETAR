@@ -1,6 +1,6 @@
 import Foundation
-import Quick
 import Nimble
+import Quick
 
 @testable import SwiftMETAR
 
@@ -18,7 +18,7 @@ class TurbulenceSpec: AsyncSpec {
                 expect(forecast.groups[0].turbulence).to(beEmpty())
                 expect(forecast.groups[1].turbulence).to(equal([
                     .init(location: .clearAir, intensity: .moderate, frequency: .occasional, base: 0, depth: 4000),
-                    .init(location: nil, intensity: .light, frequency: nil, base: 9000, depth: 9000),
+                    .init(location: nil, intensity: .light, frequency: nil, base: 9000, depth: 9000)
                 ]))
                 expect(forecast.groups[2].turbulence).to(beEmpty())
             }

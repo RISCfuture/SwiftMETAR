@@ -11,11 +11,11 @@ extension DateComponents {
         if nanosecond != nil { return .second }
         return nil
     }
-    
+
     func merged(with other: DateComponents) -> DateComponents? {
-        guard let calendar = calendar,
-              let date = date,
-              let timeZone = timeZone,
+        guard let calendar,
+              let date,
+              let timeZone,
               let period = other.mostSignificantEmptyComponent,
               let start = date.startOf(period),
               let compDate = start.next(other) else { return nil }

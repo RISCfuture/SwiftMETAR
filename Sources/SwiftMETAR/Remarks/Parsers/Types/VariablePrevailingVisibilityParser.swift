@@ -15,11 +15,11 @@ final class VariablePrevailingVisibilityParser: RemarkParser {
         highParser.rx
         Anchor.wordBoundary
     }
-    
-    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
+
+    func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
         guard let result = try rx.firstMatch(in: remarks) else { return nil }
         let low = lowParser.parse(result), high = highParser.parse(result)
-        
+
         remarks.removeSubrange(result.range)
         return .variablePrevailingVisibility(low: low, high: high)
     }

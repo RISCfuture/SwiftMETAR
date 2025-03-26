@@ -2,7 +2,7 @@ import Foundation
 import SwiftMETAR
 
 public extension Remark.LowCloudType {
-    
+
     /// Formatter for `Remark.LowCloudType`
     struct FormatStyle: Foundation.FormatStyle, Sendable {
         public func format(_ value: Remark.LowCloudType) -> String {
@@ -24,7 +24,7 @@ public extension Remark.LowCloudType {
 }
 
 public extension Remark.MiddleCloudType {
-    
+
     /// Formatter for `Remark.MiddleCloudType`
     struct FormatStyle: Foundation.FormatStyle, Sendable {
         public func format(_ value: Remark.MiddleCloudType) -> String {
@@ -45,9 +45,8 @@ public extension Remark.MiddleCloudType {
     }
 }
 
-
 public extension Remark.HighCloudType {
-    
+
     /// Formatter for `Remark.HighCloudType`
     struct FormatStyle: Foundation.FormatStyle, Sendable {
         public func format(_ value: Remark.HighCloudType) -> String {
@@ -68,6 +67,7 @@ public extension Remark.HighCloudType {
     }
 }
 
+// swiftlint:disable missing_docs
 public extension FormatStyle where Self == Remark.LowCloudType.FormatStyle {
     static var lowClouds: Self { .init() }
 }
@@ -79,3 +79,4 @@ public extension FormatStyle where Self == Remark.MiddleCloudType.FormatStyle {
 public extension FormatStyle where Self == Remark.HighCloudType.FormatStyle {
     static var highClouds: Self { .init() }
 }
+// swiftlint:enable missing_docs

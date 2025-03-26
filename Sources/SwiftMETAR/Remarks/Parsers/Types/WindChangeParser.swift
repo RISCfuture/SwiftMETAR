@@ -1,7 +1,7 @@
 import Foundation
 @preconcurrency import RegexBuilder
 
-fileprivate let nocapExtremesRegex = Remark.Extreme.allCases.map { $0.rawValue }.joined(separator: "|")
+private let nocapExtremesRegex = Remark.Extreme.allCases.map(\.rawValue).joined(separator: "|")
 
 final class WindChangeParser: RemarkParser {
     var urgency = Remark.Urgency.routine
@@ -17,7 +17,7 @@ final class WindChangeParser: RemarkParser {
         Anchor.wordBoundary
     }
 
-    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
+    func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
         guard let result = try rx.firstMatch(in: remarks) else { return nil }
         let originalString = String(remarks[result.range]),
             wind = try windParser.parse(match: result, originalString: originalString),

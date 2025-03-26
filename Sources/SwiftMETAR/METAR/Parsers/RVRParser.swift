@@ -29,7 +29,7 @@ class RVRParser {
                 }
             }
         } transform: { $0.first }
-        Capture(as: distanceRef) { Repeat(.digit, 1...4) } transform: { UInt16($0)! }
+        Capture(as: distanceRef) { Repeat(.digit, 1...4) } transform: { .init($0)! }
         Capture(as: unitRef) {
             ChoiceOf {
                 "FT"
@@ -50,7 +50,7 @@ class RVRParser {
                 }
             }
         } transform: { $0.first }
-        Capture(as: distance1Ref) { Repeat(.digit, 1...4) } transform: { UInt16($0)! }
+        Capture(as: distance1Ref) { Repeat(.digit, 1...4) } transform: { .init($0)! }
         "V"
         Capture(as: sign2Ref) {
             Optionally {
@@ -60,7 +60,7 @@ class RVRParser {
                 }
             }
         } transform: { $0.first }
-        Capture(as: distance2Ref) { Repeat(.digit, 1...4) } transform: { UInt16($0)! }
+        Capture(as: distance2Ref) { Repeat(.digit, 1...4) } transform: { .init($0)! }
         Capture(as: unitRef) {
             ChoiceOf {
                 "FT"
@@ -70,8 +70,8 @@ class RVRParser {
         Anchor.endOfSubject
     }
 
-    func parse(_ parts: inout Array<String.SubSequence>) throws -> Array<RunwayVisibility> {
-        var visibilities = Array<RunwayVisibility>()
+    func parse(_ parts: inout [String.SubSequence]) throws -> [RunwayVisibility] {
+        var visibilities = [RunwayVisibility]()
 
         while true {
             if parts.isEmpty { return visibilities }
@@ -86,7 +86,6 @@ class RVRParser {
 
                 let value = visibilityValue(quantity, bound: bound, units: units)
                 visibilities.append(RunwayVisibility(runwayID: String(runway), visibility: value))
-
             } else if let match = try variableRx.wholeMatch(in: parts[0]) {
                 parts.removeFirst()
 
@@ -100,7 +99,6 @@ class RVRParser {
                 let low = visibilityValue(lowQuantity, bound: lowBound, units: units)
                 let high = visibilityValue(highQuantity, bound: highBound, units: units)
                 visibilities.append(RunwayVisibility(runwayID: String(runway), visibility: .variable(low, high)))
-
             } else { return visibilities }
         }
     }

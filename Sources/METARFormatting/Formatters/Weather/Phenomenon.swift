@@ -2,7 +2,7 @@ import Foundation
 import SwiftMETAR
 
 public extension Weather.Phenomenon {
-    
+
     /// Formatter for `Weather.Phenomenon`
     struct FormatStyle: Foundation.FormatStyle, Sendable {
         public func format(_ value: Weather.Phenomenon) -> String {
@@ -35,6 +35,8 @@ public extension Weather.Phenomenon {
     }
 }
 
+// swiftlint:disable missing_docs
 public extension FormatStyle where Self == Weather.Phenomenon.FormatStyle {
     static var phenomenon: Self { .init() }
 }
+// swiftlint:enable missing_docs

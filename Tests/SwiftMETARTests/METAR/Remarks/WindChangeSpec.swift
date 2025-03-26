@@ -1,6 +1,6 @@
 import Foundation
-import Quick
 import Nimble
+import Quick
 
 @testable import SwiftMETAR
 
@@ -15,10 +15,10 @@ class WindChangeSpec: AsyncSpec {
                     TX39/2621Z TN24/2612Z
                 """
                 let forecast = try await TAF.from(string: string)
-                
-                expect(forecast.groups[1].remarks.map { $0.remark }).to(contain(.windChange(wind: .variable(speed: .knots(6)), after: Date().this(day: 27, hour: 7)!)))
+
+                expect(forecast.groups[1].remarks.map(\.remark)).to(contain(.windChange(wind: .variable(speed: .knots(6)), after: Date().this(day: 27, hour: 7)!)))
             }
-            
+
             it("parses a 'WND VRB06KT AFT 2707' remark") {
                 let string = """
                 TAF KSKF
@@ -28,8 +28,8 @@ class WindChangeSpec: AsyncSpec {
                     TX35/2622Z TN21/2712Z
                 """
                 let forecast = try await TAF.from(string: string)
-                
-                expect(forecast.groups[0].remarks.map { $0.remark }).to(contain(.windChange(wind: .direction(140, speed: .knots(6)), after: Date().this(day: 27, hour: 1)!)))
+
+                expect(forecast.groups[0].remarks.map(\.remark)).to(contain(.windChange(wind: .direction(140, speed: .knots(6)), after: Date().this(day: 27, hour: 1)!)))
             }
         }
     }

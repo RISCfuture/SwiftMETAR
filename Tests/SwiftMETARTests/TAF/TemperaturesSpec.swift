@@ -1,6 +1,6 @@
 import Foundation
-import Quick
 import Nimble
+import Quick
 
 @testable import SwiftMETAR
 
@@ -21,7 +21,7 @@ class TemperaturesSpec: AsyncSpec {
                 expect(forecast.temperatures).to(equal([
                     .init(type: .maximum, value: 33, time: Date().this(day: 25, hour: 22)!),
                     .init(type: .minimum, value: 16, time: Date().this(day: 25, hour: 14)!),
-                    .init(type: nil, value: 18, time: Date().this(day: 25, hour: 17)!),
+                    .init(type: nil, value: 18, time: Date().this(day: 25, hour: 17)!)
                 ]))
             }
         }

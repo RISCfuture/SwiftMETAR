@@ -2,14 +2,14 @@ import Foundation
 import SwiftMETAR
 
 public extension Weather.Descriptor {
-    
+
     /// Formatter for `Weather.Descriptor`
     struct FormatStyle: Foundation.FormatStyle, Sendable {
-        
+
         /// The phenomenon associated with this descriptor. Not printed; only
         /// used to inflect the adjective for languages where this is necessary.
         public var phenomenon: Weather.Phenomenon
-        
+
         public func format(_ value: Weather.Descriptor) -> String {
             switch value {
                 case .shallow: String(localized: "shallow", comment: "precipitation descriptor")
@@ -22,15 +22,17 @@ public extension Weather.Descriptor {
                 case .freezing: String(localized: "freezing", comment: "precipitation descriptor")
             }
         }
-        
+
         public enum Width: Sendable, Codable {
             case abbreviated, full
         }
     }
 }
 
+// swiftlint:disable missing_docs
 public extension FormatStyle where Self == Weather.Descriptor.FormatStyle {
     static func descriptor(phenomenon: Weather.Phenomenon) -> Self {
         .init(phenomenon: phenomenon)
     }
 }
+// swiftlint:enable missing_docs

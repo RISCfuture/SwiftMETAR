@@ -20,16 +20,16 @@ class TAFTemperatureParser {
             }
         } transform: { .init(rawValue: String($0)) }
         Capture(as: signRef) { Optionally("M") } transform: { $0 == "M" }
-        Capture(as: temperatureRef) { Repeat(.digit, count: 2) } transform: { Int($0)! }
+        Capture(as: temperatureRef) { Repeat(.digit, count: 2) } transform: { .init($0)! }
         "/"
-        Capture(as: dayRef) { Repeat(.digit, count: 2) } transform: { Int($0)! }
-        Capture(as: hourRef) { Repeat(.digit, count: 2) } transform: { Int($0)! }
+        Capture(as: dayRef) { Repeat(.digit, count: 2) } transform: { .init($0)! }
+        Capture(as: hourRef) { Repeat(.digit, count: 2) } transform: { .init($0)! }
         "Z"
         Anchor.wordBoundary
     }
 
-    func parse(_ parts: inout Array<String.SubSequence>, date: DateComponents) throws -> Array<TAF.Temperature>? {
-        var temps = Array<TAF.Temperature>()
+    func parse(_ parts: inout [String.SubSequence], date: DateComponents) throws -> [TAF.Temperature]? {
+        var temps = [TAF.Temperature]()
 
         while !parts.isEmpty {
             let tempStr = String(parts[0])
