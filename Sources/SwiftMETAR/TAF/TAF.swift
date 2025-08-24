@@ -286,6 +286,26 @@ public struct TAF: Codable, Sendable {
                 }
             }
 
+            public static func == (lhs: Self, rhs: Self) -> Bool {
+                switch lhs {
+                    case let .range(lhsPeriod):
+                        guard case let .range(rhsPeriod) = rhs else { return false }
+                        return lhsPeriod == rhsPeriod
+                    case let .from(lhsFrom):
+                        guard case let .from(rhsFrom) = rhs else { return false }
+                        return lhsFrom == rhsFrom
+                    case let .temporary(lhsPeriod):
+                        guard case let .temporary(rhsPeriod) = rhs else { return false }
+                        return lhsPeriod == rhsPeriod
+                    case let .becoming(lhsPeriod):
+                        guard case let .becoming(rhsPeriod) = rhs else { return false }
+                        return lhsPeriod == rhsPeriod
+                    case let .probability(lhsProb, lhsPeriod):
+                        guard case let .probability(rhsProb, rhsPeriod) = rhs else { return false }
+                        return lhsProb == rhsProb && lhsPeriod == rhsPeriod
+                }
+            }
+
             public func encode(to encoder: Encoder) throws {
                 var container = encoder.container(keyedBy: CodingKeys.self)
                 switch self {
@@ -305,26 +325,6 @@ public struct TAF: Codable, Sendable {
                         try container.encode("PROB", forKey: .type)
                         try container.encode(probability, forKey: .probability)
                         try container.encode(period, forKey: .period)
-                }
-            }
-
-            public static func == (lhs: Self, rhs: Self) -> Bool {
-                switch lhs {
-                    case let .range(lhsPeriod):
-                        guard case let .range(rhsPeriod) = rhs else { return false }
-                        return lhsPeriod == rhsPeriod
-                    case let .from(lhsFrom):
-                        guard case let .from(rhsFrom) = rhs else { return false }
-                        return lhsFrom == rhsFrom
-                    case let .temporary(lhsPeriod):
-                        guard case let .temporary(rhsPeriod) = rhs else { return false }
-                        return lhsPeriod == rhsPeriod
-                    case let .becoming(lhsPeriod):
-                        guard case let .becoming(rhsPeriod) = rhs else { return false }
-                        return lhsPeriod == rhsPeriod
-                    case let .probability(lhsProb, lhsPeriod):
-                        guard case let .probability(rhsProb, rhsPeriod) = rhs else { return false }
-                        return lhsProb == rhsProb && lhsPeriod == rhsPeriod
                 }
             }
 

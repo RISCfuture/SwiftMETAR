@@ -151,14 +151,6 @@ public enum Wind: Codable, Equatable, Sendable {
             }
         }
 
-        public static func == (lhs: Self, rhs: Self) -> Bool {
-            return lhs.measurement == rhs.measurement
-        }
-
-        public static func < (lhs: Self, rhs: Self) -> Bool {
-            return lhs.measurement < rhs.measurement
-        }
-
         public init(from decoder: Decoder) throws {
             let container = try decoder.container(keyedBy: CodingKeys.self)
             switch try container.decode(String.self, forKey: .unit) {
@@ -174,6 +166,14 @@ public enum Wind: Codable, Equatable, Sendable {
                 default:
                     throw DecodingError.dataCorruptedError(forKey: .unit, in: container, debugDescription: "Unknown enum value")
             }
+        }
+
+        public static func == (lhs: Self, rhs: Self) -> Bool {
+            return lhs.measurement == rhs.measurement
+        }
+
+        public static func < (lhs: Self, rhs: Self) -> Bool {
+            return lhs.measurement < rhs.measurement
         }
 
         public func encode(to encoder: Encoder) throws {

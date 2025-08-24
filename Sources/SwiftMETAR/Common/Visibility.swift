@@ -149,6 +149,14 @@ public enum Visibility: Codable, Equatable, Sendable {
             }
         }
 
+        public static func == (lhs: Self, rhs: Self) -> Bool {
+            return lhs.measurement == rhs.measurement
+        }
+
+        public static func < (lhs: Self, rhs: Self) -> Bool {
+            return lhs.measurement < rhs.measurement
+        }
+
         public func encode(to encoder: Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             switch self {
@@ -162,14 +170,6 @@ public enum Visibility: Codable, Equatable, Sendable {
                     try container.encode("M", forKey: .unit)
                     try container.encode(value, forKey: .value)
             }
-        }
-
-        public static func == (lhs: Self, rhs: Self) -> Bool {
-            return lhs.measurement == rhs.measurement
-        }
-
-        public static func < (lhs: Self, rhs: Self) -> Bool {
-            return lhs.measurement < rhs.measurement
         }
 
         enum CodingKeys: String, CodingKey {
