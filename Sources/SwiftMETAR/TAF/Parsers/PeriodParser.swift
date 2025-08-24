@@ -74,6 +74,12 @@ class PeriodParser {
             let start = try periodStart.parse(match: match, referenceDate: referenceDate, originalString: periodStr),
                 end = try periodEnd.parse(match: match, referenceDate: referenceDate, afterDate: start, originalString: periodStr)
 
+            guard let startDate = start.date,
+                  let endDate = end.date,
+                  endDate >= startDate else {
+                throw Error.invalidPeriod(periodStr)
+            }
+
             return .init(start: start, end: end)
         }
     }

@@ -22,5 +22,25 @@ class PeriodSpec: AsyncSpec {
             expect(period.end.month).to(equal(4))
             expect(period.end.day).to(equal(1))
         }
+
+        it("throws error for malformed BECMG with end date before start date") {
+            let string = """
+            TAF COR SPJL 241715Z 2418/2518 32018KT 9999 BKN020 TX17/2419Z TN04/2510Z TEMPO 2418/2422 32022G35KT SCT020TCU SCT100 BECMG 2423/2224 23007KT FM250300 VRB02KT 9999 SCT020
+            """
+            let referenceDate = Calendar.current.date(from: .init(year: 2025, month: 8, day: 24, hour: 18, minute: 0, second: 0))
+
+            await expect {
+                try await TAF.from(string: string, on: referenceDate)
+            }.to(throwError { error in
+                guard let swiftMETARError = error as? SwiftMETAR.Error else {
+                    fail("Expected SwiftMETAR.Error but got \(type(of: error))")
+                    return
+                }
+                guard case .invalidPeriod = swiftMETARError else {
+                    fail("Expected .invalidPeriod error but got \(swiftMETARError)")
+                    return
+                }
+            })
+        }
     }
 }
