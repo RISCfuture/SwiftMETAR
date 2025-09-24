@@ -1,12 +1,12 @@
-public extension Remark {
+extension Remark {
 
-    /// Temperature extremes for an observation period.
-    enum Extreme: String, Codable, Equatable, RegexCases, Sendable {
+  /// Temperature extremes for an observation period.
+  public enum Extreme: String, Codable, Equatable, RegexCases, Sendable {
 
-        /// Low-temperature extreme
-        case low = "2"
+    /// Low-temperature extreme
+    case low = "2"
 
-        /// High-temperature extreme
-        case high = "1"
-    }
+    /// High-temperature extreme
+    case high = "1"
+  }
 }
