@@ -2,22 +2,22 @@
  Weather phenomena present at the time of an observation. Weather phenomena can
  be precipitation, particulates in the air, or other visible dynamic weather
  activity.
- 
+
  Weather phenomena are qualified by their intensity (light, moderate, heavy) and
  a descriptor, such as "freezing" or "blowing". Descriptors are only applied to
  precipitation and particulates ("freezing snow", "blowing sand"), as there is
  no such thing as a freezing tornado, and a blowing tornado goes without saying.
- 
+
  Along with the intensities of light, moderate, and heavy, a "pseudo-intensity"
  titled ``Intensity-swift.enum/vicinity`` represents weather phenomena observed
  outside of five miles from the reporting station, but still of relevance to
  pilots.
- 
+
  "Thunderstorms" can be both a descriptor and a phenomenon. Thunderstorms in the
  vicinity are reported as a phenomenon, but thunderstorms overhead will be
  reported as a descriptor, in combination with the precipitation they generate,
  such as thunderstorm-associated rain or hail.
- 
+
  Only one descriptor can be applied to each instance, but each instance can have
  multiple phenomena associated with it; for example, "showering rain and snow".
  If there are additional phenomena not associated with the showering rain and
@@ -27,151 +27,151 @@
 
 public struct Weather: Codable, Equatable, Sendable {
 
-    /// The intensity of the phenomena.
-    public let intensity: Intensity
+  /// The intensity of the phenomena.
+  public let intensity: Intensity
 
-    /// Any qualifier applied to the phenomena.
-    public let descriptor: Descriptor?
+  /// Any qualifier applied to the phenomena.
+  public let descriptor: Descriptor?
 
-    /// The phenomena observed.
-    public let phenomena: Set<Phenomenon>
+  /// The phenomena observed.
+  public let phenomena: Set<Phenomenon>
 
-    /// Returns true if this instance is reporting tornadic activity (funnel
-    /// cloud with an intensity of heavy).
-    public var isTornado: Bool {
-        intensity == .heavy && phenomena.contains(.funnelCloud)
+  /// Returns true if this instance is reporting tornadic activity (funnel
+  /// cloud with an intensity of heavy).
+  public var isTornado: Bool {
+    intensity == .heavy && phenomena.contains(.funnelCloud)
+  }
+
+  /// The intensity associated with a phenomenon.
+  public enum Intensity: String, Codable, RegexCases, Sendable {
+    case light = "-"
+    case moderate = ""
+    case heavy = "+"
+
+    /**
+     This "pseudo-intensity" is applied to phenomena that are not occuring
+     within 5 miles of the reporting station, but are still of relevance.
+     */
+    case vicinity = "VC"
+
+    /// Another "pseudo-intensity" for light phenomena in the vicinity.
+    case vicinityLight = "-VC"
+
+    /// Another "pseudo-intensity" for heavy phenomena in the vicinity.
+    case vicinityHeavy = "+VC"
+
+    /// `true` if this is an "in the vicinity" pseudo-intensity.
+    public var isVicinity: Bool {
+      self == .vicinity || self == .vicinityLight || self == .vicinityHeavy
     }
+  }
 
-    /// The intensity associated with a phenomenon.
-    public enum Intensity: String, Codable, RegexCases, Sendable {
-        case light = "-"
-        case moderate = ""
-        case heavy = "+"
+  /// Qualifiers for precipitation phenomena. Most are not applied to
+  /// phenomena that aren't a form of precipitation.
+  public enum Descriptor: String, Codable, RegexCases, Sendable {
 
-        /**
-         This "pseudo-intensity" is applied to phenomena that are not occuring
-         within 5 miles of the reporting station, but are still of relevance.
-         */
-        case vicinity = "VC"
+    /// Visibility impedance (e.g., fog) has a low ceiling.
+    case shallow = "MI"
 
-        /// Another "pseudo-intensity" for light phenomena in the vicinity.
-        case vicinityLight = "-VC"
+    /// Phenomenon is only occurring over a part of the observation area.
+    case partial = "PA"
 
-        /// Another "pseudo-intensity" for heavy phenomena in the vicinity.
-        case vicinityHeavy = "+VC"
+    /// Phenomenon does not occur continuously throughout the observation
+    /// area.
+    case patchy = "BC"
 
-        /// `true` if this is an "in the vicinity" pseudo-intensity.
-        public var isVicinity: Bool {
-            self == .vicinity || self == .vicinityLight || self == .vicinityHeavy
-        }
-    }
+    /// Visibility impedance (e.g. fog) occurs close to the ground, pushed
+    /// along by the wind.
+    case lowDrifting = "DR"
 
-    /// Qualifiers for precipitation phenomena. Most are not applied to
-    /// phenomena that aren't a form of precipitation.
-    public enum Descriptor: String, Codable, RegexCases, Sendable {
+    /// Precipitation does not originate from overhead, but is being blown
+    /// in over the ground from somewhere else.
+    case blowing = "BL"
 
-        /// Visibility impedance (e.g., fog) has a low ceiling.
-        case shallow = "MI"
+    /// Precipitation is occuring with periodic changes in intensity.
+    case showering = "SH"
 
-        /// Phenomenon is only occurring over a part of the observation area.
-        case partial = "PA"
+    /// Precipitation is associated with a thunderstorm.
+    case thunderstorms = "TS"
 
-        /// Phenomenon does not occur continuously throughout the observation
-        /// area.
-        case patchy = "BC"
+    /// Precipitation is freezing upon contact with a surface.
+    case freezing = "FZ"
+  }
 
-        /// Visibility impedance (e.g. fog) occurs close to the ground, pushed
-        /// along by the wind.
-        case lowDrifting = "DR"
+  /// An observed weather phenomenon. These phenomena are either
+  /// precipitation, particulates suspended in the air, or dynamic weather
+  /// phenomena.
+  public enum Phenomenon: String, Codable, RegexCases, Sendable {
 
-        /// Precipitation does not originate from overhead, but is being blown
-        /// in over the ground from somewhere else.
-        case blowing = "BL"
+    /// Small raindrops that are light enough to be carried by the wind.
+    case drizzle = "DZ"
 
-        /// Precipitation is occuring with periodic changes in intensity.
-        case showering = "SH"
+    /// Larger raindrops that fall to the ground.
+    case rain = "RA"
 
-        /// Precipitation is associated with a thunderstorm.
-        case thunderstorms = "TS"
+    /// Frozen ice that crystalizes around a nucleating site.
+    case snow = "SN"
 
-        /// Precipitation is freezing upon contact with a surface.
-        case freezing = "FZ"
-    }
+    /// Very small ice particulates that do not break on impact.
+    case snowGrains = "SG"
 
-    /// An observed weather phenomenon. These phenomena are either
-    /// precipitation, particulates suspended in the air, or dynamic weather
-    /// phenomena.
-    public enum Phenomenon: String, Codable, RegexCases, Sendable {
+    /// Solid ice crystals.
+    case iceCrystals = "IC"
 
-        /// Small raindrops that are light enough to be carried by the wind.
-        case drizzle = "DZ"
+    /// Rain that has frozen during its fall.
+    case icePellets = "PL"
 
-        /// Larger raindrops that fall to the ground.
-        case rain = "RA"
+    /// Large ice crystals created when rain is lifted by convective
+    /// activity.
+    case hail = "GR"
 
-        /// Frozen ice that crystalizes around a nucleating site.
-        case snow = "SN"
+    /// Snow grains and small hailstones.
+    case snowPellets = "GS"
 
-        /// Very small ice particulates that do not break on impact.
-        case snowGrains = "SG"
+    /// Precipitation was detected by a sensor but its type could not be
+    /// determined.
+    case unknownPrecipitation = "UP"
 
-        /// Solid ice crystals.
-        case iceCrystals = "IC"
+    /// Visibility obscured by small raindrops too light to fall.
+    case mist = "BR"
 
-        /// Rain that has frozen during its fall.
-        case icePellets = "PL"
+    /// Visibility obscured by microscropic drops forming a surface cloud.
+    case fog = "FG"
 
-        /// Large ice crystals created when rain is lifted by convective
-        /// activity.
-        case hail = "GR"
+    /// Visibility obscured by combustion byproducts.
+    case smoke = "FU"
 
-        /// Snow grains and small hailstones.
-        case snowPellets = "GS"
+    /// Visibility obscured by ash from a volcanic eruption.
+    case volcanicAsh = "VA"
 
-        /// Precipitation was detected by a sensor but its type could not be
-        /// determined.
-        case unknownPrecipitation = "UP"
+    /// Visibility obscured by widespread dust lifted by the wind.
+    case dust = "DU"
 
-        /// Visibility obscured by small raindrops too light to fall.
-        case mist = "BR"
+    /// Visibility obscured by sand lifted by the wind.
+    case sand = "SA"
 
-        /// Visibility obscured by microscropic drops forming a surface cloud.
-        case fog = "FG"
+    /// Visibility obscured by microscopic particulates, usually pollution.
+    case haze = "HZ"
 
-        /// Visibility obscured by combustion byproducts.
-        case smoke = "FU"
+    /// Visibility obscured by water spray from a nearby ocean or lake.
+    case spray = "PY"
 
-        /// Visibility obscured by ash from a volcanic eruption.
-        case volcanicAsh = "VA"
+    /// Dust whirls, sand whirls, or dust devils.
+    case dustWhirls = "PO"
 
-        /// Visibility obscured by widespread dust lifted by the wind.
-        case dust = "DU"
+    /// Squalls caused by frontal action.
+    case squalls = "SQ"
 
-        /// Visibility obscured by sand lifted by the wind.
-        case sand = "SA"
+    /// Funnel cloud, tornado, or waterspout.
+    case funnelCloud = "FC"
 
-        /// Visibility obscured by microscopic particulates, usually pollution.
-        case haze = "HZ"
+    /// Powerful winds carrying large amounts of sand into the air.
+    case sandstorm = "SS"
 
-        /// Visibility obscured by water spray from a nearby ocean or lake.
-        case spray = "PY"
+    /// Powerful winds carrying large amounts of dust into the air.
+    case dustStorm = "DS"
 
-        /// Dust whirls, sand whirls, or dust devils.
-        case dustWhirls = "PO"
-
-        /// Squalls caused by frontal action.
-        case squalls = "SQ"
-
-        /// Funnel cloud, tornado, or waterspout.
-        case funnelCloud = "FC"
-
-        /// Powerful winds carrying large amounts of sand into the air.
-        case sandstorm = "SS"
-
-        /// Powerful winds carrying large amounts of dust into the air.
-        case dustStorm = "DS"
-
-        /// Convective activity producing thunderstorms.
-        case thunderstorm = "TS"
-    }
+    /// Convective activity producing thunderstorms.
+    case thunderstorm = "TS"
+  }
 }

@@ -34,3 +34,21 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - uses: norio-nomura/action-swiftlint@3.2.1
+  swift-format:
+    name: Run swift-format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: SwiftyLab/setup-swift@latest
+        with:
+          swift-version: "6.0"
+      - name: Download .swift-format config
+        run: curl -o .swift-format https://gist.githubusercontent.com/RISCfuture/e0c21afb7bd80a88d128a42bf40d2ecd/raw/.swift-format
+      - name: Install swift-format
+        run: |
+          git clone https://github.com/swiftlang/swift-format.git
+          cd swift-format
+          swift build -c release
+          sudo cp .build/release/swift-format /usr/local/bin/
+      - name: Run swift-format lint
+        run: swift-format lint -r .

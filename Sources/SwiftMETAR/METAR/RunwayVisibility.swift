@@ -1,9 +1,9 @@
 /// A runway visibility report made by a transmissometer (or human observer).
 public struct RunwayVisibility: Codable, Equatable, Sendable {
 
-    /// The ID of the runway (e.g., "21L").
-    public let runwayID: String
+  /// The ID of the runway (e.g., "21L").
+  public let runwayID: String
 
-    /// The visibility in the approach direction along that runway.
-    public let visibility: Visibility
+  /// The visibility in the approach direction along that runway.
+  public let visibility: Visibility
 }

@@ -2,31 +2,37 @@ import Foundation
 @preconcurrency import RegexBuilder
 
 final class WindShiftParser: RemarkParser {
-    var urgency = Remark.Urgency.caution
+  var urgency = Remark.Urgency.caution
 
-    private let timeParser = HourMinuteParser()
-    private let frontalPassageRef = Reference<Bool>()
+  private let timeParser = HourMinuteParser()
+  private let frontalPassageRef = Reference<Bool>()
 
-    private lazy var rx = Regex {
-        Anchor.wordBoundary
-        "WSHFT "
-        timeParser.hourOptionalRx
-        Capture(as: frontalPassageRef) {
-            Optionally {
-                " FROPA"
-            }
-        } transform: { $0 == " FROPA" }
-        Anchor.wordBoundary
+  private lazy var rx = Regex {
+    Anchor.wordBoundary
+    "WSHFT "
+    timeParser.hourOptionalRx
+    Capture(as: frontalPassageRef) {
+      Optionally {
+        " FROPA"
+      }
+    } transform: {
+      $0 == " FROPA"
     }
+    Anchor.wordBoundary
+  }
 
-    func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
-        guard let result = try rx.firstMatch(in: remarks) else { return nil }
-        let originalString = String(remarks[result.range]),
-            referenceDate = zuluCal.date(from: date),
-            date = try timeParser.parse(match: result, referenceDate: referenceDate, originalString: originalString),
-            frontalPassage = result[frontalPassageRef]
+  func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
+    guard let result = try rx.firstMatch(in: remarks) else { return nil }
+    let originalString = String(remarks[result.range])
+    let referenceDate = zuluCal.date(from: date)
+    let date = try timeParser.parse(
+      match: result,
+      referenceDate: referenceDate,
+      originalString: originalString
+    )
+    let frontalPassage = result[frontalPassageRef]
 
-        remarks.removeSubrange(result.range)
-        return .windShift(time: date, frontalPassage: frontalPassage)
-    }
+    remarks.removeSubrange(result.range)
+    return .windShift(time: date, frontalPassage: frontalPassage)
+  }
 }
