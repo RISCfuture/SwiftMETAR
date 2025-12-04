@@ -16,8 +16,15 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        swift: ["6.2"]
-        os: [macos-13, macos-14, macos-15]
+        include:
+          - os: macos-14
+            swift: "6.0"
+          - os: macos-14
+            swift: "6.1"
+          - os: macos-15
+            swift: "6.1"
+          - os: macos-15
+            swift: "6.2"
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v4
@@ -37,18 +44,19 @@ jobs:
   swift-format:
     name: Run swift-format
     runs-on: ubuntu-latest
+    container:
+      image: swift:latest
     steps:
       - uses: actions/checkout@v4
-      - uses: SwiftyLab/setup-swift@latest
-        with:
-          swift-version: "6.2"
+      - name: Install dependencies
+        run: apt-get update && apt-get install -y wget
       - name: Download .swift-format config
-        run: curl -o .swift-format https://gist.githubusercontent.com/RISCfuture/e0c21afb7bd80a88d128a42bf40d2ecd/raw/.swift-format
+        run: wget -O .swift-format https://gist.githubusercontent.com/RISCfuture/e0c21afb7bd80a88d128a42bf40d2ecd/raw/.swift-format
       - name: Install swift-format
         run: |
           git clone https://github.com/swiftlang/swift-format.git
           cd swift-format
           swift build -c release
-          sudo cp .build/release/swift-format /usr/local/bin/
+          cp .build/release/swift-format /usr/local/bin/
       - name: Run swift-format lint
         run: swift-format lint -r .
