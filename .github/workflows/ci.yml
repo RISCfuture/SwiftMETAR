@@ -16,7 +16,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        swift: ["6.0"]
+        swift: ["6.2"]
         os: [macos-13, macos-14, macos-15]
     runs-on: ${{ matrix.os }}
     steps:
@@ -41,7 +41,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: SwiftyLab/setup-swift@latest
         with:
-          swift-version: "6.0"
+          swift-version: "6.2"
       - name: Download .swift-format config
         run: curl -o .swift-format https://gist.githubusercontent.com/RISCfuture/e0c21afb7bd80a88d128a42bf40d2ecd/raw/.swift-format
       - name: Install swift-format
