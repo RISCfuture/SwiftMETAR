@@ -30,10 +30,31 @@ jobs:
         run: |
           swift package \
            --allow-writing-to-directory ./docs \
-           generate-documentation --target SwiftMETAR --output-path ./docs \
+           generate-documentation \
+           --target SwiftMETAR --target METARFormatting \
+           --output-path ./docs \
            --disable-indexing \
            --transform-for-static-hosting \
-           --hosting-base-path SwiftMETAR
+           --hosting-base-path SwiftMETAR \
+           --enable-experimental-combined-documentation
+      - name: Create root redirect
+        run: |
+          cat > ./docs/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+              <meta charset="UTF-8">
+              <meta http-equiv="refresh" content="0; url=/SwiftMETAR/documentation/swiftmetar/">
+              <title>SwiftMETAR Documentation</title>
+              <script>
+                  window.location.replace("/SwiftMETAR/documentation/swiftmetar/");
+              </script>
+          </head>
+          <body>
+              <p>Redirecting to <a href="/SwiftMETAR/documentation/swiftmetar/">SwiftMETAR Documentation</a>...</p>
+          </body>
+          </html>
+          EOF
       - name: Upload
         uses: actions/upload-pages-artifact@v3
         with:
