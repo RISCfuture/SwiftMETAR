@@ -1,6 +1,6 @@
 import Foundation
 
-/// METAR and TAF parsing errors.
+/// METAR, TAF, and Winds Aloft parsing errors.
 public enum Error: Swift.Error {
 
   /// Format was bad in general, so that no groups could be parsed.
@@ -41,11 +41,28 @@ public enum Error: Swift.Error {
 
   /// Forecasted temperature or temperature extreme could not be parsed.
   case invalidForecastTemperature(_ temperature: String)
+
+  /// Winds aloft header could not be parsed.
+  case invalidWindsAloftHeader(_ header: String)
+
+  /// Winds aloft data group could not be parsed.
+  case invalidWindsAloftGroup(_ group: String)
+
+  /// Winds aloft column layout could not be parsed.
+  case invalidWindsAloftColumns(_ columns: String)
 }
 
 extension Error: LocalizedError {
   public var errorDescription: String? {
-    return String(localized: "Couldn’t parse METAR or TAF.", comment: "error description")
+    switch self {
+      case .invalidWindsAloftHeader, .invalidWindsAloftGroup, .invalidWindsAloftColumns:
+        return String(
+          localized: "Couldn’t parse Winds Aloft product.",
+          comment: "error description"
+        )
+      default:
+        return String(localized: "Couldn’t parse METAR or TAF.", comment: "error description")
+    }
   }
 
   public var failureReason: String? {
@@ -85,16 +102,39 @@ extension Error: LocalizedError {
         return String(localized: "Invalid turbulence ‘\(turbulence)’", comment: "failure reason")
       case .invalidForecastTemperature(let temp):
         return String(
-          localized: "Invalid forecast temperature ‘\(temp)’",
+          localized: "Invalid forecast temperature '\(temp)'",
+          comment: "failure reason"
+        )
+      case .invalidWindsAloftHeader(let header):
+        return String(
+          localized: "Invalid winds aloft header '\(header)'.",
+          comment: "failure reason"
+        )
+      case .invalidWindsAloftGroup(let group):
+        return String(
+          localized: "Invalid winds aloft data group '\(group)'.",
+          comment: "failure reason"
+        )
+      case .invalidWindsAloftColumns(let columns):
+        return String(
+          localized: "Invalid winds aloft column layout '\(columns)'.",
           comment: "failure reason"
         )
     }
   }
 
   public var recoverySuggestion: String? {
-    return String(
-      localized: "Verify the format of the METAR or TAF string.",
-      comment: "recovery suggestion"
-    )
+    switch self {
+      case .invalidWindsAloftHeader, .invalidWindsAloftGroup, .invalidWindsAloftColumns:
+        return String(
+          localized: "Verify the format of the Winds Aloft product.",
+          comment: "recovery suggestion"
+        )
+      default:
+        return String(
+          localized: "Verify the format of the METAR or TAF string.",
+          comment: "recovery suggestion"
+        )
+    }
   }
 }

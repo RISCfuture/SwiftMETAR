@@ -72,8 +72,8 @@ public enum Visibility: Codable, Equatable, Sendable {
       case .greaterThan(let lhsValue):
         guard case .greaterThan(let rhsValue) = rhs else { return false }
         return lhsValue == rhsValue
-      case .variable(let lhsLow, let lhsHigh):
-        guard case .variable(let rhsLow, let rhsHigh) = rhs else { return false }
+      case let .variable(lhsLow, lhsHigh):
+        guard case let .variable(rhsLow, rhsHigh) = rhs else { return false }
         return lhsLow == rhsLow && lhsHigh == rhsHigh
       case .notRecorded:
         guard case .notRecorded = rhs else { return false }
@@ -93,7 +93,7 @@ public enum Visibility: Codable, Equatable, Sendable {
       case .greaterThan(let value):
         try container.encode(">", forKey: .constraint)
         try container.encode(value, forKey: .value)
-      case .variable(let low, let high):
+      case let .variable(low, high):
         try container.encode("<>", forKey: .constraint)
         try container.encode(low, forKey: .low)
         try container.encode(high, forKey: .high)

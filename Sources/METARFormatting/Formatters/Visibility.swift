@@ -34,7 +34,7 @@ extension Visibility {
                 localized: "> \(distance.measurement, format: distanceFormat)",
                 comment: "visibility"
               )
-            case .variable(let low, let high):
+            case let .variable(low, high):
               String(
                 localized: "\(low, format: self) – \(high, format: self)",
                 comment: "visibility"
@@ -57,7 +57,7 @@ extension Visibility {
                 localized: "greater than \(distance.measurement, format: distanceFormat)",
                 comment: "visibility"
               )
-            case .variable(let low, let high):
+            case let .variable(low, high):
               String(
                 localized: "variable between \(low, format: self) and \(high, format: self)",
                 comment: "visibility"

@@ -116,19 +116,19 @@ public enum Condition: Codable, Equatable, Sendable {
       case .skyClear: try container.encode("SKC", forKey: .coverage)
       case .noSignificantClouds: try container.encode("NXC", forKey: .coverage)
       case .cavok: try container.encode("CAVOK", forKey: .coverage)
-      case .few(let height, let type):
+      case let .few(height, type):
         try container.encode("FEW", forKey: .coverage)
         try container.encode(height, forKey: .height)
         try container.encode(type, forKey: .type)
-      case .scattered(let height, let type):
+      case let .scattered(height, type):
         try container.encode("SCT", forKey: .coverage)
         try container.encode(height, forKey: .height)
         try container.encode(type, forKey: .type)
-      case .broken(let height, let type):
+      case let .broken(height, type):
         try container.encode("BKN", forKey: .coverage)
         try container.encode(height, forKey: .height)
         try container.encode(type, forKey: .type)
-      case .overcast(let height, let type):
+      case let .overcast(height, type):
         try container.encode("OVC", forKey: .coverage)
         try container.encode(height, forKey: .height)
         try container.encode(type, forKey: .type)

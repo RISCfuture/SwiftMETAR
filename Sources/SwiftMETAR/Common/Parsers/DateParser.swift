@@ -145,6 +145,78 @@ class DayHourParser {
   }
 }
 
+class HourMinutePeriodParser {
+  private let startHourRef = Reference<UInt8>()
+  private let startMinuteRef = Reference<UInt8>()
+  private let endHourRef = Reference<UInt8>()
+  private let endMinuteRef = Reference<UInt8>()
+
+  lazy var rx = Regex {
+    Capture(as: startHourRef) {
+      Repeat(.digit, count: 2)
+    } transform: {
+      UInt8($0)!
+    }
+    Capture(as: startMinuteRef) {
+      Repeat(.digit, count: 2)
+    } transform: {
+      UInt8($0)!
+    }
+    "-"
+    Capture(as: endHourRef) {
+      Repeat(.digit, count: 2)
+    } transform: {
+      UInt8($0)!
+    }
+    Capture(as: endMinuteRef) {
+      Repeat(.digit, count: 2)
+    } transform: {
+      UInt8($0)!
+    }
+    Optionally("Z")
+  }
+
+  func parse<T>(
+    match: Regex<T>.Match,
+    referenceDate: Date? = nil,
+    originalString: String
+  ) throws -> DateComponentsInterval {
+    let startHour = Int(match[startHourRef])
+    let startMinute = Int(match[startMinuteRef])
+    let endHour = Int(match[endHourRef])
+    let endMinute = Int(match[endMinuteRef])
+
+    let refDate = referenceDate ?? Date()
+
+    guard
+      let startComponents = applyComponents(
+        .init(timeZone: zulu, hour: startHour, minute: startMinute),
+        within: .day,
+        ofDate: refDate
+      )
+    else { throw Error.invalidDate(originalString) }
+
+    var endRef = refDate
+    if endHour < startHour || (endHour == startHour && endMinute < startMinute) {
+      if let startDate = zuluCal.date(from: startComponents),
+        let nextDay = zuluCal.date(byAdding: .day, value: 1, to: startDate)
+      {
+        endRef = nextDay
+      }
+    }
+
+    guard
+      let endComponents = applyComponents(
+        .init(timeZone: zulu, hour: endHour, minute: endMinute),
+        within: .day,
+        ofDate: endRef
+      )
+    else { throw Error.invalidDate(originalString) }
+
+    return DateComponentsInterval(start: startComponents, end: endComponents)
+  }
+}
+
 class HourMinuteParser {
   private let dateRef = Reference<(UInt8?, UInt8)>()
 

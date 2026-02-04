@@ -308,8 +308,8 @@ public struct TAF: Codable, Sendable {
           case .becoming(let lhsPeriod):
             guard case .becoming(let rhsPeriod) = rhs else { return false }
             return lhsPeriod == rhsPeriod
-          case .probability(let lhsProb, let lhsPeriod):
-            guard case .probability(let rhsProb, let rhsPeriod) = rhs else { return false }
+          case let .probability(lhsProb, lhsPeriod):
+            guard case let .probability(rhsProb, rhsPeriod) = rhs else { return false }
             return lhsProb == rhsProb && lhsPeriod == rhsPeriod
         }
       }
@@ -329,7 +329,7 @@ public struct TAF: Codable, Sendable {
           case .becoming(let period):
             try container.encode("BCMG", forKey: .type)
             try container.encode(period, forKey: .period)
-          case .probability(let probability, let period):
+          case let .probability(probability, period):
             try container.encode("PROB", forKey: .type)
             try container.encode(probability, forKey: .probability)
             try container.encode(period, forKey: .period)

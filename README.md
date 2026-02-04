@@ -1,15 +1,17 @@
-# SwiftMETAR: A METAR and TAF parser for Swift
+# SwiftMETAR: A METAR, TAF, and Winds Aloft parser for Swift
 
-SwiftMETAR is a Swift library that parses aviation routine weather reports (METARs) and
-terminal aerodrome forecasts (TAF) into Swift data structures useful for machine
-interpretation. These products contain weather information of interest to pilots. METARs are
-textual hourly observations of current conditions within 5 miles of an airport, and TAFs are
-textual point forecasts of expected conditions within 5 miles of an airport, over a 24- to
-28-hour period.
+SwiftMETAR is a Swift library that parses aviation routine weather reports (METARs), terminal
+aerodrome forecasts (TAFs), and winds and temperatures aloft (FB) products into Swift data
+structures useful for machine interpretation. These products contain weather information of
+interest to pilots. METARs are textual hourly observations of current conditions within 5 miles
+of an airport, TAFs are textual point forecasts of expected conditions within 5 miles of an
+airport over a 24- to 28-hour period, and winds aloft products provide forecast wind and
+temperature data at standard altitudes for stations across the US.
 
-SwiftMETAR does not download METAR or TAF products from the Internet -- you'll have to
-do that yourself. Once you have the text product, SwiftMETAR will parse it into a `METAR` or
-`TAF` object that you can use to programmatically work with the weather information.
+SwiftMETAR does not download METAR, TAF, or winds aloft products from the Internet -- you'll
+have to do that yourself. Once you have the text product, SwiftMETAR will parse it into a
+`METAR`, `TAF`, or `WindsAloft` object that you can use to programmatically work with the
+weather information.
 
 The design goal of SwiftMETAR is _domain-restricted data as much as possible_. Wherever
 possible, SwiftMETAR avoids representing data as open-ended types such as strings.
@@ -107,6 +109,6 @@ swift package generate-documentation --target METARFormatting
 Unit testing is done using Nimble and Quick. Simply test the `SwiftMETAR` target to run
 tests.
 
-The `DecodeMETAR` and `DecodeTAF` targets provide command-line tools that allow
-you to decode METARs and TAFs into human-readable text. They demonstrate the
-locale-aware formatting tools available with the `METARFormatting` library.
+The `DecodeMETAR`, `DecodeTAF`, and `DecodeWindsAloft` targets provide
+command-line tools that allow you to decode METARs, TAFs, and winds aloft
+products into human-readable text.

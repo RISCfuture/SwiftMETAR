@@ -71,7 +71,7 @@ extension Remark {
         case .aircraftMishap:
           return String(localized: "aircraft mishap", comment: "remark")
 
-        case .cloudTypes(let low, let middle, let high):
+        case let .cloudTypes(low, middle, high):
           return String(
             localized:
               "observed cloud types, low: \(low, format: .lowClouds), middle: \(middle, format: .middleClouds), high: \(high, format: .highClouds)",
@@ -126,7 +126,7 @@ extension Remark {
         case .last:
           return String(localized: "final METAR/TAF", comment: "remark")
 
-        case .lightning(let frequency, let types, let proximity, let directions):
+        case let .lightning(frequency, types, proximity, directions):
           let parts = [
             String(localized: "lightning", comment: "lightning remark part"),
             proximity == nil ? nil : Remark.Proximity.FormatStyle.proximity.format(proximity!),
@@ -141,7 +141,7 @@ extension Remark {
         case .maintenance:
           return String(localized: "station requires maintenance", comment: "remark")
 
-        case .navalForecaster(let center, let ID):
+        case let .navalForecaster(center, ID):
           return String(
             localized:
               "\(center, format: .navalWeatherCenter(width: .abbreviated)) forecaster \(ID)",
@@ -166,7 +166,7 @@ extension Remark {
         case .noSPECI:
           return String(localized: "no SPECI issuances", comment: "remark")
 
-        case .obscuration(let type, let amount, _):
+        case let .obscuration(type, amount, _):
           if let amount {
             return String(
               localized:
@@ -180,7 +180,7 @@ extension Remark {
             comment: "obscuration remark (type, height)"
           )
 
-        case .observationType(let type, let augmented):
+        case let .observationType(type, augmented):
           if augmented {
             return String(
               localized: "\(type, format: .observationType) (augmented)",
@@ -189,7 +189,7 @@ extension Remark {
           }
           return Remark.ObservationType.FormatStyle.observationType.format(type)
 
-        case .observedPrecipitation(let type, let proximity, let directions):
+        case let .observedPrecipitation(type, proximity, directions):
           if let proximity {
             return String(
               localized:
@@ -210,7 +210,7 @@ extension Remark {
             comment: "observed viz remark (source, distance)"
           )
 
-        case .peakWinds(let wind, let components):
+        case let .peakWinds(wind, components):
           guard let date = Calendar.current.date(from: components) else {
             return String(
               localized: "peak winds \(wind, format: windFormat) at <unknown time>",
@@ -307,12 +307,12 @@ extension Remark {
             comment: "sensor inoperative remark"
           )
 
-        case .significantClouds(
-          let type,
-          let directions,
-          let movingDirection,
-          let distant,
-          let apparent
+        case let .significantClouds(
+          type,
+          directions,
+          movingDirection,
+          distant,
+          apparent
         ):
           let parts = [
             Remark.SignificantCloudType.FormatStyle.cloudType.format(type),
@@ -378,7 +378,7 @@ extension Remark {
             comment: "thunderstorm events remark"
           )
 
-        case .thunderstormLocation(let proximity, let directions, let movingDirection):
+        case let .thunderstormLocation(proximity, directions, movingDirection):
           let parts = [
             String(localized: "thunderstorms", comment: "thunderstorm remark part"),
             proximity == nil ? nil : Remark.Proximity.FormatStyle.proximity.format(proximity!),
@@ -393,7 +393,7 @@ extension Remark {
           ].compactMap(\.self)
           return parts.joined(separator: ", ")
 
-        case .tornadicActivity(let type, let begin, let end, let location, let movingDirection):
+        case let .tornadicActivity(type, begin, end, location, movingDirection):
           let beginDate = begin == nil ? nil : Calendar.current.date(from: begin!)
           let endDate = end == nil ? nil : Calendar.current.date(from: end!)
           let parts = [
@@ -431,7 +431,7 @@ extension Remark {
             comment: "remark"
           )
 
-        case .variableSkyCondition(let low, let high, _):
+        case let .variableSkyCondition(low, high, _):
           if let height = value.heightMeasurement {
             return String(
               localized:
@@ -444,7 +444,7 @@ extension Remark {
             comment: "remark (coverage, coverage)"
           )
 
-        case .variableWindDirection(let from, let to):
+        case let .variableWindDirection(from, to):
           let heading1 = Measurement<UnitAngle>(value: Double(from), unit: .degrees)
           let heading2 = Measurement<UnitAngle>(value: Double(to), unit: .degrees)
           return String(
@@ -460,7 +460,7 @@ extension Remark {
             comment: "remark"
           )
 
-        case .windChange(let wind, let after):
+        case let .windChange(wind, after):
           let time = Calendar.current.date(from: after)
           if let time {
             return String(
@@ -477,7 +477,7 @@ extension Remark {
         case .windDataEstimated:
           return String(localized: "wind data estimated", comment: "remark")
 
-        case .windShift(let components, let frontalPassage):
+        case let .windShift(components, frontalPassage):
           let time = Calendar.current.date(from: components)
           if frontalPassage {
             if let time {

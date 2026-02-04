@@ -87,15 +87,15 @@ public enum Wind: Codable, Equatable, Sendable {
       case .calm:
         if case .calm = rhs { return true }
         return false
-      case .variable(let lhsSpeed, let lhsRange):
-        guard case .variable(let rhsSpeed, let rhsRange) = rhs else { return false }
+      case let .variable(lhsSpeed, lhsRange):
+        guard case let .variable(rhsSpeed, rhsRange) = rhs else { return false }
         if lhsRange == nil && rhsRange == nil { return true }
         return zipOptionals(lhsRange, rhsRange).map { $0 == $1 && lhsSpeed == rhsSpeed } ?? false
-      case .direction(let lhsHeading, let lhsSpeed, let lhsGust):
-        guard case .direction(let rhsHeading, let rhsSpeed, let rhsGust) = rhs else { return false }
+      case let .direction(lhsHeading, lhsSpeed, lhsGust):
+        guard case let .direction(rhsHeading, rhsSpeed, rhsGust) = rhs else { return false }
         return lhsHeading == rhsHeading && lhsSpeed == rhsSpeed && lhsGust == rhsGust
-      case .directionRange(let lhsHeading, let lhsRange, let lhsSpeed, let lhsGust):
-        guard case .directionRange(let rhsHeading, let rhsRange, let rhsSpeed, let rhsGust) = rhs
+      case let .directionRange(lhsHeading, lhsRange, lhsSpeed, lhsGust):
+        guard case let .directionRange(rhsHeading, rhsRange, rhsSpeed, rhsGust) = rhs
         else { return false }
         return lhsHeading == rhsHeading && lhsRange == rhsRange && lhsSpeed == rhsSpeed
           && lhsGust == rhsGust
@@ -107,19 +107,19 @@ public enum Wind: Codable, Equatable, Sendable {
     switch self {
       case .calm:
         try container.encode("calm", forKey: .type)
-      case .variable(let speed, let headingRange):
+      case let .variable(speed, headingRange):
         try container.encode("variable", forKey: .type)
         try container.encode(speed, forKey: .speed)
         if let range = headingRange {
           try container.encode(range.0, forKey: .headingLow)
           try container.encode(range.1, forKey: .headingHigh)
         }
-      case .direction(let heading, let speed, let gust):
+      case let .direction(heading, speed, gust):
         try container.encode("direction", forKey: .type)
         try container.encode(speed, forKey: .speed)
         try container.encode(gust, forKey: .gust)
         try container.encode(heading, forKey: .heading)
-      case .directionRange(let heading, let headingRange, let speed, let gust):
+      case let .directionRange(heading, headingRange, speed, gust):
         try container.encode("range", forKey: .type)
         try container.encode(speed, forKey: .speed)
         try container.encode(gust, forKey: .gust)

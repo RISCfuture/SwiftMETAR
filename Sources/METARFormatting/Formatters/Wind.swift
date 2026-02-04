@@ -26,7 +26,7 @@ extension Wind {
       switch value {
         case .calm:
           return String(localized: "calm", comment: "winds")
-        case .variable(let speed, let headingRange):
+        case let .variable(speed, headingRange):
           if let headingRange {
             let heading1 = Measurement<UnitAngle>(value: Double(headingRange.0), unit: .degrees)
             let heading2 = Measurement<UnitAngle>(value: Double(headingRange.1), unit: .degrees)
@@ -40,7 +40,7 @@ extension Wind {
             localized: "variable at \(speed.measurement, format: speedFormat)",
             comment: "winds (variable at speed)"
           )
-        case .direction(let direction, let speed, let gust):
+        case let .direction(direction, speed, gust):
           let directionM = Measurement<UnitAngle>(value: Double(direction), unit: .degrees)
           if let gust {
             return String(
@@ -54,7 +54,7 @@ extension Wind {
               "\(directionM, format: directionFormat) at \(speed.measurement, format: speedFormat)",
             comment: "winds (heading at speed)"
           )
-        case .directionRange(let direction, let headingRange, let speed, let gust):
+        case let .directionRange(direction, headingRange, speed, gust):
           let directionM = Measurement<UnitAngle>(value: Double(direction), unit: .degrees)
           let heading1 = Measurement<UnitAngle>(value: Double(headingRange.0), unit: .degrees)
           let heading2 = Measurement<UnitAngle>(value: Double(headingRange.1), unit: .degrees)

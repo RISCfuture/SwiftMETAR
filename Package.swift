@@ -17,7 +17,8 @@ let package = Package(
       targets: ["METARFormatting"]
     ),
     .executable(name: "decode-metar", targets: ["DecodeMETAR"]),
-    .executable(name: "decode-taf", targets: ["DecodeTAF"])
+    .executable(name: "decode-taf", targets: ["DecodeTAF"]),
+    .executable(name: "decode-winds-aloft", targets: ["DecodeWindsAloft"])
   ],
   dependencies: [
     // Dependencies declare other packages that this package depends on.
@@ -61,6 +62,13 @@ let package = Package(
       dependencies: [
         "SwiftMETAR",
         "METARFormatting",
+        .product(name: "ArgumentParser", package: "swift-argument-parser")
+      ]
+    ),
+    .executableTarget(
+      name: "DecodeWindsAloft",
+      dependencies: [
+        "SwiftMETAR",
         .product(name: "ArgumentParser", package: "swift-argument-parser")
       ]
     )

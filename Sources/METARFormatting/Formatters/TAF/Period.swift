@@ -45,7 +45,7 @@ extension TAF.Group.Period {
             comment: "TAF period (date range)"
           )
 
-        case .probability(let chance, let interval):
+        case let .probability(chance, interval):
           return String(
             localized:
               "\(chance, format: .percent) chance from \(interval.dateInterval.range, format: intervalFormat)",
