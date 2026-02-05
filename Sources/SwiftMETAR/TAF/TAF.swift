@@ -60,6 +60,30 @@ public struct TAF: Codable, Sendable {
   }
 
   /**
+   Parse TAFs from aviationweather.gov cache XML data (`tafs.cache.xml`).
+  
+   XML parsing has broader error tolerance since values are pre-parsed into
+   structured fields by the data source, but does not populate remarks,
+   temperatures, or wind direction ranges.
+  
+   - Parameter data: The XML data.
+   - Returns: An `AsyncStream` of ``XMLParseResult`` values, allowing callers
+     to handle parse errors for individual entries. Failed entries include
+     the raw TAF string for fallback to textual parsing.
+   */
+  public static func from(xml data: Data) -> AsyncStream<XMLParseResult<Self>> {
+    AsyncStream { continuation in
+      Task {
+        let results = await TAFXMLParser.shared.parse(data: data)
+        for result in results {
+          continuation.yield(result)
+        }
+        continuation.finish()
+      }
+    }
+  }
+
+  /**
    Generates a snapshot of the forecasted weather at a given time within the
    forecast period. The closest prior `FM` (from) entry is combined with any
    subsequent `TEMPO` or `PROB` entries (regardless of probability) to create

@@ -5,6 +5,7 @@
 ### Parsing
 
 - ``from(string:on:)``
+- ``from(xml:)``
 
 ### Properties
 

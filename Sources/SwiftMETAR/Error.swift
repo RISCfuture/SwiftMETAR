@@ -1,7 +1,7 @@
 import Foundation
 
 /// METAR, TAF, and Winds Aloft parsing errors.
-public enum Error: Swift.Error {
+public enum Error: Swift.Error, Equatable {
 
   /// Format was bad in general, so that no groups could be parsed.
   case badFormat

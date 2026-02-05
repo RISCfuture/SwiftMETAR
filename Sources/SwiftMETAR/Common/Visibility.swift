@@ -107,10 +107,19 @@ public enum Visibility: Codable, Equatable, Sendable {
 
     /**
      A distance reported in statute miles, as a vulgar fraction.
+     Used when parsing text METARs with fraction visibility (e.g., "3/4SM").
     
      - Parameter value: distance, in statute miles.
      */
     case statuteMiles(_ value: Ratio)
+
+    /**
+     A distance reported in statute miles, as a decimal.
+     Used when parsing XML METARs where visibility is provided as decimal (e.g., 0.75).
+    
+     - Parameter value: distance, in statute miles.
+     */
+    case statuteMilesDecimal(_ value: Double)
 
     /**
      A distance reported in feet.
@@ -131,6 +140,7 @@ public enum Visibility: Codable, Equatable, Sendable {
     public var measurement: Measurement<UnitLength> {
       switch self {
         case .statuteMiles(let value): .init(value: value.doubleValue, unit: .miles)
+        case .statuteMilesDecimal(let value): .init(value: value, unit: .miles)
         case .feet(let value): .init(value: Double(value), unit: .feet)
         case .meters(let value): .init(value: Double(value), unit: .meters)
       }
@@ -142,6 +152,9 @@ public enum Visibility: Codable, Equatable, Sendable {
         case "SM":
           let value = try container.decode(Ratio.self, forKey: .value)
           self = .statuteMiles(value)
+        case "SMD":
+          let value = try container.decode(Double.self, forKey: .value)
+          self = .statuteMilesDecimal(value)
         case "FT":
           let value = try container.decode(UInt16.self, forKey: .value)
           self = .feet(value)
@@ -170,6 +183,9 @@ public enum Visibility: Codable, Equatable, Sendable {
       switch self {
         case .statuteMiles(let value):
           try container.encode("SM", forKey: .unit)
+          try container.encode(value, forKey: .value)
+        case .statuteMilesDecimal(let value):
+          try container.encode("SMD", forKey: .unit)
           try container.encode(value, forKey: .value)
         case .feet(let value):
           try container.encode("FT", forKey: .unit)

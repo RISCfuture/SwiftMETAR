@@ -55,3 +55,28 @@ SwiftMETAR prefers `DateComponents` rather than `Date` objects generally, to
 preserve the original data (day-hour-minute) rather than generating timestamps.
 Both ``METAR`` and ``TAF`` have vars allowing you to retrieve these values as
 `Date`s, but the data is stored as components.
+
+### Parsing from XML
+
+If you are working with the aviationweather.gov bulk cache XML files
+(`metars.cache.xml.gz` or `tafs.cache.xml.gz`), you can parse them
+directly. The XML parser returns an `AsyncStream` of `Result` values,
+allowing you to handle parse errors for individual entries:
+
+``` swift
+let data = try Data(contentsOf: metarsCacheURL)
+for await result in METAR.from(xml: data) {
+    switch result {
+        case .success(let observation):
+            print("\(observation.stationID): \(observation.wind)")
+        case .failure(let error):
+            print("Parse error: \(error)")
+    }
+}
+```
+
+Raw text parsing (``METAR/from(string:on:lenientRemarks:)``) produces
+the most complete output, including remarks, runway visual range, and
+wind direction ranges. XML parsing (``METAR/from(xml:)``) has broader
+error tolerance since values arrive pre-parsed into structured fields,
+but does not populate remarks or runway visual range data.

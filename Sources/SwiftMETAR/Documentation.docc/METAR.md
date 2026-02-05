@@ -5,6 +5,7 @@
 ### Parsing
 
 - ``from(string:on:lenientRemarks:)``
+- ``from(xml:)``
 
 ### Properties
 

@@ -97,6 +97,30 @@ public struct METAR: Codable, Sendable {
     return try await METARParser.shared.parse(string, on: date, lenientRemarks: lenientRemarks)
   }
 
+  /**
+   Parse METARs from aviationweather.gov cache XML data (`metars.cache.xml`).
+  
+   XML parsing has broader error tolerance since values are pre-parsed into
+   structured fields by the data source, but does not populate remarks,
+   runway visual range, or wind direction ranges.
+  
+   - Parameter data: The XML data.
+   - Returns: An `AsyncStream` of ``XMLParseResult`` values, allowing callers
+     to handle parse errors for individual entries. Failed entries include
+     the raw METAR string for fallback to textual parsing.
+   */
+  public static func from(xml data: Data) -> AsyncStream<XMLParseResult<Self>> {
+    AsyncStream { continuation in
+      Task {
+        let results = await METARXMLParser.shared.parse(data: data)
+        for result in results {
+          continuation.yield(result)
+        }
+        continuation.finish()
+      }
+    }
+  }
+
   /// Possible reasons for a METAR publication.
   public enum Issuance: String, Codable, Sendable {
 

@@ -16,9 +16,10 @@ airport over a 24- to 28-hour period, and winds aloft products provide forecast
 wind and temperature data at standard altitudes for stations across the US.
 
 SwiftMETAR does not download METAR, TAF, or winds aloft products from the
-Internet -- you'll have to do that yourself. Once you have the text product,
-SwiftMETAR will parse it into a ``METAR``, ``TAF``, or ``WindsAloft`` object
-that you can use to programmatically work with the weather information.
+Internet -- you'll have to do that yourself. Once you have the product -- either
+as raw text or as aviationweather.gov cache XML -- SwiftMETAR will parse it into
+a ``METAR``, ``TAF``, or ``WindsAloft`` object that you can use to
+programmatically work with the weather information.
 
 The design goal of SwiftMETAR is _domain-restricted data as much as possible_.
 Wherever possible, SwiftMETAR avoids representing data as open-ended types such

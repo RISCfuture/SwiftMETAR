@@ -9,9 +9,9 @@ airport over a 24- to 28-hour period, and winds aloft products provide forecast 
 temperature data at standard altitudes for stations across the US.
 
 SwiftMETAR does not download METAR, TAF, or winds aloft products from the Internet -- you'll
-have to do that yourself. Once you have the text product, SwiftMETAR will parse it into a
-`METAR`, `TAF`, or `WindsAloft` object that you can use to programmatically work with the
-weather information.
+have to do that yourself. Once you have the product -- either as raw text or as
+aviationweather.gov cache XML -- SwiftMETAR will parse it into a `METAR`, `TAF`, or
+`WindsAloft` object that you can use to programmatically work with the weather information.
 
 The design goal of SwiftMETAR is _domain-restricted data as much as possible_. Wherever
 possible, SwiftMETAR avoids representing data as open-ended types such as strings.
@@ -74,6 +74,25 @@ SwiftMETAR prefers `DateComponents` rather than `Date` objects generally, to pre
 original data (day-hour-minute) rather than generating timestamps. Both `METAR` and `TAF`
 have vars allowing you to retrieve these values as `Date`s, but the data is stored as
 components.
+
+### Parsing from XML
+
+SwiftMETAR can also parse the aviationweather.gov cache XML format
+(`metars.cache.xml`, `tafs.cache.xml`). This is useful for bulk-loading
+weather data:
+
+```swift
+let data = // XML data from aviationweather.gov
+for await observation in METAR.from(xml: data) {
+    print("\(observation.stationID): \(observation.wind)")
+}
+```
+
+Raw text parsing (`METAR.from(string:)`) provides the most complete
+output, including remarks, runway visual range, and wind direction
+ranges. XML parsing (`METAR.from(xml:)`) has broader error tolerance
+since values are pre-parsed into structured fields by the data source,
+but does not include remarks or RVR data.
 
 ### Formatting and Localization
 

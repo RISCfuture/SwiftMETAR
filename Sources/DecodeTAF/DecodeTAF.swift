@@ -3,6 +3,16 @@ import Foundation
 import METARFormatting
 import SwiftMETAR
 
+enum InputFormat: String, ExpressibleByArgument, CaseIterable {
+  case text = "txt"
+  case xml
+}
+
+enum OutputFormat: String, ExpressibleByArgument, CaseIterable {
+  case text = "txt"
+  case json
+}
+
 @available(macOS 15.0, *)
 @main
 struct DecodeTAF: AsyncParsableCommand {
@@ -25,6 +35,19 @@ struct DecodeTAF: AsyncParsableCommand {
   )
   var TAF_URL = URL(string: "https://aviationweather.gov/data/cache/tafs.cache.csv")!
 
+  @Option(
+    name: .customLong("taf-xml-url"),
+    help: "The URL to load the TAF XML from.",
+    transform: { .init(string: $0)! }
+  )
+  var TAF_XML_URL = URL(string: "https://aviationweather.gov/data/cache/tafs.cache.xml")!
+
+  @Option(name: .long, help: "Input format (txt or xml)")
+  var format: InputFormat = .text
+
+  @Option(name: .long, help: "Output format (txt or json)")
+  var output: OutputFormat = .text
+
   @Flag(name: .long, inversion: .prefixedNo, help: "Include raw TAF text")
   var raw = false
 
@@ -43,18 +66,40 @@ struct DecodeTAF: AsyncParsableCommand {
   private var session: URLSession { .init(configuration: .ephemeral) }
 
   func run() async throws {
+    if format == .xml && !all {
+      throw ValidationError("--format xml requires --all")
+    }
     try await all ? parseAll() : parsePrompt()
   }
 
   private func parseAll() async throws {
-    let TAFs = try await loadTAFs { raw, error in
-      print(raw)
-      print("  Parse error: \(error.localizedDescription)")
-      print()
-    }
-    if !errorsOnly {
-      for taf in TAFs.values {
-        printTAF(taf)
+    if format == .xml {
+      let tafs = try await loadTAFsFromXML { raw, error in
+        print(raw ?? "unknown")
+        print("  Parse error: \(error.localizedDescription)")
+        print()
+      }
+      switch output {
+        case .text:
+          if !errorsOnly {
+            for taf in tafs { printTAF(taf) }
+          }
+        case .json:
+          try printJSON(tafs)
+      }
+    } else {
+      let TAFs = try await loadTAFs { raw, error in
+        print(raw)
+        print("  Parse error: \(error.localizedDescription)")
+        print()
+      }
+      switch output {
+        case .text:
+          if !errorsOnly {
+            for taf in TAFs.values { printTAF(taf) }
+          }
+        case .json:
+          try printJSON(Array(TAFs.values))
       }
     }
   }
@@ -64,7 +109,10 @@ struct DecodeTAF: AsyncParsableCommand {
     let taf =
       try await airportCodeOrTAF.count == 4
       ? parse(code: airportCodeOrTAF) : parse(raw: airportCodeOrTAF)
-    printTAF(taf)
+    switch output {
+      case .text: printTAF(taf)
+      case .json: try printJSON(taf)
+    }
   }
 
   private func promptTAF() -> String {
@@ -89,11 +137,35 @@ struct DecodeTAF: AsyncParsableCommand {
     try await TAF.from(string: raw)
   }
 
+  private func loadTAFsFromXML(
+    errorHandler: (String?, Swift.Error) -> Void
+  ) async throws -> [TAF] {
+    logMessage("Loading TAFs from XML…\n")
+
+    let (data, response) = try await session.data(from: TAF_XML_URL)
+    guard let response = response as? HTTPURLResponse else {
+      throw Errors.badResponse(response)
+    }
+    guard response.statusCode / 100 == 2 else {
+      throw Errors.badStatus(response: response)
+    }
+
+    var tafs = [TAF]()
+    for await result in TAF.from(xml: data) {
+      switch result {
+        case .success(let taf):
+          tafs.append(taf)
+        case .failure(let error, _):
+          errorHandler(nil, error)
+      }
+    }
+    return tafs
+  }
+
   private func loadTAFs(errorHandler: ((String, Swift.Error) throws -> Void)) async throws
     -> [String: TAF]
   {
-    print("Loading TAFs…")
-    print()
+    logMessage("Loading TAFs…\n")
 
     let (data, response) = try await session.bytes(from: TAF_URL)
     guard let response = response as? HTTPURLResponse else {
@@ -105,16 +177,23 @@ struct DecodeTAF: AsyncParsableCommand {
 
     var TAFs = [String: TAF]()
     for try await line in data.lines {
-      guard let range = line.rangeOfCharacter(from: CharacterSet(charactersIn: ",")) else {
-        continue
-      }
-      let string = String(line[line.startIndex..<range.lowerBound])
-      guard string.starts(with: "K") else { continue }
+      let columns = line.split(separator: ",", maxSplits: 2)
+      guard columns.count >= 2 else { continue }
+
+      // Column 0: raw_text (quoted), Column 1: station_id
+      let stationID = String(columns[1])
+      guard stationID.starts(with: "K") else { continue }
+
+      // Strip quotes from raw_text
+      var rawText = String(columns[0])
+      if rawText.hasPrefix("\"") { rawText.removeFirst() }
+      if rawText.hasSuffix("\"") { rawText.removeLast() }
+
       do {
-        let taf = try await TAF.from(string: string)
+        let taf = try await TAF.from(string: rawText)
         TAFs[taf.airportID] = taf
       } catch {
-        try errorHandler(string, error)
+        try errorHandler(rawText, error)
       }
     }
 
@@ -123,7 +202,8 @@ struct DecodeTAF: AsyncParsableCommand {
 
   private func getTAF(airportCode: String) async throws -> TAF? {
     let TAFs = try await loadTAFs { raw, _ in
-      if raw.starts(with: airportCode) {
+      // Raw text format: "TAF KSFO ..." or "TAF AMD KSFO ..."
+      if raw.contains(" \(airportCode) ") {
         throw Errors.badTAF(raw: raw)
       }
     }
@@ -203,8 +283,19 @@ struct DecodeTAF: AsyncParsableCommand {
     }
   }
 
+  private func printJSON<T: Encodable>(_ value: T) throws {
+    let encoder = JSONEncoder()
+    encoder.outputFormatting = [.prettyPrinted, .sortedKeys]
+    let data = try encoder.encode(value)
+    print(String(data: data, encoding: .utf8)!)
+  }
+
   private func lprint(_ str: LocalizedStringResource) {
     print(String(localized: str))
+  }
+
+  private func logMessage(_ message: String) {
+    FileHandle.standardError.write(Data(message.utf8))
   }
 }
 
