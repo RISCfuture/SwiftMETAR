@@ -1,3 +1,13 @@
+# CI Matrix Policy
+#
+# Category A (tools-version 6.2 + macOS 26 min): macos-26 + Swift 6.2
+# Category B (tools-version 6.2 + older macOS):  macos-15 + 6.2, macos-26 + 6.2
+# Category C (tools-version 6.0):                macos-15 + 6.0, macos-15 + 6.2, macos-26 + 6.2
+# Linux (if viable):                             ubuntu + Swift 6.0, ubuntu + Swift 6.2
+#
+# When Swift 6.3 ships: bump 6.0→6.1 and 6.2→6.3 in Category C
+# When bumping tools-version to 6.2: drop 6.0/6.1, move to Category A or B
+
 name: CI
 
 on:
@@ -17,13 +27,11 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: macos-14
+          - os: macos-15
             swift: "6.0"
-          - os: macos-14
-            swift: "6.1"
           - os: macos-15
-            swift: "6.1"
-          - os: macos-15
+            swift: "6.2"
+          - os: macos-26
             swift: "6.2"
     runs-on: ${{ matrix.os }}
     steps:
@@ -48,15 +56,9 @@ jobs:
       image: swift:latest
     steps:
       - uses: actions/checkout@v4
-      - name: Install dependencies
-        run: apt-get update && apt-get install -y wget
       - name: Download .swift-format config
-        run: wget -O .swift-format https://gist.githubusercontent.com/RISCfuture/e0c21afb7bd80a88d128a42bf40d2ecd/raw/.swift-format
-      - name: Install swift-format
         run: |
-          git clone https://github.com/swiftlang/swift-format.git
-          cd swift-format
-          swift build -c release
-          cp .build/release/swift-format /usr/local/bin/
+          apt-get update && apt-get install -y wget
+          wget -O .swift-format https://gist.githubusercontent.com/RISCfuture/e0c21afb7bd80a88d128a42bf40d2ecd/raw/.swift-format
       - name: Run swift-format lint
-        run: swift-format lint -r .
+        run: swift format lint -r .
