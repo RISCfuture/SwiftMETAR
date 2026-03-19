@@ -35,7 +35,7 @@ jobs:
             swift: "6.2"
     runs-on: ${{ matrix.os }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: SwiftyLab/setup-swift@latest
         with:
           swift-version: ${{ matrix.swift }}
@@ -47,7 +47,7 @@ jobs:
     name: Run Swiftlint
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - uses: norio-nomura/action-swiftlint@3.2.1
   swift-format:
     name: Run swift-format
@@ -55,7 +55,7 @@ jobs:
     container:
       image: swift:latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Download .swift-format config
         run: |
           apt-get update && apt-get install -y wget
