@@ -1,5 +1,29 @@
 # Change Log
 
+## [3.0.0] - 2026-03-20
+
+### Added
+
+- XML parsing for METARs and TAFs from aviationweather.gov cache files.
+  - `METAR.from(xml:)` and `TAF.from(xml:)` return `AsyncStream<Result<..., Error>>`
+    for resilient batch parsing with per-entry error handling.
+- Winds aloft parsing.
+
+### Changed
+
+- CLI tools (`decode-metar`, `decode-taf`) now support `--format xml` and
+  `--output json` options.
+- Log messages in CLI tools now go to stderr to keep JSON output clean.
+- Updated to Swift 6.2.
+- Added swift-format for code formatting.
+
+### Fixed
+
+- Fixed CSV parsing for updated aviationweather.gov format (quoted raw text,
+  separate station_id column).
+- Fixed handling of TAF periods where the end date comes before the start date
+  (e.g., crossing month boundaries).
+
 ## [2.0.1] - 2025-08-20
 
 ### Fixed
