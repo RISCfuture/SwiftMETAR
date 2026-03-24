@@ -2,10 +2,10 @@
 #
 # Category A (tools-version 6.2 + macOS 26 min): macos-26 + Swift 6.2
 # Category B (tools-version 6.2 + older macOS):  macos-15 + 6.2, macos-26 + 6.2
-# Category C (tools-version 6.0):                macos-15 + 6.0, macos-15 + 6.2, macos-26 + 6.2
-# Linux (if viable):                             ubuntu + Swift 6.0, ubuntu + Swift 6.2
+# Category C (tools-version 6.0):                macos-15 + 6.1, macos-15 + 6.3, macos-26 + 6.3
+# Linux (if viable):                             ubuntu + Swift 6.1, ubuntu + Swift 6.3
 #
-# When Swift 6.3 ships: bump 6.0→6.1 and 6.2→6.3 in Category C
+# When Swift 6.4 ships: bump 6.1→6.2 and 6.3→6.4 in Category C
 # When bumping tools-version to 6.2: drop 6.0/6.1, move to Category A or B
 
 name: CI
@@ -28,11 +28,11 @@ jobs:
       matrix:
         include:
           - os: macos-15
-            swift: "6.0"
+            swift: "6.1"
           - os: macos-15
-            swift: "6.2"
+            swift: "6.3"
           - os: macos-26
-            swift: "6.2"
+            swift: "6.3"
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v6
