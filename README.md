@@ -1,5 +1,11 @@
 # SwiftMETAR: A METAR, TAF, and Winds Aloft parser for Swift
 
+[![CI](https://github.com/RISCfuture/SwiftMETAR/actions/workflows/ci.yml/badge.svg)](https://github.com/RISCfuture/SwiftMETAR/actions/workflows/ci.yml)
+[![Documentation](https://github.com/RISCfuture/SwiftMETAR/actions/workflows/doc.yml/badge.svg)](https://riscfuture.github.io/SwiftMETAR/)
+[![Swift 6.0+](https://img.shields.io/badge/Swift-6.0+-orange.svg)](https://swift.org)
+[![Platforms](https://img.shields.io/badge/Platforms-macOS%20|%20iOS%20|%20tvOS%20|%20watchOS%20|%20visionOS-blue.svg)](https://swift.org)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue.svg)](LICENSE)
+
 SwiftMETAR is a Swift library that parses aviation routine weather reports (METARs), terminal
 aerodrome forecasts (TAFs), and winds and temperatures aloft (FB) products into Swift data
 structures useful for machine interpretation. These products contain weather information of
