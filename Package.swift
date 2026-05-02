@@ -23,7 +23,7 @@ let package = Package(
   dependencies: [
     // Dependencies declare other packages that this package depends on.
     .package(url: "https://github.com/Quick/Quick.git", from: "7.6.2"),
-    .package(url: "https://github.com/Quick/Nimble.git", from: "13.6.0"),
+    .package(url: "https://github.com/Quick/Nimble.git", from: "14.0.0"),
     .package(url: "https://github.com/objecthub/swift-numberkit.git", from: "2.6.0"),
     .package(url: "https://github.com/apple/swift-docc-plugin.git", from: "1.4.3"),
     .package(url: "https://github.com/apple/swift-argument-parser.git", from: "1.5.0"),
