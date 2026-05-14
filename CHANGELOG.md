@@ -1,5 +1,13 @@
 # Change Log
 
+## [3.0.1] - 2026-05-14
+
+### Changed
+
+- Pinned `BuildableMacro` dependency to tagged version `1.0.0` instead of
+  `main` branch, so SwiftMETAR can be consumed as a stable-versioned
+  dependency.
+
 ## [3.0.0] - 2026-03-20
 
 ### Added
