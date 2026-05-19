@@ -1,10 +1,6 @@
 import Foundation
 @preconcurrency import RegexBuilder
 
-private let nocapWeatherCenterRx = Remark.NavalWeatherCenter.allCases.map(\.rawValue).joined(
-  separator: "|"
-)
-
 final class NavalForecasterParser: RemarkParser {
   var urgency = Remark.Urgency.routine
 

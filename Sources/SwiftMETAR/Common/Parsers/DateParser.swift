@@ -220,22 +220,6 @@ class HourMinutePeriodParser {
 class HourMinuteParser {
   private let dateRef = Reference<(UInt8?, UInt8)>()
 
-  lazy var hourRequiredRx = Regex {
-    Capture(as: dateRef) {
-      Repeat(.digit, count: 4)
-    } transform: { string in
-      let hourRange = string.startIndex...string.index(string.startIndex, offsetBy: 1)
-      let minuteRange =
-        string.index(string.startIndex, offsetBy: 2)...string.index(string.startIndex, offsetBy: 3)
-
-      guard let hour = UInt8(string[hourRange]),
-        var minute = UInt8(string[minuteRange])
-      else { throw Error.invalidDate(String(string)) }
-
-      return (hour, minute)
-    }
-  }
-
   lazy var hourOptionalRx = Regex {
     Capture(as: dateRef) {
       Optionally { Repeat(.digit, count: 2) }

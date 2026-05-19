@@ -281,7 +281,6 @@ actor TAFXMLParser {
 
     private var currentEntry: Entry?
     private var currentForecast: ForecastEntry?
-    private var currentElement: String?
     private var characterBuffer = ""
     private var inForecast = false
 
@@ -292,8 +291,6 @@ actor TAFXMLParser {
       qualifiedName _: String?,
       attributes attributeDict: [String: String] = [:]
     ) {
-      currentElement = elementName
-
       if elementName == "TAF" {
         currentEntry = Entry()
       } else if elementName == "forecast" {
@@ -393,8 +390,6 @@ actor TAFXMLParser {
           }
         }
       }
-
-      currentElement = nil
     }
 
     func parser(_: XMLParser, foundCharacters string: String) {
