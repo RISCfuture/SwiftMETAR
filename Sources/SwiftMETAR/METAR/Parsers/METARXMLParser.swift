@@ -120,7 +120,6 @@ actor METARXMLParser {
     var entries = [Entry]()
 
     private var currentEntry: Entry?
-    private var currentElement: String?
     private var characterBuffer = ""
     private var inQualityControlFlags = false
 
@@ -131,8 +130,6 @@ actor METARXMLParser {
       qualifiedName _: String?,
       attributes attributeDict: [String: String] = [:]
     ) {
-      currentElement = elementName
-
       if elementName == "METAR" {
         currentEntry = Entry()
       } else if elementName == "quality_control_flags" {
@@ -205,8 +202,6 @@ actor METARXMLParser {
           }
         }
       }
-
-      currentElement = nil
     }
 
     func parser(_: XMLParser, foundCharacters string: String) {

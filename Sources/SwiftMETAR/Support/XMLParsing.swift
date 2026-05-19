@@ -19,37 +19,6 @@ enum XMLParsing {
     return zuluCal.dateComponents(in: zulu, from: date)
   }
 
-  static func parseRatio(_ string: String) -> Ratio? {
-    if let intVal = Int(string) {
-      return Ratio(intVal)
-    }
-
-    // Handle decimal like "1.75"
-    if string.contains(".") {
-      let parts = string.split(separator: ".")
-      guard parts.count == 2,
-        let whole = Int(parts[0]),
-        let fracStr = parts.last
-      else { return nil }
-
-      let denominator = Int(pow(10.0, Double(fracStr.count)))
-      guard let numerator = Int(fracStr) else { return nil }
-      return Ratio(whole * denominator + numerator, denominator)
-    }
-
-    // Handle fraction like "3/4"
-    if string.contains("/") {
-      let parts = string.split(separator: "/")
-      guard parts.count == 2,
-        let num = Int(parts[0]),
-        let den = Int(parts[1])
-      else { return nil }
-      return Ratio(num, den)
-    }
-
-    return nil
-  }
-
   static func buildWind(dirDegrees: String?, speedKt: String?, gustKt: String?) throws -> Wind? {
     guard let speedStr = speedKt else { return nil }
     guard let speed = UInt16(speedStr) else {

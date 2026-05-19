@@ -1,8 +1,6 @@
 import Foundation
 @preconcurrency import RegexBuilder
 
-private let nocapExtremesRegex = Remark.Extreme.allCases.map(\.rawValue).joined(separator: "|")
-
 final class WindChangeParser: RemarkParser {
   var urgency = Remark.Urgency.routine
 

@@ -5,7 +5,6 @@ import NumberKit
 class VisibilityParser {
   private let integerParser = IntegerDistanceParser()
   private let fractionParser = FractionalDistanceParser()
-  private let visibilityRef = Reference<Substring>()
 
   private lazy var integerRx = Regex {
     Anchor.startOfSubject
@@ -29,20 +28,6 @@ class VisibilityParser {
     Anchor.endOfSubject
   }
 
-  lazy var rx = Regex {
-    Capture(as: visibilityRef) {
-      ChoiceOf {
-        ChoiceOf {
-          "10SM"
-          "9999"
-        }
-        notRecordedRx
-        fractionRx
-        integerRx
-      }
-    }
-  }
-
   func parse(_ parts: inout [String.SubSequence]) throws -> Visibility? {
     guard !parts.isEmpty else { return nil }
 
@@ -59,14 +44,6 @@ class VisibilityParser {
     }
 
     return nil
-  }
-
-  func parse<T>(_ match: Regex<T>.Match) throws -> Visibility? {
-    let visStr = match[visibilityRef]
-    guard let visibility = try parse(String(visStr)) else {
-      preconditionFailure("Visibility rx should have captured parseable substring")
-    }
-    return visibility
   }
 
   private func parse(_ vizStr: String) throws -> Visibility? {
