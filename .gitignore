@@ -1,6 +1,12 @@
-.swiftpm
+# Swift Package Manager
+.build/
+.swiftpm/
 
+# Xcode user state
+xcuserdata/
 
-# SwiftLint Remote Config Cache
+# SwiftLint remote config cache
 .swiftlint/RemoteConfigCache
+
+# swift-format (downloaded in CI)
 .swift-format
