@@ -16,7 +16,7 @@ public enum Condition: Codable, Equatable, Sendable {
   /**
    Included outside US region as a replacement of
    visibility, cloud, and weather groups.
-  
+
    - No clouds exist below 5,000 feet or below the highest minimum sector
    altitude, whichever is greater, and no TCU or CB are present.
    - Visibility is 10 kilometres or greater
@@ -27,7 +27,7 @@ public enum Condition: Codable, Equatable, Sendable {
 
   /**
    Cloud coverage between 1 and 2 oktas.
-  
+
    - Parameter height: The cloud bases in feet AGL.
    - Parameter type: The vertical development, if any.
    */
@@ -35,7 +35,7 @@ public enum Condition: Codable, Equatable, Sendable {
 
   /**
    Cloud coverage between 3 and 4 oktas.
-  
+
    - Parameter height: The cloud bases in feet AGL.
    - Parameter type: The vertical development, if any.
    */
@@ -43,7 +43,7 @@ public enum Condition: Codable, Equatable, Sendable {
 
   /**
    Cloud coverage between 5 and 7 oktas.
-  
+
    - Parameter height: The cloud bases in feet AGL.
    - Parameter type: The vertical development, if any.
    */
@@ -51,7 +51,7 @@ public enum Condition: Codable, Equatable, Sendable {
 
   /**
    Cloud coverage of 8 oktas.
-  
+
    - Parameter height: The cloud bases in feet AGL.
    - Parameter type: The vertical development, if any.
    */
@@ -60,7 +60,7 @@ public enum Condition: Codable, Equatable, Sendable {
   /**
    Cloud coverage is obscured by low-visibility conditions; the height of the
    obscuration layer is reported instead.
-  
+
    - Parameter ceiling: The top altitude of the obscuration layer, in feet
                         AGL.
    */

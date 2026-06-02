@@ -8,7 +8,7 @@ public enum Wind: Codable, Equatable, Sendable {
 
   /**
    Wind direction is variable.
-  
+
    - Parameter speed: The average wind speed.
    - Parameter headingRange: The range of headings the wind is coming from.
    */
@@ -16,7 +16,7 @@ public enum Wind: Codable, Equatable, Sendable {
 
   /**
    Wind has a definite heading and speed.
-  
+
    - Parameter heading: The direction the wind is coming from, referenced from
                         true north.
    - Parameter speed: The average wind speed.
@@ -27,7 +27,7 @@ public enum Wind: Codable, Equatable, Sendable {
 
   /**
    Wind has a definite heading range and speed.
-  
+
    - Parameter heading: The average direction the wind is coming from,
                         referenced from true north.
    - Parameter headingRange: The range of headings the wind is coming from.
@@ -138,21 +138,21 @@ public enum Wind: Codable, Equatable, Sendable {
 
     /**
      A wind speed in knots.
-    
+
      - Parameter quantity: The wind speed in knots.
      */
     case knots(_ quantity: UInt16)
 
     /**
      A wind speed in kilometers per hour.
-    
+
      - Parameter quantity: The wind speed in KPH.
      */
     case kph(_ quantity: UInt16)
 
     /**
      A wind speed in meters per second.
-    
+
      - Parameter quantity: The wind speed in m/s.
      */
     case mps(_ quantity: UInt16)

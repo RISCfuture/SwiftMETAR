@@ -20,7 +20,7 @@ extension Remark {
 
     /**
      A visibility sensor at a secondary location is inoperative.
-    
+
      - Parameter location: The sensor location (usually a runway name or
      quadrant direction).
      */
@@ -28,7 +28,7 @@ extension Remark {
 
     /**
      A ceilometer at a secondary location is inoperative.
-    
+
      - Parameter location: The sensor location.
      */
     case secondaryCeiling(location: String)

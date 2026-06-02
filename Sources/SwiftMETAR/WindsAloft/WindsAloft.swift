@@ -53,7 +53,7 @@ public struct WindsAloft: Codable, Equatable, Sendable {
 
   /**
    Parse a Winds and Temperatures Aloft product from its text.
-  
+
    - Parameter string: The raw product text.
    - Parameter date: A reference date for resolving partial date components.
                      Defaults to the current date.

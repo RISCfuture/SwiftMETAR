@@ -46,7 +46,7 @@ public struct TAF: Codable, Sendable {
 
   /**
    Parse a TAF from its text.
-  
+
    - Parameter string: The TAF text.
    - Parameter date: TAF dates only include the day and hour. By default, the
                      month and year are taken from the current date. If you
@@ -61,11 +61,11 @@ public struct TAF: Codable, Sendable {
 
   /**
    Parse TAFs from aviationweather.gov cache XML data (`tafs.cache.xml`).
-  
+
    XML parsing has broader error tolerance since values are pre-parsed into
    structured fields by the data source, but does not populate remarks,
    temperatures, or wind direction ranges.
-  
+
    - Parameter data: The XML data.
    - Returns: An `AsyncStream` of ``XMLParseResult`` values, allowing callers
      to handle parse errors for individual entries. Failed entries include
@@ -88,7 +88,7 @@ public struct TAF: Codable, Sendable {
    forecast period. The closest prior `FM` (from) entry is combined with any
    subsequent `TEMPO` or `PROB` entries (regardless of probability) to create
    an aggregate ``Group``, which is returned.
-  
+
    - Parameter date: The date to generate aggregate weather for.
    - Returns: The aggregate weather at that time, or `nil` if `date` is
               outside the forecast period.
@@ -150,7 +150,7 @@ public struct TAF: Codable, Sendable {
 
   /**
    Returns `true` if the given date is within this TAF's forecast period.
-  
+
    - Parameter date: A date.
    - Returns: Whether `date` is within the forecast period.
    */
@@ -254,14 +254,14 @@ public struct TAF: Codable, Sendable {
 
       /**
        Forecast is valid between two dates.
-      
+
        - Parameter period: The valid period.
        */
       case range(_ period: DateComponentsInterval)
 
       /**
        Forecast is valid starting at a date.
-      
+
        - Parameter from: The start date.
        */
       case from(_ from: DateComponents)
@@ -269,21 +269,21 @@ public struct TAF: Codable, Sendable {
       /**
        Forecast is valid between two dates within a larger date range
        covered by a ``from(_:)`` entry.
-      
+
        - Parameter period: The valid period.
        */
       case temporary(_ period: DateComponentsInterval)
 
       /**
        Changing to this forecast within this time period.
-      
+
        - Parameter period: The valid period.
        */
       case becoming(_ period: DateComponentsInterval)
 
       /**
        Forecast has a probability of becoming valid between two dates.
-      
+
        - Parameter probability: The percentage probability of this
                                 forecast.
        - Parameter period: The valid period.
