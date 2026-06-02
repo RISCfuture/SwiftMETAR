@@ -6,28 +6,28 @@ public enum Visibility: Codable, Equatable, Sendable {
 
   /**
    Visibility is equal to this value.
-  
+
    - Parameter value: The visibility value.
    */
   case equal(_ value: Value)
 
   /**
    Visibility is less than this value.
-  
+
    - Parameter value: The visibility value.
    */
   case lessThan(_ value: Value)
 
   /**
    Visibility is greater than this value.
-  
+
    - Parameter value: The visibility value.
    */
   case greaterThan(_ value: Value)
 
   /**
    Visibility is variable between these values.
-  
+
    - Parameter low: The low value.
    - Parameter high: The high value.
    */
@@ -108,7 +108,7 @@ public enum Visibility: Codable, Equatable, Sendable {
     /**
      A distance reported in statute miles, as a vulgar fraction.
      Used when parsing text METARs with fraction visibility (e.g., "3/4SM").
-    
+
      - Parameter value: distance, in statute miles.
      */
     case statuteMiles(_ value: Ratio)
@@ -116,21 +116,21 @@ public enum Visibility: Codable, Equatable, Sendable {
     /**
      A distance reported in statute miles, as a decimal.
      Used when parsing XML METARs where visibility is provided as decimal (e.g., 0.75).
-    
+
      - Parameter value: distance, in statute miles.
      */
     case statuteMilesDecimal(_ value: Double)
 
     /**
      A distance reported in feet.
-    
+
      - Parameter value: The distance, in feet.
      */
     case feet(_ value: UInt16)
 
     /**
      A distance reported in meters.
-    
+
      - Parameter value: The distance, in meters.
      */
     case meters(_ value: UInt16)

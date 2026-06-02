@@ -5,7 +5,7 @@ public enum Altimeter: Codable, Comparable, Sendable {
 
   /**
    An altimeter setting in inches of mercury (typical in the US).
-  
+
    - Parameter value: The altimeter setting, in inHg multiplied by 100.
    */
   case inHg(_ value: UInt16)  // 100s

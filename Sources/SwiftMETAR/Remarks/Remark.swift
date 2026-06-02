@@ -15,7 +15,7 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    Observed cloud types.
-  
+
    - Parameter low: Observed cloud types below 6500 feet AGL.
    - Parameter middle: Observed cloud types between 6500 and 20,000 feet AGL.
    - Parameter high: Observed cloud types above 20,000 feet AGL.
@@ -24,14 +24,14 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    METAR correction was issued.
-  
+
    - Parameter time: The time that the correction was issued.
    */
   case correction(time: DateComponents)
 
   /**
    Daily accumulated precipitation amount.
-  
+
    - Parameter amount: The amount, in inches. 0 indicates trace precipitation.
    - SeeAlso: ``precipitationAmountMeasurement``
    */
@@ -39,7 +39,7 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    Daily temperature extremes.
-  
+
    - Parameter low: The low temperature extreme, in °C.
    - Parameter high: The high temperature extreme, in °C.
    - SeeAlso: ``lowTemperatureMeasurement``, ``highTemperatureMeasurement``
@@ -48,7 +48,7 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    Largest recorded hailstone size.
-  
+
    - Parameter size: Largest hailstone size, in inches.
    - SeeAlso: ``hailstoneSizeMeasurement``
    */
@@ -56,7 +56,7 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    Hourly accumulated precipitation amount.
-  
+
    - Parameter amount: The amount, in inches. 0 indicates trace precipitation.
    - SeeAlso: ``precipitationAmountMeasurement``
    */
@@ -67,7 +67,7 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    Observed or detected lightning.
-  
+
    - Parameter frequency: How often the lightning is occurring.
    - Parameter types: The types of lightning observed.
    - Parameter proximity: How distant the lightning is from the observer.
@@ -86,7 +86,7 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    The ID of the naval weather center forecaster who produced this TAF.
-  
+
    - Parameter center: The naval weather center that produced this TAF.
    - Parameter ID: The forecaster ID.
    */
@@ -94,14 +94,14 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    Time of next forecast, when regular forecasting has stopped for the day.
-  
+
    - Parameter date: The time that forecasting will resume.
    */
   case next(_ date: DateComponents)
 
   /**
    No forecast amendments will be made after the given date.
-  
+
    - Parameter date: The last time that forecast amendments will be published.
    */
   case noAmendmentsAfter(_ date: DateComponents)
@@ -111,7 +111,7 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    Weather obscuration was observed in the vicinity.
-  
+
    - Parameter type: The type of obscuration.
    - Parameter amount: How much obscuration was present.
    - Parameter height: The height of the obscuration, in feet AGL.
@@ -121,7 +121,7 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    The type of automated observing station.
-  
+
    - Parameter type: The automated observing station type.
    - Parameter augmented: `true` if a human observer has augmented the report.
    */
@@ -129,7 +129,7 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    Precipitation was observed in the vicinity.
-  
+
    - Parameter type: The precipitation type.
    - Parameter proximity: How far away the precipitation was.
    - Parameter directions: The direction(s) the precipitation was observed in.
@@ -143,7 +143,7 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    Observed visibility at a location.
-  
+
    - Parameter source: The location that the visibility was observed from.
    - Parameter distance: The visibility, in statute miles.
    - SeeAlso: ``distanceMeasurement``
@@ -152,7 +152,7 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    Maximum recorded wind speed for the observation period.
-  
+
    - Parameter wind: Peak wind direction and speed.
    - Parameter time: The time that peak wind speed occurred.
    */
@@ -160,7 +160,7 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    Measured ice accretion for a recording period.
-  
+
    - Parameter period: The recording period, in hours (1, 3, or 6).
    - Parameter amount: The amount of ice accretion, in inches.
    - SeeAlso: ``precipitationAmountMeasurement``
@@ -169,7 +169,7 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    Measured precipitation for a recording period.
-  
+
    - Parameter period: The recording period, in hours (3 or 6).
    - Parameter amount: The amount of precipitation, in inches.
    - SeeAlso: ``precipitationAmountMeasurement``
@@ -179,14 +179,14 @@ public enum Remark: Codable, Equatable, Sendable {
   /**
    Precipitation beginning and/or ending during the recording period.
    Precipitation could have began or ended multiple times.
-  
+
    - Parameter events: Individual events of precipitation beginning or ending.
    */
   case precipitationBeginEnd(events: [PrecipitationEvent])
 
   /**
    Sea-level pressure trend over the past three hours.
-  
+
    - Parameter character: Whether the pressure was rising or falling during
                           the 3-hour period, and how quickly.
    - Parameter change: The pressure change, in hectopascals.
@@ -196,14 +196,14 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    Pressure was rising or falling rapidly.
-  
+
    - Parameter change: Whether the pressure was rising or falling.
    */
   case rapidPressureChange(_ change: RapidPressureChange)
 
   /**
    Snow depth increased by 1+ inches in the past hour.
-  
+
    - Parameter depthIncrease: The snow depth increase, in inches.
    - Parameter totalDepth: The total snow depth, in inches.
    - SeeAlso: ``depthIncreaseMeasurment``, ``totalDepthMeasurement``
@@ -212,7 +212,7 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    The relative humidity, derived from temperature and dewpoint.
-  
+
    - Parameter percent: The relative humidity in percent, where 100% is fully
                         saturated air.
    */
@@ -220,7 +220,7 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    The recorded ceiling at a runway departure end.
-  
+
    - Parameter runway: The runway name (e.g., "11" for runway 11).
    - Parameter height: The ceiling height, in feet AGL.
    - SeeAlso: ``heightMeasurement``
@@ -229,7 +229,7 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    The recorded visibility at a runway departure end.
-  
+
    - Parameter runway: The runway name (e.g., "11" for runway 11).
    - Parameter distance: The visibility, in statute miles.
    - SeeAlso: ``distanceMeasurement``
@@ -238,7 +238,7 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    Recorded sea-level pressure.
-  
+
    - Parameter pressure: Sea-level pressure, in hectopascals.
    - SeeAlso: ``pressureMeasurement``
    */
@@ -246,7 +246,7 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    Recorded visibility in a certain direction.
-  
+
    - Parameter direction: The cardinal direction.
    - Parameter distance: The visibility, in statute miles.
    - SeeAlso: ``distanceMeasurement``
@@ -255,14 +255,14 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    A weather sensor is inoperative.
-  
+
    - Parameter type: The inoperative sensor.
    */
   case inoperativeSensor(_ type: SensorType)
 
   /**
    Significant clouds observed in the vicinity.
-  
+
    - Parameter type: The cloud type.
    - Parameter directions: The direction(s) that the clouds are from the
                            observer.
@@ -283,7 +283,7 @@ public enum Remark: Codable, Equatable, Sendable {
   /**
    Highest or lowest temperature recorded in the last six-hour observation
    period.
-  
+
    - Parameter type: Whether this is a high or low extreme.
    - Parameter temperature: Minimum or maximum temperature, in °C.
    - SeeAlso: ``temperatureMeasurement``
@@ -292,7 +292,7 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    Current recorded snow depth.
-  
+
    - Parameter depth: Snow depth, in inches.
   - SeeAlso: ``depthMeasurement``
    */
@@ -301,7 +301,7 @@ public enum Remark: Codable, Equatable, Sendable {
   /**
    Total duration of unobscured sunshine for the previous day. Typically
    recorded with the 0800 UTC report or first 6-hourly period report.
-  
+
    - Parameter duration: Total minutes of sunshine during the previous day.
    - SeeAlso: ``durationMeasurement``
    */
@@ -309,7 +309,7 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    Exact recorded temperature and dewpoint.
-  
+
    - Parameter temperature: Recorded air temperature, in °C.
    - Parameter dewpoint: Recorded dewpoint, in °C.
    - SeeAlso: ``temperatureMeasurement``, ``dewpointMeasurement``
@@ -319,14 +319,14 @@ public enum Remark: Codable, Equatable, Sendable {
   /**
    Thunderstorms beginning and/or ending during the recording period.
    Thunderstorms could have began or ended multiple times.
-  
+
    - Parameter events: Individual events of thunderstorms beginning or ending.
    */
   case thunderstormBeginEnd(events: [ThunderstormEvent])
 
   /**
    Observed thunderstorms in the vicinity of the station.
-  
+
    - Parameter proximity: The proximity of the thunderstorm(s) to the station.
    - Parameter directions: The direction(s) of the thunderstorm(s) from the
                            station.
@@ -342,7 +342,7 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    A columnar vortex was observed in the vicinity of the station.
-  
+
    - Parameter type: The type of columnar vortex (e.g., tornado).
    - Parameter begin: The time that the phenomenon began. `nil` if it began
                       before the current observation period.
@@ -362,7 +362,7 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    Ceiling height varies across the observation area.
-  
+
    - Parameter low: The lowest ceiling height, in feet AGL.
    - Parameter high: The highest ceiling height, in feet AGL.
    - SeeAlso: ``lowHeightMeasurement``, ``highHeightMeasurement``
@@ -371,7 +371,7 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    Prevailing visibility varies across the observation area.
-  
+
    - Parameter low: The lowest visibility, in statute miles.
    - Parameter high: The highest visibility, in statute miles.
    - SeeAlso: ``lowVisibilityMeasurement``, ``highVisibilityMeasurement``
@@ -380,7 +380,7 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    Cloud coverage varies across the observation area.
-  
+
    - Parameter low: The thinnest cloud coverage.
    - Parameter high: The thickest cloud coverage.
    - Parameter height: The height of the ceiling.
@@ -392,7 +392,7 @@ public enum Remark: Codable, Equatable, Sendable {
    Wind direction varies during the forecast period. This remark is
    exclusively used in TAFs. Variable winds in a METAR would be encoded in the
    wind group.
-  
+
    - Parameter heading1: A variable wind direction extreme.
    - Parameter heading2: A variable wind direction extreme.
    */
@@ -400,7 +400,7 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    The equivalent water depth of snow on the ground.
-  
+
    - Parameter depth: The equivalent water depth of fallen snow, in inches.
    - SeeAlso: ``depthMeasurement``
    */
@@ -409,7 +409,7 @@ public enum Remark: Codable, Equatable, Sendable {
   /**
    Wind direction/speed will change after a certain time within the forecast
    period. This remark is used exclusively in TAFs.
-  
+
    - Parameter wind: The new wind direction/speed.
    - Parameter after: The time after which the new wind direction/speed takes
                       effect.
@@ -421,7 +421,7 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    The wind has shifted during the observation period.
-  
+
    - Parameter time: The time of the wind shift.
    - Parameter frontalPassage: `true` if the wind shift occurred because of a
                                frontal passage.
@@ -430,7 +430,7 @@ public enum Remark: Codable, Equatable, Sendable {
 
   /**
    A remark that couldn't be parsed.
-  
+
    - Parameter remark: The raw text remark.
    */
   case unknown(_ remark: String)

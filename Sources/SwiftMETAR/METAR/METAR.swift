@@ -77,7 +77,7 @@ public struct METAR: Codable, Sendable {
 
   /**
    Parse a METAR from its text.
-  
+
    - Parameter string: The METAR text.
    - Parameter date: METAR dates only include the day and hour. By default,
                      the month and year are taken from the current date. If
@@ -99,11 +99,11 @@ public struct METAR: Codable, Sendable {
 
   /**
    Parse METARs from aviationweather.gov cache XML data (`metars.cache.xml`).
-  
+
    XML parsing has broader error tolerance since values are pre-parsed into
    structured fields by the data source, but does not populate remarks,
    runway visual range, or wind direction ranges.
-  
+
    - Parameter data: The XML data.
    - Returns: An `AsyncStream` of ``XMLParseResult`` values, allowing callers
      to handle parse errors for individual entries. Failed entries include

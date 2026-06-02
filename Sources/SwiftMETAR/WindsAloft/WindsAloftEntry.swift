@@ -10,7 +10,7 @@ public enum WindsAloftEntry: Codable, Equatable, Sendable {
 
   /**
    Wind with direction, speed, and optional temperature.
-  
+
    - Parameter direction: The wind direction in degrees true, rounded to the
                           nearest 10 degrees (0–360).
    - Parameter speed: The wind speed.

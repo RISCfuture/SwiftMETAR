@@ -1,13 +1,13 @@
 {
-  "originHash" : "bac1b6216960edbd1213b8a04c6c674404d361c813e7ca2214df16174eb29f2d",
+  "originHash" : "b64b4666bf7c8ebb097021cc593c33d75e0fb0432a1149f4c8ce64f0457b4001",
   "pins" : [
     {
       "identity" : "buildablemacro",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/riscfuture/BuildableMacro.git",
       "state" : {
-        "branch" : "main",
-        "revision" : "1f8f8a17c75eeb3fd1287eb3abb6429a290412e8"
+        "revision" : "1f8f8a17c75eeb3fd1287eb3abb6429a290412e8",
+        "version" : "1.0.0"
       }
     },
     {
