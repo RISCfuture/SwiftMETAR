@@ -11,4 +11,4 @@ jobs:
       - name: Install Periphery
         run: brew install peripheryapp/periphery/periphery
       - name: Run Periphery
-        run: periphery scan
+        run: periphery scan --strict
