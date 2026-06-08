@@ -7,7 +7,7 @@ jobs:
   periphery:
     runs-on: macos-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
       - name: Install Periphery
         run: brew install peripheryapp/periphery/periphery
       - name: Run Periphery
