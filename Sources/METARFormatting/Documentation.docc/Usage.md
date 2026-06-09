@@ -7,7 +7,7 @@ How to use METARFormatting to do locale-aware formatting of your SwiftMETAR type
 `FormatStyle` implementations can be used directly as interpolations in calls to
 `String(localized:)`:
 
-```
+```swift
 func printWinds(metar: METAR) -> String {
   return String(localized: "Winds are \(metar.wind, format: .wind())")
 }
@@ -16,7 +16,7 @@ func printWinds(metar: METAR) -> String {
 If you need more customization, the class functions can generally be called with
 additional parameters:
 
-```
+```swift
 func printWinds(metar: METAR) -> String {
   return String(localized: "Winds are \(metar.wind, format: .wind(speedFormat: .measurement(width: .narrow))")
 }
@@ -25,14 +25,14 @@ func printWinds(metar: METAR) -> String {
 If you do not need the interpolation features of `String(localized:)`, you can
 also use these formatters directly:
 
-```
+```swift
 let formatter = Wind.FormatStyle()
 formatter.format(metar.wind)
 ```
 
 Most formatters also have a fluent-style interface, if you prefer:
 
-```
+```swift
 func printWinds(metar: METAR) -> String {
   return String(localized: "Winds are \(metar.wind, format: .wind.speedFormat(.measurement(width: .narrow))")
 }
@@ -41,9 +41,8 @@ func printWinds(metar: METAR) -> String {
 Remarks also have a formatter. You can format a `Remark` to print it in plain
 English:
 
-```
+```swift
 ForEach(metar.remarks) { remark in
   Text(remark, format: .remark)
 }
 ```
-

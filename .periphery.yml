@@ -1,4 +1,4 @@
 retain_public: true
 external_test_case_classes:
-- AsyncSpec
-- QuickSpec
+  - AsyncSpec
+  - QuickSpec

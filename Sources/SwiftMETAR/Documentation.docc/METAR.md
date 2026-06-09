@@ -21,7 +21,7 @@
 
 ### Conditions
 
--  ``wind``
+- ``wind``
 - ``visibility``
 - ``runwayVisibility``
 - ``weather``
