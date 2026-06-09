@@ -36,7 +36,7 @@ made for parsing TAFs at military airbases, but most of those will fail to parse
 ## Installation
 
 Online API and tutorial documentation is available at
-https://riscfuture.github.io/SwiftMETAR/documentation/swiftmetar/
+<https://riscfuture.github.io/SwiftMETAR/documentation/swiftmetar/>
 
 SwiftMETAR is a Swift Package Manager project. To use SwiftMETAR, simply add this
 project to your `Package.swift` file. Example:
@@ -108,7 +108,7 @@ information on how to use SwiftMETAR classes with localization libraries.
 ## Documentation
 
 Online API documentation and tutorials are available at
-https://riscfuture.github.io/SwiftMETAR/documentation/swiftmetar/
+<https://riscfuture.github.io/SwiftMETAR/documentation/swiftmetar/>
 
 DocC documentation is available, including tutorials and API documentation. For
 Xcode documentation, you can run

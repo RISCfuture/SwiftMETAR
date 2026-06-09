@@ -6,7 +6,7 @@ A basic tutorial on using SwiftMETAR to parse METAR and TAF products.
 
 To parse a METAR in String format, simply call
 ``METAR/from(string:on:lenientRemarks:)``. You will get back a struct that you
-can query for weather information: 
+can query for weather information:
 
 ``` swift
 let observation = try await METAR.from(string: myString)
