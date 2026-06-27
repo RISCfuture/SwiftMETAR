@@ -1,5 +1,5 @@
 import Foundation
-@preconcurrency import RegexBuilder
+import RegexBuilder
 
 class METARTemperatureParser {
   private let tempParser = AlphaSignedIntegerParser(width: 2)

@@ -1,5 +1,5 @@
 import Foundation
-@preconcurrency import RegexBuilder
+import RegexBuilder
 
 final class VariableCeilingHeightParser: RemarkParser {
   var urgency = Remark.Urgency.routine

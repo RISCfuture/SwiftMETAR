@@ -2,6 +2,11 @@
 
 import PackageDescription
 
+let approachableConcurrency: [SwiftSetting] = [
+  .enableUpcomingFeature("NonisolatedNonsendingByDefault"),
+  .enableUpcomingFeature("InferIsolatedConformances")
+]
+
 let package = Package(
   name: "SwiftMETAR",
   defaultLocalization: "en",
@@ -35,7 +40,8 @@ let package = Package(
     .target(
       name: "SwiftMETAR",
       dependencies: [.product(name: "NumberKit", package: "swift-numberkit")],
-      resources: [.process("Resources")]
+      resources: [.process("Resources")],
+      swiftSettings: approachableConcurrency
     ),
     .target(
       name: "METARFormatting",
@@ -43,11 +49,13 @@ let package = Package(
         "SwiftMETAR",
         .product(name: "BuildableMacro", package: "BuildableMacro")
       ],
-      resources: [.process("Resources")]
+      resources: [.process("Resources")],
+      swiftSettings: approachableConcurrency
     ),
     .testTarget(
       name: "SwiftMETARTests",
-      dependencies: ["SwiftMETAR", "Quick", "Nimble"]
+      dependencies: ["SwiftMETAR", "Quick", "Nimble"],
+      swiftSettings: approachableConcurrency
     ),
     .executableTarget(
       name: "DecodeMETAR",
@@ -55,7 +63,8 @@ let package = Package(
         "SwiftMETAR",
         "METARFormatting",
         .product(name: "ArgumentParser", package: "swift-argument-parser")
-      ]
+      ],
+      swiftSettings: approachableConcurrency
     ),
     .executableTarget(
       name: "DecodeTAF",
@@ -63,14 +72,16 @@ let package = Package(
         "SwiftMETAR",
         "METARFormatting",
         .product(name: "ArgumentParser", package: "swift-argument-parser")
-      ]
+      ],
+      swiftSettings: approachableConcurrency
     ),
     .executableTarget(
       name: "DecodeWindsAloft",
       dependencies: [
         "SwiftMETAR",
         .product(name: "ArgumentParser", package: "swift-argument-parser")
-      ]
+      ],
+      swiftSettings: approachableConcurrency
     )
   ],
   swiftLanguageModes: [.v5, .v6]

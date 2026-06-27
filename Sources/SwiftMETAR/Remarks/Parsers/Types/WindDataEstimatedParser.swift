@@ -1,5 +1,5 @@
 import Foundation
-@preconcurrency import RegexBuilder
+import RegexBuilder
 
 final class WindDataEstimatedParser: RemarkParser {
   private static let rx = Regex {

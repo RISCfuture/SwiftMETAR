@@ -1,5 +1,5 @@
 import Foundation
-@preconcurrency import RegexBuilder
+import RegexBuilder
 
 class DayHourMinuteParser {
   private let dateRef = Reference<(UInt8, UInt8, UInt8)>()

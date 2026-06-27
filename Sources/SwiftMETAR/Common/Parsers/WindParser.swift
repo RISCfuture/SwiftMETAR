@@ -1,5 +1,5 @@
 import Foundation
-@preconcurrency import RegexBuilder
+import RegexBuilder
 
 class WindParser {
   let directionRef = Reference<DirectionString>()

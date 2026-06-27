@@ -1,5 +1,5 @@
 import Foundation
-@preconcurrency import RegexBuilder
+import RegexBuilder
 
 class ConditionsParser {
   private let coverageRef = Reference<Coverage>()

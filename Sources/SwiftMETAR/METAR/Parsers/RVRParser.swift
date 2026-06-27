@@ -1,5 +1,5 @@
 import Foundation
-@preconcurrency import RegexBuilder
+import RegexBuilder
 
 class RVRParser {
   private let runwayRef = Reference<Substring>()

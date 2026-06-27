@@ -1,6 +1,6 @@
 import Foundation
 import NumberKit
-@preconcurrency import RegexBuilder
+import RegexBuilder
 
 class VisibilityParser {
   private let integerParser = IntegerDistanceParser()
