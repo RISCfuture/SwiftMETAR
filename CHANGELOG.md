@@ -1,5 +1,22 @@
 # Change Log
 
+## [3.1.0] - 2026-06-26
+
+### Changed
+
+- Adopted Swift's Approachable Concurrency upcoming-feature flags
+  (`NonisolatedNonsendingByDefault` and `InferIsolatedConformances`),
+  aligning the package's async execution semantics with modern Swift 6
+  defaults. No public API signatures changed: the async `from(string:)`
+  parsers and the `from(xml:)` `AsyncStream` producers behave the same
+  from a caller's perspective.
+- Dropped the now-redundant `@preconcurrency` qualifier from
+  `import RegexBuilder` across all parser files. Sendability of the
+  cached, actor-confined compiled regexes is still provided by the
+  package's `Regex: @retroactive @unchecked Sendable` conformance, which
+  is retained until the standard library conforms `Regex` to `Sendable`
+  itself.
+
 ## [3.0.1] - 2026-05-14
 
 ### Changed
