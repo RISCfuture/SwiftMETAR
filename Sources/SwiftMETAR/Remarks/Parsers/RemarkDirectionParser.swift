@@ -1,5 +1,5 @@
 import Foundation
-@preconcurrency import RegexBuilder
+import RegexBuilder
 
 class RemarkDirectionParser {
   private static let directionFromString: [String: Remark.Direction] = [

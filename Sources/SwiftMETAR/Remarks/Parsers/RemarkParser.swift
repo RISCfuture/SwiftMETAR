@@ -1,6 +1,6 @@
 import Foundation
 import NumberKit
-@preconcurrency import RegexBuilder
+import RegexBuilder
 
 protocol RemarkParser {
   var urgency: Remark.Urgency { get }

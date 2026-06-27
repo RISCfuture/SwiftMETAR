@@ -1,5 +1,5 @@
 import Foundation
-@preconcurrency import RegexBuilder
+import RegexBuilder
 
 class IcingParser {
   private let typeRef = Reference<Icing.IcingType?>()

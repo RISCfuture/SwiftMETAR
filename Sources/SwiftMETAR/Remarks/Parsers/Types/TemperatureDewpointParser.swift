@@ -1,5 +1,5 @@
 import Foundation
-@preconcurrency import RegexBuilder
+import RegexBuilder
 
 final class TemperatureDewpointParser: RemarkParser {
   private static let indeterminate = "////"

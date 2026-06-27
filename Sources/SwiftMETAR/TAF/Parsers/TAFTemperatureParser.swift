@@ -1,5 +1,5 @@
 import Foundation
-@preconcurrency import RegexBuilder
+import RegexBuilder
 
 class TAFTemperatureParser {
   private let typeRef = Reference<TAF.Temperature.TemperatureType?>()

@@ -1,5 +1,5 @@
 import Foundation
-@preconcurrency import RegexBuilder
+import RegexBuilder
 
 class WindshearParser {
   private let heightRef = Reference<UInt16>()

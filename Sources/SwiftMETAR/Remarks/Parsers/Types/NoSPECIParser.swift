@@ -1,5 +1,5 @@
 import Foundation
-@preconcurrency import RegexBuilder
+import RegexBuilder
 
 final class NoSPECIParser: RemarkParser {
   private static let rx = Regex {

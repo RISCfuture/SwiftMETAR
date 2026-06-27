@@ -1,5 +1,5 @@
 import Foundation
-@preconcurrency import RegexBuilder
+import RegexBuilder
 
 class TurbulenceParser {
   private let typeRef = Reference<Character>()

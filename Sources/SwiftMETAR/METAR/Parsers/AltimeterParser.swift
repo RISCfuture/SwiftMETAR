@@ -1,5 +1,5 @@
 import Foundation
-@preconcurrency import RegexBuilder
+import RegexBuilder
 
 class AltimeterParser {
   private let unitRef = Reference<Substring>()

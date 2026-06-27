@@ -1,5 +1,5 @@
 import Foundation
-@preconcurrency import RegexBuilder
+import RegexBuilder
 
 class PeriodParser {
   func parse(_ parts: inout [String.SubSequence], referenceDate: Date? = nil) throws -> TAF.Group

@@ -1,5 +1,5 @@
 import Foundation
-@preconcurrency import RegexBuilder
+import RegexBuilder
 
 class WeatherParser {
   private let intensityRef = Reference<Weather.Intensity>()
