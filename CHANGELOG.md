@@ -1,5 +1,16 @@
 # Change Log
 
+## [3.2.0] - 2026-07-06
+
+### Added
+
+- Linux support for the core `SwiftMETAR` library and the `decode-winds-aloft`
+  CLI. Conditional `FoundationNetworking`/`FoundationXML` imports and a
+  `String(localized:)` shim cover the platform gaps. The `METARFormatting`
+  module and the `decode-metar`/`decode-taf` CLIs remain Apple-only, as they
+  rely on `Measurement.FormatStyle`, which open-source Foundation does not
+  provide; all targets still build on Apple platforms.
+
 ## [3.1.0] - 2026-06-26
 
 ### Changed
