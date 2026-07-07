@@ -10,10 +10,10 @@
   extension String {
     init(
       localized key: String,
-      table: String? = nil,
-      bundle: Bundle? = nil,
-      locale: Locale? = nil,
-      comment: StaticString? = nil
+      table _: String? = nil,
+      bundle _: Bundle? = nil,
+      locale _: Locale? = nil,
+      comment _: StaticString? = nil
     ) {
       self = key
     }
