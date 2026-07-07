@@ -56,165 +56,85 @@ extension Error: LocalizedError {
   public var errorDescription: String? {
     switch self {
       case .invalidWindsAloftHeader, .invalidWindsAloftGroup, .invalidWindsAloftColumns:
-        #if canImport(Darwin)
-          return String(
-            localized: "Couldn’t parse Winds Aloft product.",
-            comment: "error description"
-          )
-        #else
-          return "Couldn’t parse Winds Aloft product."
-        #endif
+        return String(
+          localized: "Couldn’t parse Winds Aloft product.",
+          comment: "error description"
+        )
       default:
-        #if canImport(Darwin)
-          return String(localized: "Couldn’t parse METAR or TAF.", comment: "error description")
-        #else
-          return "Couldn’t parse METAR or TAF."
-        #endif
+        return String(localized: "Couldn’t parse METAR or TAF.", comment: "error description")
     }
   }
 
   public var failureReason: String? {
     switch self {
       case .badFormat:
-        #if canImport(Darwin)
-          return String(localized: "METAR or TAF format is incorrect.", comment: "failure reason")
-        #else
-          return "METAR or TAF format is incorrect."
-        #endif
+        return String(localized: "METAR or TAF format is incorrect.", comment: "failure reason")
       case .invalidDate(let date):
-        #if canImport(Darwin)
-          return String(localized: "Invalid date ‘\(date)’.", comment: "failure reason")
-        #else
-          return "Invalid date ‘\(date)’."
-        #endif
+        return String(localized: "Invalid date ‘\(date)’.", comment: "failure reason")
       case .invalidWinds(let winds):
-        #if canImport(Darwin)
-          return String(localized: "Invalid winds ‘\(winds)’.", comment: "failure reason")
-        #else
-          return "Invalid winds ‘\(winds)’."
-        #endif
+        return String(localized: "Invalid winds ‘\(winds)’.", comment: "failure reason")
       case .invalidVisibility(let visibility):
-        #if canImport(Darwin)
-          return String(localized: "Invalid visibility ‘\(visibility)’.", comment: "failure reason")
-        #else
-          return "Invalid visibility ‘\(visibility)’."
-        #endif
+        return String(localized: "Invalid visibility ‘\(visibility)’.", comment: "failure reason")
       case .invalidWeather(let weather):
-        #if canImport(Darwin)
-          return String(localized: "Invalid weather ‘\(weather)’.", comment: "failure reason")
-        #else
-          return "Invalid weather ‘\(weather)’."
-        #endif
+        return String(localized: "Invalid weather ‘\(weather)’.", comment: "failure reason")
       case .invalidConditions(let conditions):
-        #if canImport(Darwin)
-          return String(localized: "Invalid conditions ‘\(conditions)’.", comment: "failure reason")
-        #else
-          return "Invalid conditions ‘\(conditions)’."
-        #endif
+        return String(localized: "Invalid conditions ‘\(conditions)’.", comment: "failure reason")
       case .invalidTempDewpoint(let temps):
-        #if canImport(Darwin)
-          return String(
-            localized: "Invalid temperature and dewpoint ‘\(temps)’.",
-            comment: "failure reason"
-          )
-        #else
-          return "Invalid temperature and dewpoint ‘\(temps)’."
-        #endif
+        return String(
+          localized: "Invalid temperature and dewpoint ‘\(temps)’.",
+          comment: "failure reason"
+        )
       case .invalidAltimeter(let altimeter):
-        #if canImport(Darwin)
-          return String(
-            localized: "Invalid altimeter setting ‘\(altimeter)’.",
-            comment: "failure reason"
-          )
-        #else
-          return "Invalid altimeter setting ‘\(altimeter)’."
-        #endif
+        return String(
+          localized: "Invalid altimeter setting ‘\(altimeter)’.",
+          comment: "failure reason"
+        )
       case .invalidPeriod(let period):
-        #if canImport(Darwin)
-          return String(localized: "Invalid TAF period ‘\(period)’.", comment: "failure reason")
-        #else
-          return "Invalid TAF period ‘\(period)’."
-        #endif
+        return String(localized: "Invalid TAF period ‘\(period)’.", comment: "failure reason")
       case .invalidWindshear(let windshear):
-        #if canImport(Darwin)
-          return String(
-            localized: "Invalid low-level windshear ‘\(windshear)’.",
-            comment: "failure reason"
-          )
-        #else
-          return "Invalid low-level windshear ‘\(windshear)’."
-        #endif
+        return String(
+          localized: "Invalid low-level windshear ‘\(windshear)’.",
+          comment: "failure reason"
+        )
       case .invalidIcing(let icing):
-        #if canImport(Darwin)
-          return String(localized: "Invalid icing ‘\(icing)’", comment: "failure reason")
-        #else
-          return "Invalid icing ‘\(icing)’"
-        #endif
+        return String(localized: "Invalid icing ‘\(icing)’", comment: "failure reason")
       case .invalidTurbulence(let turbulence):
-        #if canImport(Darwin)
-          return String(localized: "Invalid turbulence ‘\(turbulence)’", comment: "failure reason")
-        #else
-          return "Invalid turbulence ‘\(turbulence)’"
-        #endif
+        return String(localized: "Invalid turbulence ‘\(turbulence)’", comment: "failure reason")
       case .invalidForecastTemperature(let temp):
-        #if canImport(Darwin)
-          return String(
-            localized: "Invalid forecast temperature '\(temp)'",
-            comment: "failure reason"
-          )
-        #else
-          return "Invalid forecast temperature '\(temp)'"
-        #endif
+        return String(
+          localized: "Invalid forecast temperature '\(temp)'",
+          comment: "failure reason"
+        )
       case .invalidWindsAloftHeader(let header):
-        #if canImport(Darwin)
-          return String(
-            localized: "Invalid winds aloft header '\(header)'.",
-            comment: "failure reason"
-          )
-        #else
-          return "Invalid winds aloft header '\(header)'."
-        #endif
+        return String(
+          localized: "Invalid winds aloft header '\(header)'.",
+          comment: "failure reason"
+        )
       case .invalidWindsAloftGroup(let group):
-        #if canImport(Darwin)
-          return String(
-            localized: "Invalid winds aloft data group '\(group)'.",
-            comment: "failure reason"
-          )
-        #else
-          return "Invalid winds aloft data group '\(group)'."
-        #endif
+        return String(
+          localized: "Invalid winds aloft data group '\(group)'.",
+          comment: "failure reason"
+        )
       case .invalidWindsAloftColumns(let columns):
-        #if canImport(Darwin)
-          return String(
-            localized: "Invalid winds aloft column layout '\(columns)'.",
-            comment: "failure reason"
-          )
-        #else
-          return "Invalid winds aloft column layout '\(columns)'."
-        #endif
+        return String(
+          localized: "Invalid winds aloft column layout '\(columns)'.",
+          comment: "failure reason"
+        )
     }
   }
 
   public var recoverySuggestion: String? {
     switch self {
       case .invalidWindsAloftHeader, .invalidWindsAloftGroup, .invalidWindsAloftColumns:
-        #if canImport(Darwin)
-          return String(
-            localized: "Verify the format of the Winds Aloft product.",
-            comment: "recovery suggestion"
-          )
-        #else
-          return "Verify the format of the Winds Aloft product."
-        #endif
+        return String(
+          localized: "Verify the format of the Winds Aloft product.",
+          comment: "recovery suggestion"
+        )
       default:
-        #if canImport(Darwin)
-          return String(
-            localized: "Verify the format of the METAR or TAF string.",
-            comment: "recovery suggestion"
-          )
-        #else
-          return "Verify the format of the METAR or TAF string."
-        #endif
+        return String(
+          localized: "Verify the format of the METAR or TAF string.",
+          comment: "recovery suggestion"
+        )
     }
   }
 }
