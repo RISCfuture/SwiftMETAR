@@ -1,5 +1,5 @@
 {
-  "originHash" : "b64b4666bf7c8ebb097021cc593c33d75e0fb0432a1149f4c8ce64f0457b4001",
+  "originHash" : "8c51dc33c7b51881b15e7e0f6f1976094500cc570250fb993cf25de8f8757c93",
   "pins" : [
     {
       "identity" : "buildablemacro",
@@ -8,51 +8,6 @@
       "state" : {
         "revision" : "1f8f8a17c75eeb3fd1287eb3abb6429a290412e8",
         "version" : "1.0.0"
-      }
-    },
-    {
-      "identity" : "cwlcatchexception",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mattgallagher/CwlCatchException.git",
-      "state" : {
-        "revision" : "07b2ba21d361c223e25e3c1e924288742923f08c",
-        "version" : "2.2.1"
-      }
-    },
-    {
-      "identity" : "cwlpreconditiontesting",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mattgallagher/CwlPreconditionTesting.git",
-      "state" : {
-        "revision" : "0139c665ebb45e6a9fbdb68aabfd7c39f3fe0071",
-        "version" : "2.2.2"
-      }
-    },
-    {
-      "identity" : "nimble",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Quick/Nimble.git",
-      "state" : {
-        "revision" : "035b88ad6ae8035f5ce2b50b0a6d69c3b16d2120",
-        "version" : "14.0.0"
-      }
-    },
-    {
-      "identity" : "quick",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/Quick/Quick.git",
-      "state" : {
-        "revision" : "1163a1b1b114a657c7432b63dd1f92ce99fe11a6",
-        "version" : "7.6.2"
-      }
-    },
-    {
-      "identity" : "swift-algorithms",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-algorithms.git",
-      "state" : {
-        "revision" : "87e50f483c54e6efd60e885f7f5aa946cee68023",
-        "version" : "1.2.1"
       }
     },
     {
@@ -89,15 +44,6 @@
       "state" : {
         "revision" : "33af3f9011e45dcd8ee696492d30dbcd5a8a67f3",
         "version" : "2.6.0"
-      }
-    },
-    {
-      "identity" : "swift-numerics",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-numerics.git",
-      "state" : {
-        "revision" : "0c0290ff6b24942dadb83a929ffaaa1481df04a2",
-        "version" : "1.1.1"
       }
     },
     {

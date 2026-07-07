@@ -1,47 +1,55 @@
 import Foundation
-import Nimble
-import Quick
+import Testing
 
 @testable import SwiftMETAR
 
-class SixHourTemperatureExtremeSpec: AsyncSpec {
-  override class func spec() {
-    describe("six-hour temperature extreme") {
-      it("parses a '10142' remark") {
-        let string = "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 10142"
-        let observation = try await METAR.from(string: string)
+@Suite
+struct SixHourTemperatureExtremeTests {
+  @Test
+  func parsesA10142Remark() async throws {
+    let string = "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 10142"
+    let observation = try await METAR.from(string: string)
 
-        expect(observation.remarks.map(\.remark)).to(
-          contain(.sixHourTemperatureExtreme(type: .high, temperature: 14.2))
-        )
-      }
+    #expect(
+      observation.remarks.map(\.remark).contains(
+        .sixHourTemperatureExtreme(type: .high, temperature: 14.2)
+      )
+    )
+  }
 
-      it("parses a '11021' remark") {
-        let string = "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 11021"
-        let observation = try await METAR.from(string: string)
+  @Test
+  func parsesA11021Remark() async throws {
+    let string = "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 11021"
+    let observation = try await METAR.from(string: string)
 
-        expect(observation.remarks.map(\.remark)).to(
-          contain(.sixHourTemperatureExtreme(type: .high, temperature: -2.1))
-        )
-      }
+    #expect(
+      observation.remarks.map(\.remark).contains(
+        .sixHourTemperatureExtreme(type: .high, temperature: -2.1)
+      )
+    )
+  }
 
-      it("parses a '21001' remark") {
-        let string = "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 21001"
-        let observation = try await METAR.from(string: string)
+  @Test
+  func parsesA21001Remark() async throws {
+    let string = "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 21001"
+    let observation = try await METAR.from(string: string)
 
-        expect(observation.remarks.map(\.remark)).to(
-          contain(.sixHourTemperatureExtreme(type: .low, temperature: -0.1))
-        )
-      }
+    #expect(
+      observation.remarks.map(\.remark).contains(
+        .sixHourTemperatureExtreme(type: .low, temperature: -0.1)
+      )
+    )
+  }
 
-      it("parses a '20012' remark") {
-        let string = "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 20012"
-        let observation = try await METAR.from(string: string)
+  @Test
+  func parsesA20012Remark() async throws {
+    let string = "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 20012"
+    let observation = try await METAR.from(string: string)
 
-        expect(observation.remarks.map(\.remark)).to(
-          contain(.sixHourTemperatureExtreme(type: .low, temperature: 1.2))
-        )
-      }
-    }
+    #expect(
+      observation.remarks.map(\.remark).contains(
+        .sixHourTemperatureExtreme(type: .low, temperature: 1.2)
+      )
+    )
   }
 }

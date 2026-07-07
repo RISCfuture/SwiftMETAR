@@ -1,4 +1,3 @@
 retain_public: true
-external_test_case_classes:
-  - AsyncSpec
-  - QuickSpec
+retain_files:
+  - "**/Tests/**/*.swift"

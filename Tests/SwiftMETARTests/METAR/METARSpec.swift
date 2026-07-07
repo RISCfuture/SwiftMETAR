@@ -1,86 +1,92 @@
 import Foundation
-import Nimble
-import Quick
+import Testing
 
 @testable import SwiftMETAR
 
-class METARSpec: AsyncSpec {
-  override class func spec() {
-    describe("report type") {
-      it("parses the report type") {
-        let string =
-          "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
-        let metar = try await METAR.from(string: string)
-        expect(metar.issuance).to(equal(.routine))
-      }
-    }
+@Suite
+struct METARTests {
+  // MARK: - report type
 
-    describe("station identifier") {
-      it("parses the station identifier") {
-        let string =
-          "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
-        let metar = try await METAR.from(string: string)
-        expect(metar.stationID).to(equal("KOKC"))
-      }
-    }
+  @Test
+  func parsesTheReportType() async throws {
+    let string =
+      "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
+    let metar = try await METAR.from(string: string)
+    #expect(metar.issuance == .routine)
+  }
 
-    describe("date and time") {
-      it("parses the date") {
-        let string =
-          "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
-        let date = try await METAR.from(string: string).calendarDate
+  // MARK: - station identifier
 
-        expect(date).to(equal(.this(day: 1, hour: 19, minute: 55)))
-      }
+  @Test
+  func parsesTheStationIdentifier() async throws {
+    let string =
+      "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
+    let metar = try await METAR.from(string: string)
+    #expect(metar.stationID == "KOKC")
+  }
 
-      it("parses the date from a reference date") {
-        let referenceComponents = DateComponents(year: 2005, month: 11)
-        let referenceDate = zuluCal.nextDate(
-          after: Date(),
-          matching: referenceComponents,
-          matchingPolicy: .nextTime,
-          repeatedTimePolicy: .first,
-          direction: .backward
-        )!
+  // MARK: - date and time
 
-        let string =
-          "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
-        let date = try await METAR.from(string: string, on: referenceDate).calendarDate
+  @Test
+  func parsesTheDate() async throws {
+    let string =
+      "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
+    let date = try await METAR.from(string: string).calendarDate
 
-        expect(date).to(equal(referenceDate.this(day: 1, hour: 19, minute: 55)))
-      }
-    }
+    #expect(date == .this(day: 1, hour: 19, minute: 55))
+  }
 
-    describe("observer") {
-      it("parses automated reports") {
-        let string =
-          "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
-        let metar = try await METAR.from(string: string)
-        expect(metar.observer).to(equal(.automated))
-      }
+  @Test
+  func parsesTheDateFromAReferenceDate() async throws {
+    let referenceComponents = DateComponents(year: 2005, month: 11)
+    let referenceDate = zuluCal.nextDate(
+      after: Date(),
+      matching: referenceComponents,
+      matchingPolicy: .nextTime,
+      repeatedTimePolicy: .first,
+      direction: .backward
+    )!
 
-      it("parses corrected reports") {
-        let string =
-          "METAR KOKC 011955Z COR 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
-        let metar = try await METAR.from(string: string)
-        expect(metar.observer).to(equal(.corrected))
-      }
+    let string =
+      "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
+    let date = try await METAR.from(string: string, on: referenceDate).calendarDate
 
-      it("parses human observed reports") {
-        let string =
-          "METAR KOKC 011955Z 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
-        let metar = try await METAR.from(string: string)
-        expect(metar.observer).to(equal(.human))
-      }
-    }
+    #expect(date == referenceDate.this(day: 1, hour: 19, minute: 55))
+  }
 
-    describe("remarks") {
-      it("parses empty remarks") {
-        let string =
-          "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992"
-        let observation = try await METAR.from(string: string)
-        expect(observation.remarks).to(beEmpty())
-      }
-    }
+  // MARK: - observer
+
+  @Test
+  func parsesAutomatedReports() async throws {
+    let string =
+      "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
+    let metar = try await METAR.from(string: string)
+    #expect(metar.observer == .automated)
+  }
+
+  @Test
+  func parsesCorrectedReports() async throws {
+    let string =
+      "METAR KOKC 011955Z COR 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
+    let metar = try await METAR.from(string: string)
+    #expect(metar.observer == .corrected)
+  }
+
+  @Test
+  func parsesHumanObservedReports() async throws {
+    let string =
+      "METAR KOKC 011955Z 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
+    let metar = try await METAR.from(string: string)
+    #expect(metar.observer == .human)
+  }
+
+  // MARK: - remarks
+
+  @Test
+  func parsesEmptyRemarks() async throws {
+    let string =
+      "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992"
+    let observation = try await METAR.from(string: string)
+    #expect(observation.remarks.isEmpty)
   }
 }
