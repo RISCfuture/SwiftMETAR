@@ -52,11 +52,10 @@ jobs:
         run: swift test -v
   lint:
     name: Run SwiftLint
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
+    container: ghcr.io/realm/swiftlint:latest
     steps:
       - uses: actions/checkout@v6
-      - name: Install SwiftLint
-        run: brew install swiftlint
       - name: Run SwiftLint
         run: swiftlint --strict
   swift-format:
