@@ -10,3 +10,4 @@ xcuserdata/
 
 # swift-format (downloaded in CI)
 .swift-format
+.claude/settings.local.json
