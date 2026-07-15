@@ -9,7 +9,7 @@ import Foundation
  METARs indicate observed weather in a 5-mile radius around a reporting site.
  */
 
-public struct METAR: Codable, Sendable {
+public struct METAR: Sendable {
 
   /// The raw text of the METAR.
   public let text: String?

@@ -1,20 +1,22 @@
 import Foundation
 import RegexBuilder
 
-final class SunshineDurationParser: RemarkParser {
+final class SunshineDurationParser: RemarkParser, @unchecked Sendable {
   var urgency = Remark.Urgency.routine
 
   private let durationRef = Reference<UInt>()
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    "98"
-    Capture(as: durationRef) {
-      Repeat(.digit, count: 3)
-    } transform: {
-      .init($0)!
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      "98"
+      Capture(as: durationRef) {
+        Repeat(.digit, count: 3)
+      } transform: {
+        .init($0)!
+      }
+      Anchor.wordBoundary
     }
-    Anchor.wordBoundary
-  }
+  )
 
   func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }

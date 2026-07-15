@@ -1,31 +1,33 @@
 import Foundation
 import RegexBuilder
 
-final class DailyPrecipitationAmountParser: RemarkParser {
+final class DailyPrecipitationAmountParser: RemarkParser, @unchecked Sendable {
   var urgency = Remark.Urgency.routine
 
   private let amountRef = Reference<UInt?>()
   private let missingRef = Reference<Bool?>()
 
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    "7"
-    ChoiceOf {
-      Regex {
-        Capture(as: amountRef) {
-          Repeat(.digit, count: 4)
-        } transform: {
-          .init($0)
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      "7"
+      ChoiceOf {
+        Regex {
+          Capture(as: amountRef) {
+            Repeat(.digit, count: 4)
+          } transform: {
+            .init($0)
+          }
+          Anchor.wordBoundary
         }
-        Anchor.wordBoundary
-      }
-      Capture(as: missingRef) {
-        Repeat("/", count: 4)
-      } transform: { _ in
-        true
+        Capture(as: missingRef) {
+          Repeat("/", count: 4)
+        } transform: { _ in
+          true
+        }
       }
     }
-  }
+  )
 
   func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }

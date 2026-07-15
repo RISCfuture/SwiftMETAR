@@ -1,27 +1,29 @@
 import Foundation
 import RegexBuilder
 
-final class CorrectionParser: RemarkParser {
+final class CorrectionParser: RemarkParser, @unchecked Sendable {
   var urgency = Remark.Urgency.routine
 
   private let hourRef = Reference<UInt8>()
   private let minuteRef = Reference<UInt8>()
 
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    "COR "
-    Capture(as: hourRef) {
-      Repeat(.digit, count: 2)
-    } transform: {
-      .init($0)!
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      "COR "
+      Capture(as: hourRef) {
+        Repeat(.digit, count: 2)
+      } transform: {
+        .init($0)!
+      }
+      Capture(as: minuteRef) {
+        Repeat(.digit, count: 2)
+      } transform: {
+        .init($0)!
+      }
+      Anchor.wordBoundary
     }
-    Capture(as: minuteRef) {
-      Repeat(.digit, count: 2)
-    } transform: {
-      .init($0)!
-    }
-    Anchor.wordBoundary
-  }
+  )
 
   func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }

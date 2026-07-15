@@ -1,7 +1,7 @@
 import Foundation
 import RegexBuilder
 
-final class CloudTypesParser: RemarkParser {
+final class CloudTypesParser: RemarkParser, @unchecked Sendable {
   var urgency = Remark.Urgency.routine
 
   private let lowRef = Reference<Remark.LowCloudType>()
@@ -9,25 +9,27 @@ final class CloudTypesParser: RemarkParser {
   private let highRef = Reference<Remark.HighCloudType>()
 
   // swiftlint:disable force_try
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    "8/"
-    Capture(as: lowRef) {
-      try! Remark.LowCloudType.rx
-    } transform: {
-      .init(rawValue: String($0))!
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      "8/"
+      Capture(as: lowRef) {
+        try! Remark.LowCloudType.rx
+      } transform: {
+        .init(rawValue: String($0))!
+      }
+      Capture(as: midRef) {
+        try! Remark.MiddleCloudType.rx
+      } transform: {
+        .init(rawValue: String($0))!
+      }
+      Capture(as: highRef) {
+        try! Remark.HighCloudType.rx
+      } transform: {
+        .init(rawValue: String($0))!
+      }
     }
-    Capture(as: midRef) {
-      try! Remark.MiddleCloudType.rx
-    } transform: {
-      .init(rawValue: String($0))!
-    }
-    Capture(as: highRef) {
-      try! Remark.HighCloudType.rx
-    } transform: {
-      .init(rawValue: String($0))!
-    }
-  }
+  )
   // swiftlint:enable force_try
 
   func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {

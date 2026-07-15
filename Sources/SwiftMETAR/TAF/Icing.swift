@@ -1,7 +1,7 @@
 import Foundation
 
 /// Forecasted icing conditions in a military TAF.
-public struct Icing: Codable, Equatable, Sendable {
+public struct Icing: Equatable, Sendable {
 
   /// The type of icing forecasted.
   public var type: IcingType
@@ -62,5 +62,37 @@ public struct Icing: Codable, Equatable, Sendable {
 
     /// Severe clear icing in precipitation
     case severeClear = "9"
+  }
+}
+
+extension Icing: CodedRepresentable {
+
+  /**
+   The canonical coded representation of this icing group, e.g. `"620304"`. The
+   group is a leading `"6"`, the ``IcingType`` raw digit, the ``base`` in
+   hundreds of feet zero-padded to three digits, and the ``depth`` in thousands
+   of feet as a single digit.
+
+   The mapping is lossy for values whose ``base`` is not a whole multiple of 100
+   feet or whose ``depth`` is not a whole multiple of 1000 feet: the surplus
+   feet are truncated by integer division and do not round-trip.
+   */
+  public var codedString: String {
+    "6\(type.rawValue)\(String(format: "%03d", base / 100))\(depth / 1000)"
+  }
+
+  /**
+   Parses a coded icing string into a value.
+
+   - Parameter coded: The coded string, e.g. `"620304"`.
+   - Throws: ``Error/invalidIcing(_:)`` if `coded` is not a valid icing
+             representation.
+   */
+  public init(coded: String) throws {
+    var parts = coded.split(whereSeparator: \.isWhitespace)
+    guard let icing = try IcingParser().parse(&parts), parts.isEmpty else {
+      throw Error.invalidIcing(coded)
+    }
+    self = icing
   }
 }

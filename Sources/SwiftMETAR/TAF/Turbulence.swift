@@ -1,7 +1,7 @@
 import Foundation
 
 /// Forecasted turbulence conditions in a military TAF.
-public struct Turbulence: Codable, Equatable, Sendable {
+public struct Turbulence: Equatable, Sendable {
 
   /// The location associated with the turbulence.
   public var location: Location?
@@ -76,5 +76,49 @@ public struct Turbulence: Codable, Equatable, Sendable {
 
     /// Turbulence will occur more than 1/3 of the time.
     case frequent
+  }
+}
+
+extension Turbulence: CodedRepresentable {
+
+  /**
+   The coded representation of this turbulence, e.g. `"520004"`. The group is
+   `5`, followed by a single figure encoding ``intensity``, ``location``, and
+   ``frequency``, followed by the ``base`` in hundreds of feet (zero-padded to
+   three digits) and the ``depth`` in thousands of feet (a single digit).
+   */
+  public var codedString: String {
+    "5\(typeFigure)\(String(format: "%03d", base / 100))\(depth / 1000)"
+  }
+
+  private var typeFigure: Character {
+    switch intensity {
+      case .none: return "0"
+      case .light: return "1"
+      case .extreme: return "X"
+      case .moderate, .severe:
+        let severe = intensity == .severe
+        switch (location ?? .clearAir, frequency ?? .occasional) {
+          case (.clearAir, .occasional): return severe ? "6" : "2"
+          case (.clearAir, .frequent): return severe ? "7" : "3"
+          case (.inCloud, .occasional): return severe ? "8" : "4"
+          case (.inCloud, .frequent): return severe ? "9" : "5"
+        }
+    }
+  }
+
+  /**
+   Parses a coded turbulence string into a value.
+
+   - Parameter coded: The coded string, e.g. `"520004"`.
+   - Throws: ``Error/invalidTurbulence(_:)`` if `coded` is not a valid turbulence
+             representation.
+   */
+  public init(coded: String) throws {
+    var parts = coded.split(whereSeparator: \.isWhitespace)
+    guard let turbulence = try TurbulenceParser().parse(&parts), parts.isEmpty else {
+      throw Error.invalidTurbulence(coded)
+    }
+    self = turbulence
   }
 }

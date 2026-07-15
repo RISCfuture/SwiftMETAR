@@ -1,25 +1,27 @@
 import Foundation
 import RegexBuilder
 
-final class WindShiftParser: RemarkParser {
+final class WindShiftParser: RemarkParser, @unchecked Sendable {
   var urgency = Remark.Urgency.caution
 
   private let timeParser = HourMinuteParser()
   private let frontalPassageRef = Reference<Bool>()
 
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    "WSHFT "
-    timeParser.hourOptionalRx
-    Capture(as: frontalPassageRef) {
-      Optionally {
-        " FROPA"
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      "WSHFT "
+      timeParser.hourOptionalRx
+      Capture(as: frontalPassageRef) {
+        Optionally {
+          " FROPA"
+        }
+      } transform: {
+        $0 == " FROPA"
       }
-    } transform: {
-      $0 == " FROPA"
+      Anchor.wordBoundary
     }
-    Anchor.wordBoundary
-  }
+  )
 
   func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }

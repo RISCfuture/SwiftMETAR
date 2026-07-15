@@ -1,20 +1,22 @@
 import Foundation
 import RegexBuilder
 
-final class SectorVisibilityParser: RemarkParser {
+final class SectorVisibilityParser: RemarkParser, @unchecked Sendable {
   var urgency = Remark.Urgency.routine
 
   private let directionParser = RemarkDirectionParser()
   private let visibilityParser = FractionParser()
 
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    "VIS "
-    directionParser.rx
-    " "
-    visibilityParser.rx
-    Anchor.wordBoundary
-  }
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      "VIS "
+      directionParser.rx
+      " "
+      visibilityParser.rx
+      Anchor.wordBoundary
+    }
+  )
 
   func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
     guard let result = try rx.firstMatch(in: remarks),

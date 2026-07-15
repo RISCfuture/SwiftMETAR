@@ -2,30 +2,43 @@ import Foundation
 import NumberKit
 import RegexBuilder
 
-class VisibilityParser {
+final class VisibilityParser: WarmableParser, @unchecked Sendable {
+  private static let integerRx = LockedRegex(
+    Regex {
+      Anchor.startOfSubject
+      IntegerDistanceParser.rx
+      Anchor.endOfSubject
+    }
+  )
+
+  private static let notRecordedRx = LockedRegex(
+    Regex {
+      Anchor.startOfSubject
+      Repeat("/", 2...)
+      ChoiceOf {
+        "SM"
+        "FT"
+        "M"
+      }
+      Anchor.endOfSubject
+    }
+  )
+
   private let integerParser = IntegerDistanceParser()
   private let fractionParser = FractionalDistanceParser()
-
-  private lazy var integerRx = Regex {
-    Anchor.startOfSubject
-    integerParser.rx
-    Anchor.endOfSubject
-  }
-  private lazy var fractionRx = Regex {
-    Anchor.startOfSubject
-    fractionParser.rx
-    Anchor.endOfSubject
-  }
-
-  private lazy var notRecordedRx = Regex {
-    Anchor.startOfSubject
-    Repeat("/", 2...)
-    ChoiceOf {
-      "SM"
-      "FT"
-      "M"
+  // `FractionalDistanceParser.rx` embeds the shared, non-`Sendable` `FractionParser`, so it (and
+  // this anchored wrapper) stays instance `lazy var` storage; the other regexes are hoisted to
+  // `static let`.
+  private lazy var fractionRx = LockedRegex(
+    Regex {
+      Anchor.startOfSubject
+      fractionParser.rx
+      Anchor.endOfSubject
     }
-    Anchor.endOfSubject
+  )
+
+  func warmUp() {
+    _ = try? fractionRx.wholeMatch(in: "")
   }
 
   func parse(_ parts: inout [String.SubSequence]) throws -> Visibility? {
@@ -57,7 +70,7 @@ class VisibilityParser {
       return .greaterThan(.meters(9999))
     }
 
-    if try notRecordedRx.wholeMatch(in: vizStr) != nil {
+    if try Self.notRecordedRx.wholeMatch(in: vizStr) != nil {
       return .notRecorded
     }
 
@@ -65,7 +78,7 @@ class VisibilityParser {
       return fractionParser.parse(match)
     }
 
-    if let match = try integerRx.wholeMatch(in: vizStr) {
+    if let match = try Self.integerRx.wholeMatch(in: vizStr) {
       return integerParser.parse(match)
     }
 
@@ -79,10 +92,10 @@ class VisibilityParser {
   }
 
   class OpenRangeParser {
-    private let boundRef = Reference<OpenRange>()
+    private static let boundRef = Reference<OpenRange>()
 
     // swiftlint:disable force_try
-    lazy var rx = Regex {
+    static let rx = Regex {
       Capture(as: boundRef) {
         try! OpenRange.rx
       } transform: {
@@ -92,7 +105,7 @@ class VisibilityParser {
     // swiftlint:enable force_try
 
     func parse<T>(_ match: Regex<T>.Match) -> OpenRange {
-      match[boundRef]
+      match[Self.boundRef]
     }
   }
 
@@ -108,14 +121,12 @@ class VisibilityParser {
   }
 
   class IntegerDistanceParser {
-    private let openRangeParser = OpenRangeParser()
-
-    private let valueRef = Reference<UInt16>()
-    private let unitRef = Reference<VisibilityDistanceUnit>()
+    private static let valueRef = Reference<UInt16>()
+    private static let unitRef = Reference<VisibilityDistanceUnit>()
 
     // swiftlint:disable force_try
-    lazy var rx = Regex {
-      openRangeParser.rx
+    static let rx = Regex {
+      OpenRangeParser.rx
       Capture(as: valueRef) {
         Repeat(.digit, 1...4)
       } transform: {
@@ -129,12 +140,14 @@ class VisibilityParser {
     }
     // swiftlint:enable force_try
 
+    private let openRangeParser = OpenRangeParser()
+
     func parse<T>(_ match: Regex<T>.Match) -> Visibility {
       let distance: Visibility.Value =
-        switch match[unitRef] {
-          case .feet: .feet(match[valueRef])
-          case .meters: .meters(match[valueRef])
-          case .statuteMiles: .statuteMiles(Ratio(Int(match[valueRef])))
+        switch match[Self.unitRef] {
+          case .feet: .feet(match[Self.valueRef])
+          case .meters: .meters(match[Self.valueRef])
+          case .statuteMiles: .statuteMiles(Ratio(Int(match[Self.valueRef])))
         }
 
       switch openRangeParser.parse(match) {
@@ -150,7 +163,7 @@ class VisibilityParser {
     private let fractionParser = FractionParser()
 
     lazy var rx = Regex {
-      openRangeParser.rx
+      OpenRangeParser.rx
       fractionParser.rx
       "SM"
     }

@@ -1,28 +1,30 @@
 import Foundation
 import RegexBuilder
 
-final class VariableCeilingHeightParser: RemarkParser {
+final class VariableCeilingHeightParser: RemarkParser, @unchecked Sendable {
   var urgency = Remark.Urgency.routine
 
   private let lowRef = Reference<UInt>()
   private let highRef = Reference<UInt>()
 
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    "CIG "
-    Capture(as: lowRef) {
-      Repeat(.digit, count: 3)
-    } transform: {
-      .init($0)! * 100
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      "CIG "
+      Capture(as: lowRef) {
+        Repeat(.digit, count: 3)
+      } transform: {
+        .init($0)! * 100
+      }
+      "V"
+      Capture(as: highRef) {
+        Repeat(.digit, count: 3)
+      } transform: {
+        .init($0)! * 100
+      }
+      Anchor.wordBoundary
     }
-    "V"
-    Capture(as: highRef) {
-      Repeat(.digit, count: 3)
-    } transform: {
-      .init($0)! * 100
-    }
-    Anchor.wordBoundary
-  }
+  )
 
   func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }

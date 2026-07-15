@@ -5,6 +5,22 @@ import Testing
 
 @Suite
 struct WindsAloftTests {
+
+  /// A low-level fixture with a mix of missing altitudes, four- and six-digit
+  /// groups, and signed temperatures, reused by the round-trip tests.
+  private static let lowLevelBulletin = [
+    "000",
+    "FBUS31 KWNO 032000",
+    "FD1US1",
+    "DATA BASED ON 031800Z",
+    "VALID 040000Z   FOR USE 2000-0300Z. TEMPS NEG ABV 24000",
+    "",
+    "FT  3000    6000    9000   12000   18000   24000  30000  34000  39000",
+    "ABI      0517+06 3209+02 3221-05 2941-18 2953-31 295947 288253 770853",
+    "ABQ              3325+03 3427-02 3343-16 3347-30 355547 354956 285561",
+    "ABR 3214 3431-04 3540-09 3536-15 3431-28 3335-41 312756 323555 344353"
+  ].joined(separator: "\n")
+
   // MARK: - low-level product
 
   @Test
@@ -132,6 +148,43 @@ struct WindsAloftTests {
     #expect(station[3000] == .wind(direction: 270, speed: .knots(10), temperature: nil))
     #expect(station[6000] == .wind(direction: 280, speed: .knots(20), temperature: 5))
     #expect(station[9000] == nil)
+  }
+
+  // MARK: - coded round-tripping
+
+  @Test
+  func regeneratesAReParseableBulletin() async throws {
+    let original = try await WindsAloft.from(string: Self.lowLevelBulletin)
+
+    // Drop the raw text so `codedString` regenerates the table from components.
+    let regenerated = WindsAloft(
+      text: nil,
+      header: original.header,
+      level: original.level,
+      basedOn: original.basedOn,
+      validAt: original.validAt,
+      usePeriod: original.usePeriod,
+      altitudes: original.altitudes,
+      stations: original.stations
+    )
+    let reparsed = try await WindsAloft.from(string: regenerated.codedString)
+
+    #expect(reparsed.header == original.header)
+    #expect(reparsed.level == original.level)
+    #expect(reparsed.altitudes == original.altitudes)
+    #expect(reparsed.stations == original.stations)
+  }
+
+  @Test
+  func roundTripsThroughJSON() async throws {
+    let original = try await WindsAloft.from(string: Self.lowLevelBulletin)
+
+    let data = try JSONEncoder().encode(original)
+    let decoded = try JSONDecoder().decode(WindsAloft.self, from: data)
+
+    #expect(decoded.header == original.header)
+    #expect(decoded.altitudes == original.altitudes)
+    #expect(decoded.stations == original.stations)
   }
 
   // MARK: - light and variable in product

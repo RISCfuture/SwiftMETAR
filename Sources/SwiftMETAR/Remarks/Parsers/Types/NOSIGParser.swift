@@ -1,12 +1,14 @@
 import Foundation
 import RegexBuilder
 
-final class NOSIGParser: RemarkParser {
-  private static let rx = Regex {
-    Anchor.wordBoundary
-    "NOSIG"
-    Anchor.wordBoundary
-  }
+final class NOSIGParser: RemarkParser, @unchecked Sendable {
+  private static let rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      "NOSIG"
+      Anchor.wordBoundary
+    }
+  )
 
   var urgency = Remark.Urgency.routine
 

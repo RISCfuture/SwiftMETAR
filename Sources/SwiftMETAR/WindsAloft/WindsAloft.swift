@@ -20,7 +20,7 @@ import Foundation
  }
  ```
  */
-public struct WindsAloft: Codable, Equatable, Sendable {
+public struct WindsAloft: Equatable, Sendable {
 
   /// The raw text of the product.
   public let text: String?

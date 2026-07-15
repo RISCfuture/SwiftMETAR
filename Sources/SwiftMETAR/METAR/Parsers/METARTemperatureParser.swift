@@ -1,15 +1,21 @@
 import Foundation
 import RegexBuilder
 
-class METARTemperatureParser {
+final class METARTemperatureParser: WarmableParser, @unchecked Sendable {
   private let tempParser = AlphaSignedIntegerParser(width: 2)
   private let dewpointParser = AlphaSignedIntegerParser(width: 2)
 
-  private lazy var rx = Regex {
-    Anchor.startOfSubject
-    tempParser.rx
-    "/"
-    Optionally { dewpointParser.rx }
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.startOfSubject
+      tempParser.rx
+      "/"
+      Optionally { dewpointParser.rx }
+    }
+  )
+
+  func warmUp() {
+    _ = try? rx.wholeMatch(in: "")
   }
 
   func parse(_ parts: inout [String.SubSequence]) throws -> (Int8?, Int8?) {

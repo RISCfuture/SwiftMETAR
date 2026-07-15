@@ -122,4 +122,61 @@ struct WindsAloftEntryTests {
     #expect(entry.temperatureMeasurement == nil)
     #expect(entry.directionMeasurement == nil)
   }
+
+  @Test
+  func emitsCanonicalCodedStrings() {
+    #expect(WindsAloftEntry.lightAndVariable.codedString == "9900")
+    #expect(
+      WindsAloftEntry.wind(direction: 200, speed: .knots(17), temperature: nil).codedString
+        == "2017"
+    )
+    #expect(
+      WindsAloftEntry.wind(direction: 320, speed: .knots(9), temperature: 2).codedString
+        == "3209+02"
+    )
+    #expect(
+      WindsAloftEntry.wind(direction: 320, speed: .knots(21), temperature: -5).codedString
+        == "3221-05"
+    )
+    // Six-digit unsigned input re-emits in the canonical signed form.
+    #expect(
+      WindsAloftEntry.wind(direction: 290, speed: .knots(59), temperature: -47).codedString
+        == "2959-47"
+    )
+    #expect(
+      WindsAloftEntry.wind(direction: 230, speed: .knots(108), temperature: nil).codedString
+        == "7308"
+    )
+    #expect(
+      WindsAloftEntry.wind(direction: 230, speed: .knots(108), temperature: 2).codedString
+        == "7308+02"
+    )
+    #expect(
+      WindsAloftEntry.wind(direction: 360, speed: .knots(10), temperature: 3).codedString
+        == "3610+03"
+    )
+  }
+
+  @Test(arguments: [
+    WindsAloftEntry.lightAndVariable,
+    .wind(direction: 200, speed: .knots(17), temperature: nil),
+    .wind(direction: 320, speed: .knots(9), temperature: 2),
+    .wind(direction: 320, speed: .knots(21), temperature: -5),
+    .wind(direction: 290, speed: .knots(59), temperature: -47),
+    .wind(direction: 230, speed: .knots(108), temperature: nil),
+    .wind(direction: 230, speed: .knots(108), temperature: 2),
+    .wind(direction: 360, speed: .knots(10), temperature: 3)
+  ])
+  func roundTripsCodedString(_ entry: WindsAloftEntry) throws {
+    #expect(try WindsAloftEntry(coded: entry.codedString) == entry)
+  }
+
+  @Test
+  func roundTripsThroughCodable() throws {
+    let entry = WindsAloftEntry.wind(direction: 270, speed: .knots(50), temperature: -10)
+    let data = try JSONEncoder().encode(entry)
+
+    #expect(String(data: data, encoding: .utf8) == #""2750-10""#)
+    #expect(try JSONDecoder().decode(WindsAloftEntry.self, from: data) == entry)
+  }
 }

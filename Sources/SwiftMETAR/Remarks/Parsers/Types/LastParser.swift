@@ -1,12 +1,14 @@
 import Foundation
 import RegexBuilder
 
-final class LastParser: RemarkParser {
-  private static let rx = Regex {
-    Anchor.wordBoundary
-    "LAST"
-    Anchor.wordBoundary
-  }
+final class LastParser: RemarkParser, @unchecked Sendable {
+  private static let rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      "LAST"
+      Anchor.wordBoundary
+    }
+  )
 
   var urgency = Remark.Urgency.routine
 

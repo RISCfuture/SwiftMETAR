@@ -1,7 +1,7 @@
 import Foundation
 import RegexBuilder
 
-final class LightningParser: RemarkParser {
+final class LightningParser: RemarkParser, @unchecked Sendable {
   var urgency = Remark.Urgency.urgent
 
   private let directionsParser = RemarkDirectionsParser()
@@ -10,38 +10,40 @@ final class LightningParser: RemarkParser {
   private let proximityRef = Reference<Remark.Proximity?>()
 
   // swiftlint:disable force_try
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    Optionally {
-      Capture(as: frequencyRef) {
-        try! Remark.Frequency.rx
-      } transform: {
-        .init(rawValue: String($0))
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      Optionally {
+        Capture(as: frequencyRef) {
+          try! Remark.Frequency.rx
+        } transform: {
+          .init(rawValue: String($0))
+        }
+        " "
       }
-      " "
-    }
-    "LTG"
-    Optionally {
-      Capture(as: typesRef) {
-        OneOrMore { try! Remark.LightningType.rx }
-      } transform: {
-        $0
+      "LTG"
+      Optionally {
+        Capture(as: typesRef) {
+          OneOrMore { try! Remark.LightningType.rx }
+        } transform: {
+          $0
+        }
       }
-    }
-    Optionally {
-      " "
-      Capture(as: proximityRef) {
-        try! Remark.Proximity.rx
-      } transform: {
-        .init(rawValue: String($0))
+      Optionally {
+        " "
+        Capture(as: proximityRef) {
+          try! Remark.Proximity.rx
+        } transform: {
+          .init(rawValue: String($0))
+        }
       }
+      Optionally {
+        " "
+        directionsParser.rx
+      }
+      Anchor.wordBoundary
     }
-    Optionally {
-      " "
-      directionsParser.rx
-    }
-    Anchor.wordBoundary
-  }
+  )
   // swiftlint:enable force_try
 
   func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {

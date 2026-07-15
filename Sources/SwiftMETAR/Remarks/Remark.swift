@@ -2,7 +2,7 @@ import Foundation
 import NumberKit
 
 /// Types of METAR remarks.
-public enum Remark: Codable, Equatable, Sendable {
+public enum Remark: Equatable, Sendable {
 
   /**
    No significant changes in weather conditions are expected in the two hours

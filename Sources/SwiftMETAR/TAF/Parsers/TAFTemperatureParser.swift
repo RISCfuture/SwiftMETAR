@@ -1,49 +1,55 @@
 import Foundation
 import RegexBuilder
 
-class TAFTemperatureParser {
+final class TAFTemperatureParser: WarmableParser, @unchecked Sendable {
   private let typeRef = Reference<TAF.Temperature.TemperatureType?>()
   private let signRef = Reference<Bool>()
   private let temperatureRef = Reference<Int>()
   private let dayRef = Reference<Int>()
   private let hourRef = Reference<Int>()
 
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    "T"
-    Capture(as: typeRef) {
-      Optionally {
-        ChoiceOf {
-          "N"
-          "X"
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      "T"
+      Capture(as: typeRef) {
+        Optionally {
+          ChoiceOf {
+            "N"
+            "X"
+          }
         }
+      } transform: {
+        .init(rawValue: String($0))
       }
-    } transform: {
-      .init(rawValue: String($0))
+      Capture(as: signRef) {
+        Optionally("M")
+      } transform: {
+        $0 == "M"
+      }
+      Capture(as: temperatureRef) {
+        Repeat(.digit, count: 2)
+      } transform: {
+        .init($0)!
+      }
+      "/"
+      Capture(as: dayRef) {
+        Repeat(.digit, count: 2)
+      } transform: {
+        .init($0)!
+      }
+      Capture(as: hourRef) {
+        Repeat(.digit, count: 2)
+      } transform: {
+        .init($0)!
+      }
+      "Z"
+      Anchor.wordBoundary
     }
-    Capture(as: signRef) {
-      Optionally("M")
-    } transform: {
-      $0 == "M"
-    }
-    Capture(as: temperatureRef) {
-      Repeat(.digit, count: 2)
-    } transform: {
-      .init($0)!
-    }
-    "/"
-    Capture(as: dayRef) {
-      Repeat(.digit, count: 2)
-    } transform: {
-      .init($0)!
-    }
-    Capture(as: hourRef) {
-      Repeat(.digit, count: 2)
-    } transform: {
-      .init($0)!
-    }
-    "Z"
-    Anchor.wordBoundary
+  )
+
+  func warmUp() {
+    _ = try? rx.wholeMatch(in: "")
   }
 
   func parse(_ parts: inout [String.SubSequence], date: DateComponents) throws -> [TAF.Temperature]?

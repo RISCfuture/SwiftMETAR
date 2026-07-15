@@ -68,4 +68,45 @@ struct WindTests {
     let wind = try await METAR.from(string: string).wind
     #expect(wind == .calm)
   }
+
+  @Test
+  func emitsCanonicalCodedStrings() {
+    #expect(Wind.calm.codedString == "00000KT")
+    #expect(Wind.direction(50, speed: .knots(8)).codedString == "05008KT")
+    #expect(Wind.direction(340, speed: .knots(112)).codedString == "340112KT")
+    #expect(Wind.direction(270, speed: .knots(20), gust: .knots(35)).codedString == "27020G35KT")
+    #expect(Wind.variable(speed: .knots(3)).codedString == "VRB03KT")
+    #expect(
+      Wind.variable(speed: .knots(3), headingRange: (30, 150)).codedString == "VRB03KT 030V150"
+    )
+    #expect(
+      Wind.directionRange(210, headingRange: (180, 240), speed: .knots(10)).codedString
+        == "21010KT 180V240"
+    )
+    #expect(Wind.direction(90, speed: .mps(5)).codedString == "09005MPS")
+  }
+
+  @Test(arguments: [
+    Wind.calm,
+    .direction(50, speed: .knots(8)),
+    .direction(340, speed: .knots(112)),
+    .direction(270, speed: .knots(20), gust: .knots(35)),
+    .variable(speed: .knots(3)),
+    .variable(speed: .knots(3), headingRange: (30, 150)),
+    .directionRange(210, headingRange: (180, 240), speed: .knots(10)),
+    .direction(90, speed: .mps(5)),
+    .direction(90, speed: .kph(15))
+  ])
+  func roundTripsCodedString(_ wind: Wind) throws {
+    #expect(try Wind(coded: wind.codedString) == wind)
+  }
+
+  @Test
+  func roundTripsThroughCodable() throws {
+    let wind = Wind.direction(270, speed: .knots(20), gust: .knots(35))
+    let data = try JSONEncoder().encode(wind)
+
+    #expect(String(data: data, encoding: .utf8) == #""27020G35KT""#)
+    #expect(try JSONDecoder().decode(Wind.self, from: data) == wind)
+  }
 }

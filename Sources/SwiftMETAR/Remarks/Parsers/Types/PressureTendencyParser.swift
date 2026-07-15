@@ -1,28 +1,30 @@
 import Foundation
 import RegexBuilder
 
-final class PressureTendencyParser: RemarkParser {
+final class PressureTendencyParser: RemarkParser, @unchecked Sendable {
   var urgency = Remark.Urgency.routine
 
   private let characterRef = Reference<Remark.PressureCharacter>()
   private let amountRef = Reference<Float>()
 
   // swiftlint:disable force_try
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    "5"
-    Capture(as: characterRef) {
-      try! Remark.PressureCharacter.rx
-    } transform: {
-      .init(rawValue: String($0))!
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      "5"
+      Capture(as: characterRef) {
+        try! Remark.PressureCharacter.rx
+      } transform: {
+        .init(rawValue: String($0))!
+      }
+      Capture(as: amountRef) {
+        Repeat(.digit, count: 3)
+      } transform: {
+        Float($0)! / 10.0
+      }
+      Anchor.wordBoundary
     }
-    Capture(as: amountRef) {
-      Repeat(.digit, count: 3)
-    } transform: {
-      Float($0)! / 10.0
-    }
-    Anchor.wordBoundary
-  }
+  )
   // swiftlint:enable force_try
 
   func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {

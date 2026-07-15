@@ -1,7 +1,7 @@
 import Foundation
 import RegexBuilder
 
-final class ObservedPrecipitationParser: RemarkParser {
+final class ObservedPrecipitationParser: RemarkParser, @unchecked Sendable {
   var urgency = Remark.Urgency.routine
 
   private let precipRef = Reference<Remark.ObservedPrecipitationType>()
@@ -9,27 +9,29 @@ final class ObservedPrecipitationParser: RemarkParser {
   private let directionsParser = RemarkDirectionsParser()
 
   // swiftlint:disable force_try
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    Capture(as: precipRef) {
-      try! Remark.ObservedPrecipitationType.rx
-    } transform: {
-      .init(rawValue: String($0))!
-    }
-    Optionally {
-      " "
-      Capture(as: proximityRef) {
-        try! Remark.Proximity.rx
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      Capture(as: precipRef) {
+        try! Remark.ObservedPrecipitationType.rx
       } transform: {
-        .init(rawValue: String($0))
+        .init(rawValue: String($0))!
       }
+      Optionally {
+        " "
+        Capture(as: proximityRef) {
+          try! Remark.Proximity.rx
+        } transform: {
+          .init(rawValue: String($0))
+        }
+      }
+      Optionally {
+        " "
+        directionsParser.rx
+      }
+      Anchor.wordBoundary
     }
-    Optionally {
-      " "
-      directionsParser.rx
-    }
-    Anchor.wordBoundary
-  }
+  )
   // swiftlint:enable force_try
 
   func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {

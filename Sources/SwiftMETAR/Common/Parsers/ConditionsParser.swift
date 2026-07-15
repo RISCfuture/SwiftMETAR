@@ -1,30 +1,32 @@
 import Foundation
 import RegexBuilder
 
-class ConditionsParser {
-  private let coverageRef = Reference<Coverage>()
-  private let heightRef = Reference<UInt>()
-  private let ceilingTypeRef = Reference<Condition.CeilingType?>()
+final class ConditionsParser: WarmableParser, @unchecked Sendable {
+  private static let coverageRef = Reference<Coverage>()
+  private static let heightRef = Reference<UInt>()
+  private static let ceilingTypeRef = Reference<Condition.CeilingType?>()
   // swiftlint:disable force_try
-  private lazy var rx = Regex {
-    Anchor.startOfSubject
-    Capture(as: coverageRef) {
-      try! Coverage.rx
-    } transform: {
-      .init(rawValue: String($0))!
+  private static let rx = LockedRegex(
+    Regex {
+      Anchor.startOfSubject
+      Capture(as: coverageRef) {
+        try! Coverage.rx
+      } transform: {
+        .init(rawValue: String($0))!
+      }
+      Capture(as: heightRef) {
+        Repeat(.digit, count: 3)
+      } transform: {
+        .init($0)! * 100
+      }
+      Capture(as: ceilingTypeRef) {
+        Optionally(try! Condition.CeilingType.rx)
+      } transform: {
+        .init(rawValue: String($0))
+      }
+      Anchor.endOfSubject
     }
-    Capture(as: heightRef) {
-      Repeat(.digit, count: 3)
-    } transform: {
-      .init($0)! * 100
-    }
-    Capture(as: ceilingTypeRef) {
-      Optionally(try! Condition.CeilingType.rx)
-    } transform: {
-      .init(rawValue: String($0))
-    }
-    Anchor.endOfSubject
-  }
+  )
   // swiftlint:enable force_try
 
   func parse(_ parts: inout [String.SubSequence]) throws -> [Condition] {
@@ -50,12 +52,12 @@ class ConditionsParser {
           break
       }
 
-      if let match = try rx.wholeMatch(in: condStr) {
+      if let match = try Self.rx.wholeMatch(in: condStr) {
         parts.removeFirst()
 
-        let coverage = match[coverageRef]
-        let height = match[heightRef]
-        let type = match[ceilingTypeRef]
+        let coverage = match[Self.coverageRef]
+        let height = match[Self.heightRef]
+        let type = match[Self.ceilingTypeRef]
 
         if type != nil {
           guard coverage != .verticalVis else { throw Error.invalidConditions(condStr) }

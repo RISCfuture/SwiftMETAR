@@ -1,7 +1,7 @@
 import Foundation
 
 /// A sky condition, either a cloud layer or the presence of a clear sky.
-public enum Condition: Codable, Equatable, Sendable {
+public enum Condition: CodedRepresentable, Equatable, Sendable {
 
   /// Sky clear below 12,000 feet (USA) or 25,000 feet (Canada). Typically
   /// reported by automated ceilometers.
@@ -79,63 +79,55 @@ public enum Condition: Codable, Equatable, Sendable {
     }
   }
 
-  public init(from decoder: Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    switch try container.decode(String.self, forKey: .coverage) {
-      case "CLR": self = .clear
-      case "SKC": self = .skyClear
-      case "NSC": self = .noSignificantClouds
-      case "FEW":
-        let arguments = try decodeHeightAndTypeFrom(container: container)
-        self = .few(arguments.0, type: arguments.1)
-      case "SCT":
-        let arguments = try decodeHeightAndTypeFrom(container: container)
-        self = .scattered(arguments.0, type: arguments.1)
-      case "BKN":
-        let arguments = try decodeHeightAndTypeFrom(container: container)
-        self = .broken(arguments.0, type: arguments.1)
-      case "OVC":
-        let arguments = try decodeHeightAndTypeFrom(container: container)
-        self = .overcast(arguments.0, type: arguments.1)
-      case "VV":
-        let height = try container.decode(UInt.self, forKey: .height)
-        self = .indefinite(height)
-      default:
-        throw DecodingError.dataCorruptedError(
-          forKey: .type,
-          in: container,
-          debugDescription: "Unknown enum value"
-        )
+  /**
+   The coded representation of this sky condition, e.g. `"CLR"`, `"FEW020"`,
+   `"BKN050CB"`, or `"VV002"`. Cloud heights are emitted as hundreds of feet,
+   zero-padded to three digits; any vertical development is appended as its
+   coded suffix (`"CB"` or `"TCU"`).
+   */
+  public var codedString: String {
+    switch self {
+      case .clear: return "CLR"
+      case .skyClear: return "SKC"
+      case .noSignificantClouds: return "NSC"
+      case .cavok: return "CAVOK"
+      case let .few(height, type): return "FEW\(Self.heightGroup(height))\(Self.suffix(type))"
+      case let .scattered(height, type):
+        return "SCT\(Self.heightGroup(height))\(Self.suffix(type))"
+      case let .broken(height, type): return "BKN\(Self.heightGroup(height))\(Self.suffix(type))"
+      case let .overcast(height, type):
+        return "OVC\(Self.heightGroup(height))\(Self.suffix(type))"
+      case .indefinite(let ceiling): return "VV\(Self.heightGroup(ceiling))"
     }
   }
 
-  public func encode(to encoder: Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    switch self {
-      case .clear: try container.encode("CLR", forKey: .coverage)
-      case .skyClear: try container.encode("SKC", forKey: .coverage)
-      case .noSignificantClouds: try container.encode("NXC", forKey: .coverage)
-      case .cavok: try container.encode("CAVOK", forKey: .coverage)
-      case let .few(height, type):
-        try container.encode("FEW", forKey: .coverage)
-        try container.encode(height, forKey: .height)
-        try container.encode(type, forKey: .type)
-      case let .scattered(height, type):
-        try container.encode("SCT", forKey: .coverage)
-        try container.encode(height, forKey: .height)
-        try container.encode(type, forKey: .type)
-      case let .broken(height, type):
-        try container.encode("BKN", forKey: .coverage)
-        try container.encode(height, forKey: .height)
-        try container.encode(type, forKey: .type)
-      case let .overcast(height, type):
-        try container.encode("OVC", forKey: .coverage)
-        try container.encode(height, forKey: .height)
-        try container.encode(type, forKey: .type)
-      case .indefinite(let height):
-        try container.encode("VV", forKey: .coverage)
-        try container.encode(height, forKey: .height)
+  /**
+   Parses a coded sky-condition token into a value.
+
+   - Parameter coded: The coded string, e.g. `"BKN050CB"` or `"CLR"`.
+   - Throws: ``Error/invalidConditions(_:)`` if `coded` is not a valid
+             representation of a single sky condition.
+   */
+  public init(coded: String) throws {
+    if coded == "CAVOK" {
+      self = .cavok
+      return
     }
+
+    var parts = coded.split(whereSeparator: \.isWhitespace)
+    let conditions = try ConditionsParser().parse(&parts)
+    guard conditions.count == 1, parts.isEmpty else {
+      throw Error.invalidConditions(coded)
+    }
+    self = conditions[0]
+  }
+
+  private static func heightGroup(_ feet: UInt) -> String {
+    String(format: "%03d", feet / 100)
+  }
+
+  private static func suffix(_ type: CeilingType?) -> String {
+    type?.rawValue ?? ""
   }
 
   /// Types of vertical development that a cloud layer can have.
@@ -147,26 +139,4 @@ public enum Condition: Codable, Equatable, Sendable {
     /// Layer consists of towering cumulus clouds.
     case toweringCumulus = "TCU"
   }
-
-  enum CodingKeys: String, CodingKey {
-    case coverage, height, type
-  }
-}
-
-private func decodeHeightAndTypeFrom(container: KeyedDecodingContainer<Condition.CodingKeys>) throws
-  -> (UInt, Condition.CeilingType?)
-{
-  let height = try container.decode(UInt.self, forKey: .height)
-  let type = try container.decode(Optional<String>.self, forKey: .type).map { typeStr in
-    guard let type = Condition.CeilingType(rawValue: typeStr) else {
-      throw DecodingError.dataCorruptedError(
-        forKey: .type,
-        in: container,
-        debugDescription: "Unknown enum value"
-      )
-    }
-    return type
-  }
-
-  return (height, type)
 }

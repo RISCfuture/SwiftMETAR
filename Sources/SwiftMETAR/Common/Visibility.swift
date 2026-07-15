@@ -2,7 +2,7 @@ import Foundation
 import NumberKit
 
 /// A visibility report, made by a human or a transmissometer.
-public enum Visibility: Codable, Equatable, Sendable {
+public enum Visibility: CodedRepresentable, Equatable, Sendable {
 
   /**
    Visibility is equal to this value.
@@ -36,29 +36,50 @@ public enum Visibility: Codable, Equatable, Sendable {
   /// Visibility was not recorded.
   case notRecorded
 
-  public init(from decoder: Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    switch try container.decode(String.self, forKey: .constraint) {
-      case "=":
-        let value = try container.decode(Value.self, forKey: .value)
-        self = .equal(value)
-      case "<":
-        let value = try container.decode(Value.self, forKey: .value)
-        self = .lessThan(value)
-      case ">":
-        let value = try container.decode(Value.self, forKey: .value)
-        self = .greaterThan(value)
-      case "<>":
-        let low = try container.decode(Self.self, forKey: .low)
-        let high = try container.decode(Self.self, forKey: .high)
-        self = .variable(low, high)
-      default:
-        throw DecodingError.dataCorruptedError(
-          forKey: .constraint,
-          in: container,
-          debugDescription: "Unknown enum value"
-        )
+  /**
+   The coded representation of this visibility, e.g. `"10SM"`, `"3/4SM"`,
+   `"1 1/2SM"` (a whole number plus a fraction is a single value written with a
+   space), `"1200FT"`, or `"3000"` (bare metric meters). A range is prefixed with
+   `M` for ``lessThan`` (e.g. `"M1/4SM"`) or `P` for ``greaterThan``
+   (e.g. `"P6SM"`). A ``variable`` visibility joins its two bounds with `V`,
+   e.g. `"1000FTV1400FT"`.
+
+   `notRecorded` has no standard coded token; it is emitted as `"////SM"`, which
+   decodes back to `notRecorded` but is not an official METAR spelling.
+   */
+  public var codedString: String {
+    switch self {
+      case .equal(let value): value.codedString
+      case .lessThan(let value): "M\(value.codedString)"
+      case .greaterThan(let value): "P\(value.codedString)"
+      case let .variable(low, high): "\(low.codedString)V\(high.codedString)"
+      case .notRecorded: "////SM"
     }
+  }
+
+  /**
+   Parses a coded visibility group, e.g. `"10SM"`, `"M1/4SM"`, `"1 1/2SM"`,
+   `"1200FT"`, `"3000"`, or a variable range like `"1000FTV1400FT"`.
+
+   - Parameter coded: The coded visibility string.
+   - Throws: ``Error/invalidVisibility(_:)`` if `coded` is not a valid
+             visibility group.
+   */
+  public init(coded: String) throws {
+    var parts = coded.split(whereSeparator: \.isWhitespace)
+    if let visibility = try VisibilityParser().parse(&parts), parts.isEmpty {
+      self = visibility
+      return
+    }
+
+    if let separator = coded.firstIndex(of: "V") {
+      let low = try Self(coded: String(coded[..<separator]))
+      let high = try Self(coded: String(coded[coded.index(after: separator)...]))
+      self = .variable(low, high)
+      return
+    }
+
+    throw Error.invalidVisibility(coded)
   }
 
   public static func == (lhs: Self, rhs: Self) -> Bool {
@@ -81,29 +102,8 @@ public enum Visibility: Codable, Equatable, Sendable {
     }
   }
 
-  public func encode(to encoder: Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    switch self {
-      case .equal(let value):
-        try container.encode("=", forKey: .constraint)
-        try container.encode(value, forKey: .value)
-      case .lessThan(let value):
-        try container.encode("<", forKey: .constraint)
-        try container.encode(value, forKey: .value)
-      case .greaterThan(let value):
-        try container.encode(">", forKey: .constraint)
-        try container.encode(value, forKey: .value)
-      case let .variable(low, high):
-        try container.encode("<>", forKey: .constraint)
-        try container.encode(low, forKey: .low)
-        try container.encode(high, forKey: .high)
-      case .notRecorded:
-        try container.encode("no", forKey: .constraint)
-    }
-  }
-
   /// A distance as used in a visibility report.
-  public enum Value: Codable, Comparable, Sendable {
+  public enum Value: CodedRepresentable, Comparable, Sendable {
 
     /**
      A distance reported in statute miles, as a vulgar fraction.
@@ -146,28 +146,56 @@ public enum Visibility: Codable, Equatable, Sendable {
       }
     }
 
-    public init(from decoder: Decoder) throws {
-      let container = try decoder.container(keyedBy: CodingKeys.self)
-      switch try container.decode(String.self, forKey: .unit) {
-        case "SM":
-          let value = try container.decode(Ratio.self, forKey: .value)
-          self = .statuteMiles(value)
-        case "SMD":
-          let value = try container.decode(Double.self, forKey: .value)
-          self = .statuteMilesDecimal(value)
-        case "FT":
-          let value = try container.decode(UInt16.self, forKey: .value)
-          self = .feet(value)
-        case "M":
-          let value = try container.decode(UInt16.self, forKey: .value)
-          self = .meters(value)
-        default:
-          throw DecodingError.dataCorruptedError(
-            forKey: .unit,
-            in: container,
-            debugDescription: "Unknown enum value"
-          )
+    /**
+     The coded representation of this distance, without any range prefix, e.g.
+     `"10SM"`, `"3/4SM"`, `"1 1/2SM"`, `"1200FT"`, or `"3000"` for bare metric
+     meters.
+
+     `statuteMilesDecimal` has no native coded METAR form; it is rendered as a
+     decimal `"SM"` string (e.g. `"0.75SM"`), which the parser cannot read back,
+     so it is lossy and non-idempotent.
+     */
+    public var codedString: String {
+      switch self {
+        case .statuteMiles(let value): Self.coded(statuteMiles: value)
+        case .statuteMilesDecimal(let value): Self.coded(statuteMilesDecimal: value)
+        case .feet(let value): "\(value)FT"
+        case .meters(let value): "\(value)"
       }
+    }
+
+    /**
+     Parses a coded distance, without any range prefix, e.g. `"10SM"`, `"3/4SM"`,
+     `"1 1/2SM"`, `"1200FT"`, or `"3000"`.
+
+     - Parameter coded: The coded distance string.
+     - Throws: ``Error/invalidVisibility(_:)`` if `coded` is not a valid,
+               unqualified distance.
+     */
+    public init(coded: String) throws {
+      guard case let .equal(value) = try Visibility(coded: coded) else {
+        throw Error.invalidVisibility(coded)
+      }
+      self = value
+    }
+
+    private static func coded(statuteMiles ratio: Ratio) -> String {
+      let whole = ratio.numerator / ratio.denominator
+      let remainder = ratio.numerator % ratio.denominator
+      let body =
+        if remainder == 0 {
+          "\(whole)"
+        } else if whole == 0 {
+          "\(ratio.numerator)/\(ratio.denominator)"
+        } else {
+          "\(whole) \(remainder)/\(ratio.denominator)"
+        }
+      return "\(body)SM"
+    }
+
+    private static func coded(statuteMilesDecimal value: Double) -> String {
+      let body = value == value.rounded() ? "\(Int(value))" : "\(value)"
+      return "\(body)SM"
     }
 
     public static func == (lhs: Self, rhs: Self) -> Bool {
@@ -177,31 +205,5 @@ public enum Visibility: Codable, Equatable, Sendable {
     public static func < (lhs: Self, rhs: Self) -> Bool {
       return lhs.measurement < rhs.measurement
     }
-
-    public func encode(to encoder: Encoder) throws {
-      var container = encoder.container(keyedBy: CodingKeys.self)
-      switch self {
-        case .statuteMiles(let value):
-          try container.encode("SM", forKey: .unit)
-          try container.encode(value, forKey: .value)
-        case .statuteMilesDecimal(let value):
-          try container.encode("SMD", forKey: .unit)
-          try container.encode(value, forKey: .value)
-        case .feet(let value):
-          try container.encode("FT", forKey: .unit)
-          try container.encode(value, forKey: .value)
-        case .meters(let value):
-          try container.encode("M", forKey: .unit)
-          try container.encode(value, forKey: .value)
-      }
-    }
-
-    enum CodingKeys: String, CodingKey {
-      case unit, value, numerator, denominator
-    }
-  }
-
-  enum CodingKeys: String, CodingKey {
-    case constraint, value, low, high
   }
 }

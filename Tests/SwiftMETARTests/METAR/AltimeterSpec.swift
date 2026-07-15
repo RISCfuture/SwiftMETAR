@@ -27,11 +27,24 @@ struct AltimeterTests {
     )
   }
 
-  @Test(arguments: [Altimeter.inHg(2992), .hPa(1021)])
-  func roundTripsThroughCodable(_ altimeter: Altimeter) throws {
-    let data = try JSONEncoder().encode(altimeter)
-    let decoded = try JSONDecoder().decode(Altimeter.self, from: data)
+  @Test
+  func emitsCanonicalCodedStrings() {
+    #expect(Altimeter.inHg(2992).codedString == "A2992")
+    #expect(Altimeter.hPa(1013).codedString == "Q1013")
+    #expect(Altimeter.hPa(995).codedString == "Q0995")
+  }
 
-    #expect(decoded == altimeter)
+  @Test(arguments: [Altimeter.inHg(2992), .hPa(1021), .hPa(995)])
+  func roundTripsCodedString(_ altimeter: Altimeter) throws {
+    #expect(try Altimeter(coded: altimeter.codedString) == altimeter)
+  }
+
+  @Test
+  func roundTripsThroughCodable() throws {
+    let altimeter = Altimeter.inHg(2992)
+    let data = try JSONEncoder().encode(altimeter)
+
+    #expect(String(data: data, encoding: .utf8) == #""A2992""#)
+    #expect(try JSONDecoder().decode(Altimeter.self, from: data) == altimeter)
   }
 }

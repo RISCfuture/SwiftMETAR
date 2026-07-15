@@ -1,7 +1,7 @@
 import Foundation
 import RegexBuilder
 
-final class SignificantCloudsParser: RemarkParser {
+final class SignificantCloudsParser: RemarkParser, @unchecked Sendable {
   var urgency = Remark.Urgency.caution
 
   private let apparentRef = Reference<Bool>()
@@ -11,33 +11,35 @@ final class SignificantCloudsParser: RemarkParser {
   private let movingDirectionParser = RemarkDirectionParser()
 
   // swiftlint:disable force_try
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    Capture(as: apparentRef) {
-      Optionally("APRNT ")
-    } transform: {
-      !$0.isEmpty
-    }
-    Capture(as: cloudTypeRef) {
-      try! Remark.SignificantCloudType.rx
-    } transform: {
-      .from(raw: String($0))!
-    }
-    " "
-    Capture(as: distantRef) {
-      Optionally("DSNT ")
-    } transform: {
-      !$0.isEmpty
-    }
-    directionsParser.rx
-    Optionally {
-      " MOV"
-      Optionally("G")
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      Capture(as: apparentRef) {
+        Optionally("APRNT ")
+      } transform: {
+        !$0.isEmpty
+      }
+      Capture(as: cloudTypeRef) {
+        try! Remark.SignificantCloudType.rx
+      } transform: {
+        .from(raw: String($0))!
+      }
       " "
-      movingDirectionParser.rx
+      Capture(as: distantRef) {
+        Optionally("DSNT ")
+      } transform: {
+        !$0.isEmpty
+      }
+      directionsParser.rx
+      Optionally {
+        " MOV"
+        Optionally("G")
+        " "
+        movingDirectionParser.rx
+      }
+      Anchor.wordBoundary
     }
-    Anchor.wordBoundary
-  }
+  )
   // swiftlint:enable force_try
 
   func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {

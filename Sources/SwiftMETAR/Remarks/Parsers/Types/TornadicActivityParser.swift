@@ -1,7 +1,7 @@
 import Foundation
 import RegexBuilder
 
-final class TornadicActivityParser: RemarkParser {
+final class TornadicActivityParser: RemarkParser, @unchecked Sendable {
   var urgency = Remark.Urgency.urgent
 
   private let typeRef = Reference<Remark.TornadicActivityType>()
@@ -12,37 +12,39 @@ final class TornadicActivityParser: RemarkParser {
   private let movingDirectionParser = RemarkDirectionParser()
 
   // swiftlint:disable force_try
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    Capture(as: typeRef) {
-      try! Remark.TornadicActivityType.rx
-    } transform: {
-      .init(rawValue: String($0))!
-    }
-    " "
-    Capture(as: eventTypeRef) {
-      try! Remark.EventType.rx
-    } transform: {
-      .init(rawValue: String($0))!
-    }
-    timeParser.hourOptionalRx
-    " "
-    Capture(as: distanceRef) {
-      OneOrMore(.digit)
-    } transform: {
-      .init($0)!
-    }
-    " "
-    directionParser.rx
-    Optionally {
-      " MOV"
-      Optionally("G")
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      Capture(as: typeRef) {
+        try! Remark.TornadicActivityType.rx
+      } transform: {
+        .init(rawValue: String($0))!
+      }
       " "
-      movingDirectionParser.rx
-    }
+      Capture(as: eventTypeRef) {
+        try! Remark.EventType.rx
+      } transform: {
+        .init(rawValue: String($0))!
+      }
+      timeParser.hourOptionalRx
+      " "
+      Capture(as: distanceRef) {
+        OneOrMore(.digit)
+      } transform: {
+        .init($0)!
+      }
+      " "
+      directionParser.rx
+      Optionally {
+        " MOV"
+        Optionally("G")
+        " "
+        movingDirectionParser.rx
+      }
 
-    Anchor.wordBoundary
-  }
+      Anchor.wordBoundary
+    }
+  )
   // swiftlint:enable force_try
 
   func parse(remarks: inout String, date: DateComponents) throws -> Remark? {

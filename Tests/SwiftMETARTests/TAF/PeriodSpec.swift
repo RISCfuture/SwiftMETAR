@@ -46,4 +46,20 @@ struct PeriodTests {
       return true
     }
   }
+
+  @Test(arguments: [
+    "2515/2615", "FM261500", "TEMPO 2515/2615", "BECMG 2515/2615", "PROB30 2515/2615"
+  ])
+  func roundTripsCodedString(_ coded: String) throws {
+    #expect(try TAF.Group.Period(coded: coded).codedString == coded)
+  }
+
+  @Test
+  func roundTripsThroughCodable() throws {
+    let coded = "PROB30 2515/2615"
+    let period = try TAF.Group.Period(coded: coded)
+    let data = try JSONEncoder().encode(period)
+
+    #expect(try JSONDecoder().decode(TAF.Group.Period.self, from: data).codedString == coded)
+  }
 }

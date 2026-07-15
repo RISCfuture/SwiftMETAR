@@ -1,28 +1,30 @@
 import Foundation
 import RegexBuilder
 
-final class NavalForecasterParser: RemarkParser {
+final class NavalForecasterParser: RemarkParser, @unchecked Sendable {
   var urgency = Remark.Urgency.routine
 
   private let centerRef = Reference<Remark.NavalWeatherCenter>()
   private let forecasterRef = Reference<UInt>()
 
   // swiftlint:disable force_try
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    "F"
-    Capture(as: centerRef) {
-      try! Remark.NavalWeatherCenter.rx
-    } transform: {
-      .init(rawValue: String($0))!
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      "F"
+      Capture(as: centerRef) {
+        try! Remark.NavalWeatherCenter.rx
+      } transform: {
+        .init(rawValue: String($0))!
+      }
+      Capture(as: forecasterRef) {
+        OneOrMore(.digit)
+      } transform: {
+        .init($0)!
+      }
+      Anchor.wordBoundary
     }
-    Capture(as: forecasterRef) {
-      OneOrMore(.digit)
-    } transform: {
-      .init($0)!
-    }
-    Anchor.wordBoundary
-  }
+  )
   // swiftlint:enable force_try
 
   func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {

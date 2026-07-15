@@ -1,12 +1,14 @@
 import Foundation
 import RegexBuilder
 
-final class WindDataEstimatedParser: RemarkParser {
-  private static let rx = Regex {
-    Anchor.wordBoundary
-    "WND DATA ESTMD"
-    Anchor.wordBoundary
-  }
+final class WindDataEstimatedParser: RemarkParser, @unchecked Sendable {
+  private static let rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      "WND DATA ESTMD"
+      Anchor.wordBoundary
+    }
+  )
 
   var urgency = Remark.Urgency.routine
 

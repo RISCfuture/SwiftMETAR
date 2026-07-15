@@ -1,27 +1,29 @@
 import Foundation
 import RegexBuilder
 
-final class PeriodicIceAccretionAmountParser: RemarkParser {
+final class PeriodicIceAccretionAmountParser: RemarkParser, @unchecked Sendable {
   var urgency = Remark.Urgency.routine
 
   private let periodRef = Reference<UInt8>()
   private let amountRef = Reference<Float>()
 
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    "I"
-    Capture(as: periodRef) {
-      CharacterClass.anyOf("136")
-    } transform: {
-      .init($0)!
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      "I"
+      Capture(as: periodRef) {
+        CharacterClass.anyOf("136")
+      } transform: {
+        .init($0)!
+      }
+      Capture(as: amountRef) {
+        Repeat(.digit, count: 3)
+      } transform: {
+        .init($0)! / 100.0
+      }
+      Anchor.wordBoundary
     }
-    Capture(as: amountRef) {
-      Repeat(.digit, count: 3)
-    } transform: {
-      .init($0)! / 100.0
-    }
-    Anchor.wordBoundary
-  }
+  )
 
   func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }

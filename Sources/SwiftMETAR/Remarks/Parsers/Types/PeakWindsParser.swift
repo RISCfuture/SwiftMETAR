@@ -1,32 +1,34 @@
 import Foundation
 import RegexBuilder
 
-final class PeakWindsParser: RemarkParser {
+final class PeakWindsParser: RemarkParser, @unchecked Sendable {
   var urgency = Remark.Urgency.routine
 
   private let directionRef = Reference<UInt16>()
   private let speedRef = Reference<UInt16>()
   private let timeParser = HourMinuteParser()
 
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    "PK W"
-    Optionally("I")
-    "ND "
-    Capture(as: directionRef) {
-      Repeat(.digit, count: 3)
-    } transform: {
-      .init($0)!
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      "PK W"
+      Optionally("I")
+      "ND "
+      Capture(as: directionRef) {
+        Repeat(.digit, count: 3)
+      } transform: {
+        .init($0)!
+      }
+      Capture(as: speedRef) {
+        Repeat(.digit, 2...3)
+      } transform: {
+        .init($0)!
+      }
+      "/"
+      timeParser.hourOptionalRx
+      Anchor.wordBoundary
     }
-    Capture(as: speedRef) {
-      Repeat(.digit, 2...3)
-    } transform: {
-      .init($0)!
-    }
-    "/"
-    timeParser.hourOptionalRx
-    Anchor.wordBoundary
-  }
+  )
 
   func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }

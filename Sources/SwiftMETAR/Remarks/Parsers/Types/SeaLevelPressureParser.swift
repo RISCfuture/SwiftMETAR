@@ -1,29 +1,31 @@
 import Foundation
 import RegexBuilder
 
-final class SeaLevelPressureParser: RemarkParser {
+final class SeaLevelPressureParser: RemarkParser, @unchecked Sendable {
   var urgency = Remark.Urgency.routine
 
   private let pressureRef = Reference<UInt?>()
   private let noRef = Reference<Bool?>()
 
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    "SLP"
-    ChoiceOf {
-      Capture(as: pressureRef) {
-        Repeat(.digit, count: 3)
-      } transform: {
-        .init($0)
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      "SLP"
+      ChoiceOf {
+        Capture(as: pressureRef) {
+          Repeat(.digit, count: 3)
+        } transform: {
+          .init($0)
+        }
+        Capture(as: noRef) {
+          "NO"
+        } transform: { _ in
+          true
+        }
       }
-      Capture(as: noRef) {
-        "NO"
-      } transform: { _ in
-        true
-      }
+      Anchor.wordBoundary
     }
-    Anchor.wordBoundary
-  }
+  )
 
   func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }

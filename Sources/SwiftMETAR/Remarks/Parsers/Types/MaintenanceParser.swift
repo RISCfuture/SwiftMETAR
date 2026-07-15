@@ -1,22 +1,24 @@
 import Foundation
 import RegexBuilder
 
-final class MaintenanceParser: RemarkParser {
-  private static let rx = Regex {
-    ChoiceOf {
-      Regex {
-        OneOrMore(.whitespace)
-        "$"
-        OneOrMore(.whitespace)
-      }
-      Regex {
-        OneOrMore(.whitespace)
-        "$"
-        ZeroOrMore(.whitespace)
-        Anchor.endOfSubject
+final class MaintenanceParser: RemarkParser, @unchecked Sendable {
+  private static let rx = LockedRegex(
+    Regex {
+      ChoiceOf {
+        Regex {
+          OneOrMore(.whitespace)
+          "$"
+          OneOrMore(.whitespace)
+        }
+        Regex {
+          OneOrMore(.whitespace)
+          "$"
+          ZeroOrMore(.whitespace)
+          Anchor.endOfSubject
+        }
       }
     }
-  }
+  )
 
   var urgency = Remark.Urgency.routine
 

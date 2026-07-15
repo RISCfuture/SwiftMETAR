@@ -69,4 +69,64 @@ struct VisibilityTests {
     let metar = try await METAR.from(string: string)
     #expect(metar.visibility == nil)
   }
+
+  @Test
+  func emitsCanonicalCodedStrings() {
+    #expect(Visibility.equal(.statuteMiles(3 / 4 as Ratio)).codedString == "3/4SM")
+    #expect(Visibility.equal(.statuteMiles(3 / 2 as Ratio)).codedString == "1 1/2SM")
+    #expect(Visibility.equal(.statuteMiles(3 as Ratio)).codedString == "3SM")
+    #expect(Visibility.lessThan(.statuteMiles(1 / 4 as Ratio)).codedString == "M1/4SM")
+    #expect(Visibility.greaterThan(.statuteMiles(6 as Ratio)).codedString == "P6SM")
+    #expect(Visibility.greaterThan(.statuteMiles(10 as Ratio)).codedString == "P10SM")
+    #expect(Visibility.equal(.meters(3000)).codedString == "3000")
+    #expect(Visibility.greaterThan(.meters(9999)).codedString == "P9999")
+    #expect(Visibility.equal(.feet(1200)).codedString == "1200FT")
+    #expect(Visibility.lessThan(.feet(1000)).codedString == "M1000FT")
+    #expect(
+      Visibility.variable(.equal(.feet(1000)), .equal(.feet(1400))).codedString
+        == "1000FTV1400FT"
+    )
+    #expect(Visibility.notRecorded.codedString == "////SM")
+
+    // `statuteMilesDecimal` has no native coded form; it is a lossy decimal rendering.
+    #expect(Visibility.Value.statuteMilesDecimal(0.75).codedString == "0.75SM")
+  }
+
+  @Test(arguments: [
+    Visibility.equal(.statuteMiles(3 / 4 as Ratio)),
+    .equal(.statuteMiles(3 / 2 as Ratio)),
+    .equal(.statuteMiles(3 as Ratio)),
+    .lessThan(.statuteMiles(1 / 4 as Ratio)),
+    .greaterThan(.statuteMiles(6 as Ratio)),
+    .greaterThan(.statuteMiles(10 as Ratio)),
+    .equal(.meters(3000)),
+    .greaterThan(.meters(9999)),
+    .equal(.feet(1200)),
+    .lessThan(.feet(1000)),
+    .variable(.equal(.feet(1000)), .equal(.feet(1400))),
+    .notRecorded
+  ])
+  func roundTripsCodedString(_ visibility: Visibility) throws {
+    #expect(try Visibility(coded: visibility.codedString) == visibility)
+  }
+
+  @Test(arguments: [
+    Visibility.Value.statuteMiles(3 / 4 as Ratio),
+    .statuteMiles(3 / 2 as Ratio),
+    .statuteMiles(3 as Ratio),
+    .feet(1200),
+    .meters(3000)
+  ])
+  func roundTripsValueCodedString(_ value: Visibility.Value) throws {
+    #expect(try Visibility.Value(coded: value.codedString) == value)
+  }
+
+  @Test
+  func roundTripsThroughCodable() throws {
+    let visibility = Visibility.equal(.feet(1200))
+    let data = try JSONEncoder().encode(visibility)
+
+    #expect(String(data: data, encoding: .utf8) == #""1200FT""#)
+    #expect(try JSONDecoder().decode(Visibility.self, from: data) == visibility)
+  }
 }

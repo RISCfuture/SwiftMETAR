@@ -1,7 +1,7 @@
 import Foundation
 import RegexBuilder
 
-final class ObscurationParser: RemarkParser {
+final class ObscurationParser: RemarkParser, @unchecked Sendable {
   var urgency = Remark.Urgency.routine
 
   private let typeRef = Reference<Weather.Phenomenon>()
@@ -9,28 +9,30 @@ final class ObscurationParser: RemarkParser {
   private let heightRef = Reference<UInt>()
 
   // swiftlint:disable force_try
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    Capture(as: typeRef) {
-      try! Weather.Phenomenon.rx
-    } transform: {
-      .init(rawValue: String($0))!
-    }
-    " "
-    Optionally {
-      Capture(as: coverageRef) {
-        try! Remark.Coverage.rx
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      Capture(as: typeRef) {
+        try! Weather.Phenomenon.rx
       } transform: {
-        .init(rawValue: String($0))
+        .init(rawValue: String($0))!
       }
+      " "
+      Optionally {
+        Capture(as: coverageRef) {
+          try! Remark.Coverage.rx
+        } transform: {
+          .init(rawValue: String($0))
+        }
+      }
+      Capture(as: heightRef) {
+        Repeat(.digit, count: 3)
+      } transform: {
+        .init($0)! * 100
+      }
+      Anchor.wordBoundary
     }
-    Capture(as: heightRef) {
-      Repeat(.digit, count: 3)
-    } transform: {
-      .init($0)! * 100
-    }
-    Anchor.wordBoundary
-  }
+  )
   // swiftlint:enable force_try
 
   func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {

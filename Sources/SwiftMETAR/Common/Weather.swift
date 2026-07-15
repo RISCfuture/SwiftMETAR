@@ -25,7 +25,7 @@
  instance.
  */
 
-public struct Weather: Codable, Equatable, Sendable {
+public struct Weather: Equatable, Sendable {
 
   /// The intensity of the phenomena.
   public let intensity: Intensity
@@ -173,5 +173,45 @@ public struct Weather: Codable, Equatable, Sendable {
 
     /// Convective activity producing thunderstorms.
     case thunderstorm = "TS"
+  }
+}
+
+extension Weather: CodedRepresentable {
+
+  /**
+   The canonical coded representation of this weather group, e.g. `"+SHRA"`,
+   `"-RA"`, `"VCTS"`, or `"BR"`.
+
+   Components are emitted in FMH-1 order: intensity, then descriptor, then
+   phenomena. Because ``phenomena`` is an unordered set, the phenomena are
+   emitted in ``Phenomenon`` declaration order, which matches the canonical
+   FMH-1 ordering. A value whose phenomena were originally coded out of that
+   order therefore round-trips into the canonical order (e.g. `"GRRA"` becomes
+   `"RAGR"`).
+   */
+  public var codedString: String {
+    let phenomenaCode =
+      Phenomenon.allCases
+      .filter { phenomena.contains($0) }
+      .map(\.rawValue)
+      .joined()
+    return "\(intensity.rawValue)\(descriptor?.rawValue ?? "")\(phenomenaCode)"
+  }
+
+  /**
+   Parses a single coded weather group into a ``Weather`` value.
+
+   - Parameter coded: The coded string, e.g. `"+TSRA"`.
+   - Throws: ``Error/invalidWeather(_:)`` if `coded` is not a single valid
+             weather group.
+   */
+  public init(coded: String) throws {
+    var parts = coded.split(whereSeparator: \.isWhitespace)
+    guard let weather = try WeatherParser().parse(&parts),
+      weather.count == 1, parts.isEmpty
+    else {
+      throw Error.invalidWeather(coded)
+    }
+    self = weather[0]
   }
 }

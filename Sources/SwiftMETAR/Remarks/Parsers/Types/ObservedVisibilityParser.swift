@@ -1,24 +1,26 @@
 import Foundation
 import RegexBuilder
 
-final class ObservedVisibilityParser: RemarkParser {
+final class ObservedVisibilityParser: RemarkParser, @unchecked Sendable {
   var urgency = Remark.Urgency.routine
 
   private let sourceRef = Reference<Remark.VisibilitySource>()
   private let visibilityParser = FractionParser()
 
   // swiftlint:disable force_try
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    Capture(as: sourceRef) {
-      try! Remark.VisibilitySource.rx
-    } transform: {
-      .init(rawValue: String($0))!
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      Capture(as: sourceRef) {
+        try! Remark.VisibilitySource.rx
+      } transform: {
+        .init(rawValue: String($0))!
+      }
+      " VIS "
+      visibilityParser.rx
+      Anchor.wordBoundary
     }
-    " VIS "
-    visibilityParser.rx
-    Anchor.wordBoundary
-  }
+  )
   // swiftlint:enable force_try
 
   func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {

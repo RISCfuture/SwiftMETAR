@@ -1,20 +1,22 @@
 import Foundation
 import RegexBuilder
 
-final class WaterEquivalentDepthParser: RemarkParser {
+final class WaterEquivalentDepthParser: RemarkParser, @unchecked Sendable {
   var urgency = Remark.Urgency.routine
 
   private let depthRef = Reference<Float>()
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    "933"
-    Capture(as: depthRef) {
-      Repeat(.digit, count: 3)
-    } transform: {
-      .init($0)! / 10.0
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      "933"
+      Capture(as: depthRef) {
+        Repeat(.digit, count: 3)
+      } transform: {
+        .init($0)! / 10.0
+      }
+      Anchor.wordBoundary
     }
-    Anchor.wordBoundary
-  }
+  )
 
   func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }

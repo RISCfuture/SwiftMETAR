@@ -1,28 +1,30 @@
 import Foundation
 import RegexBuilder
 
-final class VariableWindDirectionParser: RemarkParser {
+final class VariableWindDirectionParser: RemarkParser, @unchecked Sendable {
   var urgency = Remark.Urgency.routine
 
   private let dir1Ref = Reference<UInt16>()
   private let dir2Ref = Reference<UInt16>()
 
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    "WND "
-    Capture(as: dir1Ref) {
-      Repeat(.digit, count: 3)
-    } transform: {
-      .init($0)!
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      "WND "
+      Capture(as: dir1Ref) {
+        Repeat(.digit, count: 3)
+      } transform: {
+        .init($0)!
+      }
+      "V"
+      Capture(as: dir2Ref) {
+        Repeat(.digit, count: 3)
+      } transform: {
+        .init($0)!
+      }
+      Anchor.wordBoundary
     }
-    "V"
-    Capture(as: dir2Ref) {
-      Repeat(.digit, count: 3)
-    } transform: {
-      .init($0)!
-    }
-    Anchor.wordBoundary
-  }
+  )
 
   func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }

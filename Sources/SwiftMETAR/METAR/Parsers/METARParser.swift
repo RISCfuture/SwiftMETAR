@@ -3,25 +3,50 @@ import Foundation
 actor METARParser {
   static let shared = METARParser()
 
-  private let windParser = WindParser()
-  private let visibilityParser = VisibilityParser()
-  private let rvrParser = RVRParser()
-  private let weatherParser = WeatherParser()
-  private let conditionsParser = ConditionsParser()
-  private let temperatureParser = METARTemperatureParser()
-  private let altimeterParser = AltimeterParser()
+  nonisolated private static let visibilityParser = warmed(VisibilityParser())
+  nonisolated private static let rvrParser = warmed(RVRParser())
+  nonisolated private static let weatherParser = warmed(WeatherParser())
+  nonisolated private static let conditionsParser = warmed(ConditionsParser())
+  nonisolated private static let temperatureParser = warmed(METARTemperatureParser())
+  nonisolated private static let altimeterParser = warmed(AltimeterParser())
+  nonisolated private static let dateParser = warmed(DayHourMinuteParser())
 
   private init() {}
 
-  func parse(_ codedMETAR: String, on referenceDate: Date? = nil, lenientRemarks: Bool = false)
-    async throws -> METAR
-  {
+  /// Parses a METAR synchronously off the actor, using the shared warmed parsers.
+  /// Used by the synchronous `Codable` decode path.
+  static func parseSynchronously(
+    _ codedMETAR: String,
+    on referenceDate: Date? = nil,
+    lenientRemarks: Bool = false
+  ) throws -> METAR {
+    let remarkParsers = RemarksParser.sharedParsers
+    return try assemble(codedMETAR, referenceDate: referenceDate) { parts, date in
+      try RemarksParser.parse(
+        &parts,
+        using: remarkParsers,
+        date: date,
+        lenientRemarks: lenientRemarks
+      )
+    }
+  }
+
+  /// The isolation-free parsing core, shared by the async and synchronous paths.
+  /// It matches against the shared warmed component-parser singletons; only
+  /// `parseRemarks` differs between callers.
+  private static func assemble(
+    _ codedMETAR: String,
+    referenceDate: Date?,
+    parseRemarks: (_ parts: inout [Substring], _ date: DateComponents) throws -> (
+      [RemarkEntry], String?
+    )
+  ) throws -> METAR {
     var parts = codedMETAR.split(separator: .whitespacesAndNewlines)
     let issuance = try parseIssuance(&parts)
     let stationID = try parseLocationID(&parts)
-    let date = try DayHourMinuteParser().parse(&parts, referenceDate: referenceDate)
+    let date = try dateParser.parse(&parts, referenceDate: referenceDate)
     let observer = try parseObserver(&parts)
-    let wind = try orMissing(&parts, defaultValue: nil) { try windParser.parse(&$0) }
+    let wind = try orMissing(&parts, defaultValue: nil) { try WindParser.parse(&$0) }
 
     let visibility: Visibility?
     let runwayViz: [RunwayVisibility]
@@ -43,11 +68,7 @@ actor METARParser {
       try temperatureParser.parse(&$0)
     }
     let altimeter = try orMissing(&parts, defaultValue: nil) { try altimeterParser.parseMETAR(&$0) }
-    let (remarks, remarksString) = try await RemarksParser.shared.parse(
-      &parts,
-      date: date,
-      lenientRemarks: lenientRemarks
-    )
+    let (remarks, remarksString) = try parseRemarks(&parts, date)
 
     return METAR(
       text: codedMETAR,
@@ -68,7 +89,7 @@ actor METARParser {
     )
   }
 
-  private func parseIssuance(_ parts: inout [String.SubSequence]) throws -> METAR.Issuance {
+  private static func parseIssuance(_ parts: inout [String.SubSequence]) throws -> METAR.Issuance {
     guard !parts.isEmpty else { throw Error.badFormat }
 
     let typeCode = String(parts[0])
@@ -79,7 +100,7 @@ actor METARParser {
     return type
   }
 
-  private func parseObserver(_ parts: inout [String.SubSequence]) throws -> METAR.Observer {
+  private static func parseObserver(_ parts: inout [String.SubSequence]) throws -> METAR.Observer {
     guard !parts.isEmpty else { throw Error.badFormat }
 
     let observer = METAR.Observer(rawValue: String(parts[0]))
@@ -87,7 +108,7 @@ actor METARParser {
     return observer ?? .human
   }
 
-  private func orMissing<T>(
+  private static func orMissing<T>(
     _ parts: inout [Substring],
     defaultValue: T,
     _ parser: (_ parts: inout [Substring]) throws -> T
@@ -97,5 +118,18 @@ actor METARParser {
       return defaultValue
     }
     return try parser(&parts)
+  }
+
+  func parse(_ codedMETAR: String, on referenceDate: Date? = nil, lenientRemarks: Bool = false)
+    throws -> METAR
+  {
+    try Self.assemble(codedMETAR, referenceDate: referenceDate) { parts, date in
+      try RemarksParser.parse(
+        &parts,
+        using: RemarksParser.sharedParsers,
+        date: date,
+        lenientRemarks: lenientRemarks
+      )
+    }
   }
 }

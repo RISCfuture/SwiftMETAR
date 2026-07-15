@@ -1,19 +1,21 @@
 import Foundation
 import RegexBuilder
 
-final class NoAmendmentsAfterParser: RemarkParser {
+final class NoAmendmentsAfterParser: RemarkParser, @unchecked Sendable {
   var urgency = Remark.Urgency.routine
 
   private let timeParser = DayHourParser()
 
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    "NO AMD"
-    Optionally("S")
-    " AFT "
-    timeParser.rx
-    Anchor.wordBoundary
-  }
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      "NO AMD"
+      Optionally("S")
+      " AFT "
+      timeParser.rx
+      Anchor.wordBoundary
+    }
+  )
 
   func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }

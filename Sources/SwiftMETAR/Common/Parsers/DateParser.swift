@@ -1,7 +1,7 @@
 import Foundation
 import RegexBuilder
 
-class DayHourMinuteParser {
+final class DayHourMinuteParser: WarmableParser, @unchecked Sendable {
   private let dateRef = Reference<(UInt8, UInt8, UInt8)>()
 
   lazy var rx = Regex {
@@ -24,10 +24,16 @@ class DayHourMinuteParser {
     Optionally("Z")
   }
 
-  private lazy var anchoredRx = Regex {
-    Anchor.startOfSubject
-    rx
-    Anchor.endOfSubject
+  private lazy var anchoredRx = LockedRegex(
+    Regex {
+      Anchor.startOfSubject
+      rx
+      Anchor.endOfSubject
+    }
+  )
+
+  func warmUp() {
+    _ = try? anchoredRx.wholeMatch(in: "")
   }
 
   func parse(_ parts: inout [String.SubSequence], referenceDate: Date? = nil) throws

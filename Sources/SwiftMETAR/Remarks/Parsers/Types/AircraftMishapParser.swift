@@ -1,12 +1,14 @@
 import Foundation
 import RegexBuilder
 
-final class AircraftMishapParser: RemarkParser {
-  private static let rx = Regex {
-    Anchor.wordBoundary
-    "ACFT MSHP"
-    Anchor.wordBoundary
-  }
+final class AircraftMishapParser: RemarkParser, @unchecked Sendable {
+  private static let rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      "ACFT MSHP"
+      Anchor.wordBoundary
+    }
+  )
 
   var urgency = Remark.Urgency.urgent
 

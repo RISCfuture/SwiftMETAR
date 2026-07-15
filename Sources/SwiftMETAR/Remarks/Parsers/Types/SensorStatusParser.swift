@@ -1,7 +1,7 @@
 import Foundation
 import RegexBuilder
 
-final class SensorStatusParser: RemarkParser {
+final class SensorStatusParser: RemarkParser, @unchecked Sendable {
   var urgency = Remark.Urgency.caution
 
   private let sensorRef = Reference<Sensor?>()
@@ -9,30 +9,32 @@ final class SensorStatusParser: RemarkParser {
   private let locationRef = Reference<Substring?>()
 
   // swiftlint:disable force_try
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    ChoiceOf {
-      Capture(as: sensorRef) {
-        try! Sensor.rx
-      } transform: {
-        .init(rawValue: String($0))
-      }
-      Regex {
-        Capture(as: secondarySensorRef) {
-          try! SecondarySensor.rx
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      ChoiceOf {
+        Capture(as: sensorRef) {
+          try! Sensor.rx
         } transform: {
           .init(rawValue: String($0))
         }
-        " "
-        Capture(as: locationRef) {
-          OneOrMore(.word)
-        } transform: {
-          $0
+        Regex {
+          Capture(as: secondarySensorRef) {
+            try! SecondarySensor.rx
+          } transform: {
+            .init(rawValue: String($0))
+          }
+          " "
+          Capture(as: locationRef) {
+            OneOrMore(.word)
+          } transform: {
+            $0
+          }
         }
       }
+      Anchor.wordBoundary
     }
-    Anchor.wordBoundary
-  }
+  )
   // swiftlint:enable force_try
 
   func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {

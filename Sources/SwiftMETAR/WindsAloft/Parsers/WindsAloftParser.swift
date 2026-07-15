@@ -3,16 +3,30 @@ import Foundation
 actor WindsAloftParser {
   static let shared = WindsAloftParser()
 
-  private let headerParser = WindsAloftHeaderParser()
-  private let dataGroupParser = WindsAloftDataGroupParser()
+  nonisolated private static let headerParser = warmed(WindsAloftHeaderParser())
+  nonisolated private static let dataGroupParser = warmed(WindsAloftDataGroupParser())
 
   private init() {}
 
-  func parse(_ string: String, on referenceDate: Date? = nil) throws -> WindsAloft {
+  /// Parses a winds aloft product synchronously. Used by the synchronous
+  /// `Codable` decode path; shares the same cached parsers as the async path.
+  nonisolated static func parseSynchronously(
+    _ string: String,
+    on referenceDate: Date? = nil
+  ) throws -> WindsAloft {
+    try assemble(string, referenceDate: referenceDate)
+  }
+
+  /// The isolation-free parsing core, shared by the async and synchronous
+  /// paths, using the cached shared sub-parsers.
+  nonisolated private static func assemble(
+    _ string: String,
+    referenceDate: Date?
+  ) throws -> WindsAloft {
     var lines = string.components(separatedBy: .newlines)
 
     let (header, basedOn, validAt, usePeriod) =
-      try headerParser.parse(&lines, referenceDate: referenceDate)
+      try Self.headerParser.parse(&lines, referenceDate: referenceDate)
 
     // Skip blank lines before column header
     while let first = lines.first, first.trimmingCharacters(in: .whitespaces).isEmpty {
@@ -56,7 +70,7 @@ actor WindsAloftParser {
 
   // MARK: - Column Layout
 
-  private func parseColumnLayout(_ line: String) throws -> ColumnLayout {
+  nonisolated private static func parseColumnLayout(_ line: String) throws -> ColumnLayout {
     guard line.contains("FT") || line.contains("3000") || line.contains("6000") else {
       throw Error.invalidWindsAloftColumns(line)
     }
@@ -112,7 +126,10 @@ actor WindsAloftParser {
 
   // MARK: - Station Lines
 
-  private func parseStationLine(_ line: String, layout: ColumnLayout) throws -> WindsAloft.Station {
+  nonisolated private static func parseStationLine(
+    _ line: String,
+    layout: ColumnLayout
+  ) throws -> WindsAloft.Station {
     let lineLength = line.count
 
     // Extract station ID from the station range
@@ -136,12 +153,16 @@ actor WindsAloftParser {
         groupStr = ""
       }
 
-      if let entry = try dataGroupParser.parse(groupStr) {
+      if let entry = try Self.dataGroupParser.parse(groupStr) {
         entries.append(.init(altitude: column.altitude, data: entry))
       }
     }
 
     return WindsAloft.Station(id: stationID, entries: entries)
+  }
+
+  func parse(_ string: String, on referenceDate: Date? = nil) throws -> WindsAloft {
+    try Self.assemble(string, referenceDate: referenceDate)
   }
 
   struct ColumnLayout {

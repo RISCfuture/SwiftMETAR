@@ -153,4 +153,61 @@ struct WeatherTests {
     let metar = try await METAR.from(string: string)
     #expect(metar.weather == nil)
   }
+
+  @Test
+  func emitsCanonicalCodedStrings() {
+    #expect(
+      Weather(intensity: .heavy, descriptor: .showering, phenomena: [.rain]).codedString == "+SHRA"
+    )
+    #expect(Weather(intensity: .light, descriptor: nil, phenomena: [.rain]).codedString == "-RA")
+    #expect(
+      Weather(intensity: .vicinity, descriptor: nil, phenomena: [.thunderstorm]).codedString
+        == "VCTS"
+    )
+    #expect(Weather(intensity: .moderate, descriptor: nil, phenomena: [.mist]).codedString == "BR")
+    #expect(
+      Weather(intensity: .heavy, descriptor: .thunderstorms, phenomena: [.rain]).codedString
+        == "+TSRA"
+    )
+    #expect(
+      Weather(intensity: .light, descriptor: .freezing, phenomena: [.rain]).codedString == "-FZRA"
+    )
+    // Phenomena are emitted in Phenomenon declaration order regardless of set order.
+    #expect(
+      Weather(intensity: .moderate, descriptor: nil, phenomena: [.snow, .rain]).codedString
+        == "RASN"
+    )
+    #expect(
+      Weather(intensity: .moderate, descriptor: .thunderstorms, phenomena: [.hail, .rain])
+        .codedString == "TSRAGR"
+    )
+    #expect(
+      Weather(intensity: .vicinity, descriptor: .blowing, phenomena: [.sand]).codedString
+        == "VCBLSA"
+    )
+  }
+
+  @Test(arguments: [
+    Weather(intensity: .heavy, descriptor: .showering, phenomena: [.rain]),
+    Weather(intensity: .light, descriptor: nil, phenomena: [.rain]),
+    Weather(intensity: .vicinity, descriptor: nil, phenomena: [.thunderstorm]),
+    Weather(intensity: .moderate, descriptor: nil, phenomena: [.mist]),
+    Weather(intensity: .heavy, descriptor: .thunderstorms, phenomena: [.rain]),
+    Weather(intensity: .light, descriptor: .freezing, phenomena: [.rain]),
+    Weather(intensity: .moderate, descriptor: nil, phenomena: [.rain, .snow]),
+    Weather(intensity: .vicinity, descriptor: .blowing, phenomena: [.sand]),
+    Weather(intensity: .moderate, descriptor: .thunderstorms, phenomena: [.rain, .hail])
+  ])
+  func roundTripsCodedString(_ weather: Weather) throws {
+    #expect(try Weather(coded: weather.codedString) == weather)
+  }
+
+  @Test
+  func roundTripsThroughCodable() throws {
+    let weather = Weather(intensity: .heavy, descriptor: .thunderstorms, phenomena: [.rain])
+    let data = try JSONEncoder().encode(weather)
+
+    #expect(String(data: data, encoding: .utf8) == #""+TSRA""#)
+    #expect(try JSONDecoder().decode(Weather.self, from: data) == weather)
+  }
 }

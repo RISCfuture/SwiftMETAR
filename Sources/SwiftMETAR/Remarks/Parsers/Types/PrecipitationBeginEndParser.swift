@@ -1,47 +1,53 @@
 import Foundation
 import RegexBuilder
 
-final class PrecipitationBeginEndParser: RemarkParser {
+final class PrecipitationBeginEndParser: RemarkParser, @unchecked Sendable {
   var urgency = Remark.Urgency.routine
 
   private let typeRef = Reference<Remark.EventType>()
   private let timeParser = HourMinuteParser()
   // swiftlint:disable force_try
-  private lazy var timeRx = Regex {
-    Capture(as: typeRef) {
-      try! Remark.EventType.rx
-    } transform: {
-      .init(rawValue: String($0))!
+  private lazy var timeRx = LockedRegex(
+    Regex {
+      Capture(as: typeRef) {
+        try! Remark.EventType.rx
+      } transform: {
+        .init(rawValue: String($0))!
+      }
+      timeParser.hourOptionalRx
     }
-    timeParser.hourOptionalRx
-  }
+  )
   // swiftlint:enable force_try
 
   private let descriptorRef = Reference<Weather.Descriptor?>()
   private let phenomenonRef = Reference<Weather.Phenomenon>()
   private let timesRef = Reference<Substring>()
   // swiftlint:disable force_try
-  private lazy var eventRx = Regex {
-    Capture(as: descriptorRef) {
-      try! Optionally(Weather.Descriptor.rx)
-    } transform: {
-      .init(rawValue: String($0))
+  private lazy var eventRx = LockedRegex(
+    Regex {
+      Capture(as: descriptorRef) {
+        try! Optionally(Weather.Descriptor.rx)
+      } transform: {
+        .init(rawValue: String($0))
+      }
+      Capture(as: phenomenonRef) {
+        try! Weather.Phenomenon.rx
+      } transform: {
+        .init(rawValue: String($0))!
+      }
+      Capture(as: timesRef) { OneOrMore(timeRx.composable) }
     }
-    Capture(as: phenomenonRef) {
-      try! Weather.Phenomenon.rx
-    } transform: {
-      .init(rawValue: String($0))!
-    }
-    Capture(as: timesRef) { OneOrMore(timeRx) }
-  }
+  )
   // swiftlint:enable force_try
 
   private let eventsRef = Reference<Substring>()
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    Capture(as: eventsRef) { OneOrMore(eventRx) }
-    Anchor.wordBoundary
-  }
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      Capture(as: eventsRef) { OneOrMore(eventRx.composable) }
+      Anchor.wordBoundary
+    }
+  )
 
   func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }
@@ -64,7 +70,7 @@ final class PrecipitationBeginEndParser: RemarkParser {
   private func parseEvents(from string: String, referenceDate: Date?, originalString: String) throws
     -> [Remark.PrecipitationEvent]
   {
-    let result = string.matches(of: eventRx)
+    let result = eventRx.allMatches(in: string)
     guard !result.isEmpty else { return [] }
 
     var events = [Remark.PrecipitationEvent]()
@@ -99,7 +105,7 @@ final class PrecipitationBeginEndParser: RemarkParser {
   private func parseTimes(from string: String, referenceDate: Date?, originalString: String) throws
     -> [(Remark.EventType, DateComponents)]
   {
-    let result = string.matches(of: timeRx)
+    let result = timeRx.allMatches(in: string)
     guard !result.isEmpty else { return [] }
     return try result.map { match in
       let type = match[typeRef]

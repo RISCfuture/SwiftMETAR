@@ -1,15 +1,15 @@
 import Foundation
 import RegexBuilder
 
-class WindParser {
-  let directionRef = Reference<DirectionString>()
-  let direction1Ref = Reference<UInt16?>()
-  let direction2Ref = Reference<UInt16?>()
-  let speedRef = Reference<UInt16>()
-  let gustRef = Reference<UInt16?>()
-  let unitRef = Reference<Substring>()
+enum WindParser {
+  static let directionRef = Reference<DirectionString>()
+  static let direction1Ref = Reference<UInt16?>()
+  static let direction2Ref = Reference<UInt16?>()
+  static let speedRef = Reference<UInt16>()
+  static let gustRef = Reference<UInt16?>()
+  static let unitRef = Reference<Substring>()
 
-  lazy var noAnchorRx = Regex {
+  static let noAnchorRx = Regex {
     Capture(as: directionRef) {
       ChoiceOf {
         Repeat(.digit, count: 3)
@@ -43,28 +43,34 @@ class WindParser {
       }
     }
   }
-  private lazy var rx = Regex {
-    Anchor.startOfSubject
-    noAnchorRx
-    Anchor.endOfSubject
-  }
-  private lazy var variableRx = Regex {
-    Anchor.startOfSubject
-    Capture(as: direction1Ref) {
-      Repeat(.digit, count: 3)
-    } transform: {
-      .init($0)
-    }
-    "V"
-    Capture(as: direction2Ref) {
-      Repeat(.digit, count: 3)
-    } transform: {
-      .init($0)
-    }
-    Anchor.endOfSubject
-  }
 
-  func parse(_ parts: inout [String.SubSequence]) throws -> Wind? {
+  private static let rx = LockedRegex(
+    Regex {
+      Anchor.startOfSubject
+      noAnchorRx
+      Anchor.endOfSubject
+    }
+  )
+
+  private static let variableRx = LockedRegex(
+    Regex {
+      Anchor.startOfSubject
+      Capture(as: direction1Ref) {
+        Repeat(.digit, count: 3)
+      } transform: {
+        .init($0)
+      }
+      "V"
+      Capture(as: direction2Ref) {
+        Repeat(.digit, count: 3)
+      } transform: {
+        .init($0)
+      }
+      Anchor.endOfSubject
+    }
+  )
+
+  static func parse(_ parts: inout [String.SubSequence]) throws -> Wind? {
     guard !parts.isEmpty else { return nil }
     let dirAndSpeed = String(parts[0])
 
@@ -116,7 +122,7 @@ class WindParser {
     }
   }
 
-  func parse<T>(match: Regex<T>.Match, originalString: String) throws -> Wind {
+  static func parse<T>(match: Regex<T>.Match, originalString: String) throws -> Wind {
     let speedValue = match[speedRef]
     let speed: Wind.Speed =
       switch match[unitRef] {
@@ -146,7 +152,7 @@ class WindParser {
     }
   }
 
-  private func parseDirectionRange(
+  private static func parseDirectionRange(
     _ parts: inout [String.SubSequence],
     rangeSeq: String.SubSequence
   ) throws -> (UInt16, UInt16)? {

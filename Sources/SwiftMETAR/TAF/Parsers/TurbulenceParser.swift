@@ -1,41 +1,43 @@
 import Foundation
 import RegexBuilder
 
-class TurbulenceParser {
-  private let typeRef = Reference<Character>()
-  private let baseRef = Reference<UInt>()
-  private let depthRef = Reference<UInt>()
+final class TurbulenceParser: WarmableParser, @unchecked Sendable {
+  private static let typeRef = Reference<Character>()
+  private static let baseRef = Reference<UInt>()
+  private static let depthRef = Reference<UInt>()
 
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    "5"
-    Capture(as: typeRef) {
-      CharacterClass("0"..."9", .anyOf("X"))
-    } transform: {
-      $0.first!
+  private static let rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      "5"
+      Capture(as: typeRef) {
+        CharacterClass("0"..."9", .anyOf("X"))
+      } transform: {
+        $0.first!
+      }
+      Capture(as: baseRef) {
+        Repeat(.digit, count: 3)
+      } transform: {
+        .init($0)! * 100
+      }
+      Capture(as: depthRef) {
+        .digit
+      } transform: {
+        .init($0)! * 1000
+      }
+      Anchor.wordBoundary
     }
-    Capture(as: baseRef) {
-      Repeat(.digit, count: 3)
-    } transform: {
-      .init($0)! * 100
-    }
-    Capture(as: depthRef) {
-      .digit
-    } transform: {
-      .init($0)! * 1000
-    }
-    Anchor.wordBoundary
-  }
+  )
 
   func parse(_ parts: inout [String.SubSequence]) throws -> Turbulence? {
     guard !parts.isEmpty else { return nil }
     let turbStr = String(parts[0])
-    guard let result = try rx.wholeMatch(in: turbStr) else { return nil }
+    guard let result = try Self.rx.wholeMatch(in: turbStr) else { return nil }
     parts.removeFirst()
 
-    let type = result[typeRef]
-    let base = result[baseRef]
-    let depth = result[depthRef]
+    let type = result[Self.typeRef]
+    let base = result[Self.baseRef]
+    let depth = result[Self.depthRef]
 
     var intensity = Turbulence.Intensity.none
     var location: Turbulence.Location?

@@ -10,7 +10,7 @@ import Foundation
  that is forecasted during that valid period.
  */
 
-public struct TAF: Codable, Sendable {
+public struct TAF: Sendable {
 
   /// The raw text of the TAF.
   public let text: String?
@@ -250,7 +250,7 @@ public struct TAF: Codable, Sendable {
     public var remarksString: String?
 
     /// A valid period for a TAF or one of its groups.
-    public enum Period: Codable, Equatable, Sendable {
+    public enum Period: CodedRepresentable, Equatable, Sendable {
 
       /**
        Forecast is valid between two dates.
@@ -290,32 +290,56 @@ public struct TAF: Codable, Sendable {
        */
       case probability(_ probability: UInt8, period: DateComponentsInterval)
 
-      public init(from decoder: Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        switch try container.decode(String.self, forKey: .type) {
-          case "":
-            let period = try container.decode(DateComponentsInterval.self, forKey: .period)
-            self = .range(period)
-          case "FM":
-            let from = try container.decode(DateComponents.self, forKey: .from)
-            self = .from(from)
-          case "TEMPO":
-            let period = try container.decode(DateComponentsInterval.self, forKey: .period)
-            self = .temporary(period)
-          case "BCMG":
-            let period = try container.decode(DateComponentsInterval.self, forKey: .period)
-            self = .becoming(period)
-          case "PROB":
-            let probability = try container.decode(UInt8.self, forKey: .probability)
-            let period = try container.decode(DateComponentsInterval.self, forKey: .period)
-            self = .probability(probability, period: period)
-          default:
-            throw DecodingError.dataCorruptedError(
-              forKey: .type,
-              in: container,
-              debugDescription: "Unknown enum value"
-            )
+      /**
+       The coded representation of this period, e.g. `"2515/2615"` for a range,
+       `"FM261500"` for a `from`, `"TEMPO 2515/2615"`, `"BECMG 2515/2615"`, or
+       `"PROB30 2515/2615"`. Dates carry only day, hour, and (for `from`)
+       minute; the month and year are not encoded.
+       */
+      public var codedString: String {
+        switch self {
+          case .range(let period): Self.coded(period)
+          case .from(let from): "FM\(Self.dayHourMinute(from))"
+          case .temporary(let period): "TEMPO \(Self.coded(period))"
+          case .becoming(let period): "BECMG \(Self.coded(period))"
+          case let .probability(probability, period):
+            "PROB\(String(format: "%02d", probability)) \(Self.coded(period))"
         }
+      }
+
+      /**
+       Parses a coded forecast period, e.g. `"2515/2615"` or `"FM261500"`.
+
+       Because no reference date is available, the resulting components carry the
+       coded day and hour (and minute) but resolve their month and year against
+       the current date.
+
+       - Parameter coded: The coded string.
+       - Throws: ``Error/invalidPeriod(_:)`` if `coded` is not a valid period.
+       */
+      public init(coded: String) throws {
+        var parts = coded.split(whereSeparator: \.isWhitespace)
+        guard let period = try PeriodParser().parse(&parts), parts.isEmpty else {
+          throw Error.invalidPeriod(coded)
+        }
+        self = period
+      }
+
+      private static func coded(_ period: DateComponentsInterval) -> String {
+        "\(dayHour(period.start))/\(dayHour(period.end))"
+      }
+
+      private static func dayHour(_ components: DateComponents) -> String {
+        String(format: "%02d%02d", components.day ?? 0, components.hour ?? 0)
+      }
+
+      private static func dayHourMinute(_ components: DateComponents) -> String {
+        String(
+          format: "%02d%02d%02d",
+          components.day ?? 0,
+          components.hour ?? 0,
+          components.minute ?? 0
+        )
       }
 
       public static func == (lhs: Self, rhs: Self) -> Bool {
@@ -336,32 +360,6 @@ public struct TAF: Codable, Sendable {
             guard case let .probability(rhsProb, rhsPeriod) = rhs else { return false }
             return lhsProb == rhsProb && lhsPeriod == rhsPeriod
         }
-      }
-
-      public func encode(to encoder: Encoder) throws {
-        var container = encoder.container(keyedBy: CodingKeys.self)
-        switch self {
-          case .range(let period):
-            try container.encode("", forKey: .type)
-            try container.encode(period, forKey: .period)
-          case .from(let from):
-            try container.encode("FM", forKey: .type)
-            try container.encode(from, forKey: .from)
-          case .temporary(let period):
-            try container.encode("TEMPO", forKey: .type)
-            try container.encode(period, forKey: .period)
-          case .becoming(let period):
-            try container.encode("BCMG", forKey: .type)
-            try container.encode(period, forKey: .period)
-          case let .probability(probability, period):
-            try container.encode("PROB", forKey: .type)
-            try container.encode(probability, forKey: .probability)
-            try container.encode(period, forKey: .period)
-        }
-      }
-
-      enum CodingKeys: String, CodingKey {
-        case type, probability, from, period
       }
     }
   }

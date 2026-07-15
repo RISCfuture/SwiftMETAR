@@ -1,92 +1,96 @@
 import Foundation
 import RegexBuilder
 
-class RVRParser {
-  private let runwayRef = Reference<Substring>()
-  private let signRef = Reference<Character?>()
-  private let sign1Ref = Reference<Character?>()
-  private let sign2Ref = Reference<Character?>()
-  private let distanceRef = Reference<UInt16>()
-  private let distance1Ref = Reference<UInt16>()
-  private let distance2Ref = Reference<UInt16>()
-  private let unitRef = Reference<Substring>()
+final class RVRParser: WarmableParser, @unchecked Sendable {
+  private static let runwayRef = Reference<Substring>()
+  private static let signRef = Reference<Character?>()
+  private static let sign1Ref = Reference<Character?>()
+  private static let sign2Ref = Reference<Character?>()
+  private static let distanceRef = Reference<UInt16>()
+  private static let distance1Ref = Reference<UInt16>()
+  private static let distance2Ref = Reference<UInt16>()
+  private static let unitRef = Reference<Substring>()
 
-  private lazy var runwayRx = Regex {
+  private static let runwayRx = Regex {
     "R"
-    Capture(as: runwayRef) {
+    Capture(as: RVRParser.runwayRef) {
       OneOrMore { CharacterClass("A"..."Z", "0"..."9") }
     }
   }
-  private lazy var visRx = Regex {
-    Anchor.startOfSubject
-    runwayRx
-    "/"
-    Capture(as: signRef) {
-      Optionally {
+  private static let visRx = LockedRegex(
+    Regex {
+      Anchor.startOfSubject
+      RVRParser.runwayRx
+      "/"
+      Capture(as: RVRParser.signRef) {
+        Optionally {
+          ChoiceOf {
+            "M"
+            "P"
+          }
+        }
+      } transform: {
+        $0.first
+      }
+      Capture(as: RVRParser.distanceRef) {
+        Repeat(.digit, 1...4)
+      } transform: {
+        .init($0)!
+      }
+      Capture(as: RVRParser.unitRef) {
         ChoiceOf {
+          "FT"
           "M"
-          "P"
         }
       }
-    } transform: {
-      $0.first
+      Anchor.endOfSubject
     }
-    Capture(as: distanceRef) {
-      Repeat(.digit, 1...4)
-    } transform: {
-      .init($0)!
-    }
-    Capture(as: unitRef) {
-      ChoiceOf {
-        "FT"
-        "M"
+  )
+  private static let variableRx = LockedRegex(
+    Regex {
+      Anchor.startOfSubject
+      RVRParser.runwayRx
+      "/"
+      Capture(as: RVRParser.sign1Ref) {
+        Optionally {
+          ChoiceOf {
+            "M"
+            "P"
+          }
+        }
+      } transform: {
+        $0.first
       }
-    }
-    Anchor.endOfSubject
-  }
-  private lazy var variableRx = Regex {
-    Anchor.startOfSubject
-    runwayRx
-    "/"
-    Capture(as: sign1Ref) {
-      Optionally {
+      Capture(as: RVRParser.distance1Ref) {
+        Repeat(.digit, 1...4)
+      } transform: {
+        .init($0)!
+      }
+      "V"
+      Capture(as: RVRParser.sign2Ref) {
+        Optionally {
+          ChoiceOf {
+            "M"
+            "P"
+          }
+        }
+      } transform: {
+        $0.first
+      }
+      Capture(as: RVRParser.distance2Ref) {
+        Repeat(.digit, 1...4)
+      } transform: {
+        .init($0)!
+      }
+      Capture(as: RVRParser.unitRef) {
         ChoiceOf {
+          "FT"
           "M"
-          "P"
         }
       }
-    } transform: {
-      $0.first
+      Anchor.endOfSubject
     }
-    Capture(as: distance1Ref) {
-      Repeat(.digit, 1...4)
-    } transform: {
-      .init($0)!
-    }
-    "V"
-    Capture(as: sign2Ref) {
-      Optionally {
-        ChoiceOf {
-          "M"
-          "P"
-        }
-      }
-    } transform: {
-      $0.first
-    }
-    Capture(as: distance2Ref) {
-      Repeat(.digit, 1...4)
-    } transform: {
-      .init($0)!
-    }
-    Capture(as: unitRef) {
-      ChoiceOf {
-        "FT"
-        "M"
-      }
-    }
-    Anchor.endOfSubject
-  }
+  )
 
   func parse(_ parts: inout [String.SubSequence]) throws -> [RunwayVisibility] {
     var visibilities = [RunwayVisibility]()
@@ -94,25 +98,25 @@ class RVRParser {
     while true {
       if parts.isEmpty { return visibilities }
 
-      if let match = try visRx.wholeMatch(in: parts[0]) {
+      if let match = try Self.visRx.wholeMatch(in: parts[0]) {
         parts.removeFirst()
 
-        let runway = match[runwayRef]
-        let bound = match[signRef]
-        let quantity = match[distanceRef]
-        let units = match[unitRef]
+        let runway = match[Self.runwayRef]
+        let bound = match[Self.signRef]
+        let quantity = match[Self.distanceRef]
+        let units = match[Self.unitRef]
 
         let value = visibilityValue(quantity, bound: bound, units: units)
         visibilities.append(RunwayVisibility(runwayID: String(runway), visibility: value))
-      } else if let match = try variableRx.wholeMatch(in: parts[0]) {
+      } else if let match = try Self.variableRx.wholeMatch(in: parts[0]) {
         parts.removeFirst()
 
-        let runway = match[runwayRef]
-        let lowBound = match[sign1Ref]
-        let lowQuantity = match[distance1Ref]
-        let highBound = match[sign2Ref]
-        let highQuantity = match[distance2Ref]
-        let units = match[unitRef]
+        let runway = match[Self.runwayRef]
+        let lowBound = match[Self.sign1Ref]
+        let lowQuantity = match[Self.distance1Ref]
+        let highBound = match[Self.sign2Ref]
+        let highQuantity = match[Self.distance2Ref]
+        let units = match[Self.unitRef]
 
         let low = visibilityValue(lowQuantity, bound: lowBound, units: units)
         let high = visibilityValue(highQuantity, bound: highBound, units: units)

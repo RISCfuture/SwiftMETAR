@@ -1,17 +1,19 @@
 import Foundation
 import RegexBuilder
 
-final class HailstoneSizeParser: RemarkParser {
+final class HailstoneSizeParser: RemarkParser, @unchecked Sendable {
   var urgency = Remark.Urgency.urgent
 
   private let sizeParser = FractionParser()
 
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    "GR "
-    sizeParser.rx
-    Anchor.wordBoundary
-  }
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      "GR "
+      sizeParser.rx
+      Anchor.wordBoundary
+    }
+  )
 
   func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }

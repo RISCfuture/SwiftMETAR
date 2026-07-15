@@ -3,28 +3,48 @@ import Foundation
 actor TAFParser {
   static let shared = TAFParser()
 
-  private let periodParser = PeriodParser()
-  private let windParser = WindParser()
-  private let visibilityParser = VisibilityParser()
-  private let weatherParser = WeatherParser()
-  private let conditionsParser = ConditionsParser()
-  private let windshearParser = WindshearParser()
-  private let icingParser = IcingParser()
-  private let turbulenceParser = TurbulenceParser()
-  private let altimeterParser = AltimeterParser()
-  private let temperatureParser = TAFTemperatureParser()
+  nonisolated private static let periodParser = warmed(PeriodParser())
+  nonisolated private static let visibilityParser = warmed(VisibilityParser())
+  nonisolated private static let weatherParser = warmed(WeatherParser())
+  nonisolated private static let conditionsParser = warmed(ConditionsParser())
+  nonisolated private static let windshearParser = warmed(WindshearParser())
+  nonisolated private static let icingParser = warmed(IcingParser())
+  nonisolated private static let turbulenceParser = warmed(TurbulenceParser())
+  nonisolated private static let altimeterParser = warmed(AltimeterParser())
+  nonisolated private static let temperatureParser = warmed(TAFTemperatureParser())
+  nonisolated private static let dateParser = warmed(DayHourMinuteParser())
 
   private init() {}
 
-  func parse(_ codedTAF: String, on referenceDate: Date? = nil) async throws -> TAF {
+  /// Parses a TAF synchronously. Used by the synchronous `Codable` decode path; shares
+  /// the same cached parsers as the async path.
+  static func parseSynchronously(_ codedTAF: String, on referenceDate: Date? = nil) throws -> TAF {
+    try assemble(codedTAF, referenceDate: referenceDate) { parts, date, lenient in
+      try RemarksParser.parse(
+        &parts,
+        using: RemarksParser.sharedParsers,
+        date: date,
+        lenientRemarks: lenient
+      )
+    }
+  }
+
+  /// The isolation-free parsing core, shared by the async and synchronous paths.
+  /// Only `parseRemarks` differs between callers.
+  private static func assemble(
+    _ codedTAF: String,
+    referenceDate: Date?,
+    parseRemarks: (_ parts: inout [Substring], _ date: DateComponents, _ lenient: Bool) throws -> (
+      [RemarkEntry], String?
+    )
+  ) throws -> TAF {
     var parts = codedTAF.split(separator: .whitespacesAndNewlines)
 
     let issuance = try parseIssuance(&parts)
     let locationID = try parseLocationID(&parts)
-    let dateParser = DayHourMinuteParser()
     let date: DateComponents? =
       if try dateParser.matchesNext(parts) {
-        try DayHourMinuteParser().parse(&parts, referenceDate: referenceDate)
+        try dateParser.parse(&parts, referenceDate: referenceDate)
       } else {
         nil
       }
@@ -42,10 +62,10 @@ actor TAFParser {
       if let period = try periodParser.parse(&parts, referenceDate: date?.date) {
         if !pendingGroupRemarks.isEmpty {
           guard !groups.isEmpty else { throw Error.badFormat }
-          let (lastGroupRemarks, lastGroupRemarksStr) = try await RemarksParser.shared.parse(
+          let (lastGroupRemarks, lastGroupRemarksStr) = try parseRemarks(
             &pendingGroupRemarks,
-            date: refDateForRemarks,
-            lenientRemarks: true
+            refDateForRemarks,
+            true
           )
           groups.indices.last.map { i in
             groups[i].remarks = lastGroupRemarks
@@ -53,7 +73,7 @@ actor TAFParser {
           }
         }
 
-        let wind = try windParser.parse(&parts)
+        let wind = try WindParser.parse(&parts)
 
         let visibility = try visibilityParser.parse(&parts)
 
@@ -97,10 +117,10 @@ actor TAFParser {
       } else if let temps = try temperatureParser.parse(&parts, date: refDateForRemarks) {
         if !pendingGroupRemarks.isEmpty {
           guard !groups.isEmpty else { throw Error.badFormat }
-          let (lastGroupRemarks, lastGroupRemarksStr) = try await RemarksParser.shared.parse(
+          let (lastGroupRemarks, lastGroupRemarksStr) = try parseRemarks(
             &pendingGroupRemarks,
-            date: refDateForRemarks,
-            lenientRemarks: true
+            refDateForRemarks,
+            true
           )
           groups.indices.last.map { i in
             groups[i].remarks = lastGroupRemarks
@@ -112,11 +132,7 @@ actor TAFParser {
 
         temperatures = temps
       } else if parts.first == "RMK" {
-        (TAFRemarks, TAFRemarksString) = try await RemarksParser.shared.parse(
-          &parts,
-          date: refDateForRemarks,
-          lenientRemarks: false
-        )
+        (TAFRemarks, TAFRemarksString) = try parseRemarks(&parts, refDateForRemarks, false)
       } else {
         pendingGroupRemarks.append(parts.removeFirst())
       }
@@ -134,7 +150,59 @@ actor TAFParser {
     )
   }
 
-  private func parseIssuance(_ parts: inout [String.SubSequence]) throws -> TAF.Issuance {
+  /// Parses a single forecast group from its coded string (e.g.
+  /// `"FM130200 05005KT P6SM SCT040"`), synchronously. Used by
+  /// `TAF.Group.init(coded:)`.
+  static func parseGroup(_ coded: String) throws -> TAF.Group {
+    var parts = coded.split(separator: .whitespacesAndNewlines)
+    guard let period = try periodParser.parse(&parts, referenceDate: nil) else {
+      throw Error.invalidPeriod(coded)
+    }
+
+    let wind = try WindParser.parse(&parts)
+    let visibility = try visibilityParser.parse(&parts)
+    let weather = try weatherParser.parse(&parts)
+    let conditions = try conditionsParser.parse(&parts)
+    let windshear = try windshearParser.parse(&parts)
+    let windshearConditions = try parseWindshearConditions(&parts)
+
+    var icing = [Icing]()
+    while let forecast = try icingParser.parse(&parts) { icing.append(forecast) }
+    var turbulence = [Turbulence]()
+    while let forecast = try turbulenceParser.parse(&parts) { turbulence.append(forecast) }
+
+    let altimeter = try altimeterParser.parseTAF(&parts)
+
+    var remarks = [RemarkEntry]()
+    var remarksString: String?
+    if !parts.isEmpty {
+      let date = zuluCal.dateComponents(in: zulu, from: Date())
+      (remarks, remarksString) = try RemarksParser.parse(
+        &parts,
+        using: RemarksParser.sharedParsers,
+        date: date,
+        lenientRemarks: true
+      )
+    }
+
+    return TAF.Group(
+      text: coded,
+      period: period,
+      wind: wind,
+      visibility: visibility,
+      weather: weather,
+      conditions: conditions,
+      windshear: windshear,
+      windshearConditions: windshearConditions,
+      icing: icing,
+      turbulence: turbulence,
+      altimeter: altimeter,
+      remarks: remarks,
+      remarksString: remarksString
+    )
+  }
+
+  private static func parseIssuance(_ parts: inout [String.SubSequence]) throws -> TAF.Issuance {
     guard !parts.isEmpty else { throw Error.badFormat }
 
     if parts[0] != "TAF" { return .routine }
@@ -150,6 +218,17 @@ actor TAFParser {
         return .corrected
       default:
         return .routine
+    }
+  }
+
+  func parse(_ codedTAF: String, on referenceDate: Date? = nil) throws -> TAF {
+    try Self.assemble(codedTAF, referenceDate: referenceDate) { parts, date, lenient in
+      try RemarksParser.parse(
+        &parts,
+        using: RemarksParser.sharedParsers,
+        date: date,
+        lenientRemarks: lenient
+      )
     }
   }
 }

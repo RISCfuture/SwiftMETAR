@@ -23,4 +23,31 @@ struct IcingConditionsTests {
     )
     #expect(forecast.groups[2].icing.isEmpty)
   }
+
+  @Test
+  func emitsCanonicalCodedStrings() {
+    #expect(Icing(type: .lightRime, base: 3000, depth: 4000).codedString == "620304")
+    #expect(Icing(type: .lightMixed, base: 9000, depth: 9000).codedString == "610909")
+    #expect(Icing(type: .traceNone, base: 0, depth: 0).codedString == "600000")
+    #expect(Icing(type: .severeClear, base: 9900, depth: 9000).codedString == "690999")
+  }
+
+  @Test(arguments: [
+    Icing(type: .lightRime, base: 3000, depth: 4000),
+    Icing(type: .lightMixed, base: 9000, depth: 9000),
+    Icing(type: .traceNone, base: 0, depth: 0),
+    Icing(type: .severeClear, base: 9900, depth: 9000)
+  ])
+  func roundTripsCodedString(_ icing: Icing) throws {
+    #expect(try Icing(coded: icing.codedString) == icing)
+  }
+
+  @Test
+  func roundTripsThroughCodable() throws {
+    let icing = Icing(type: .lightRime, base: 3000, depth: 4000)
+    let data = try JSONEncoder().encode(icing)
+
+    #expect(String(data: data, encoding: .utf8) == #""620304""#)
+    #expect(try JSONDecoder().decode(Icing.self, from: data) == icing)
+  }
 }

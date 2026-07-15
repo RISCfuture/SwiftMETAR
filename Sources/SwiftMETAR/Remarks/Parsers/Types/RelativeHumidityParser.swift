@@ -1,20 +1,22 @@
 import Foundation
 import RegexBuilder
 
-final class RelativeHumidityParser: RemarkParser {
+final class RelativeHumidityParser: RemarkParser, @unchecked Sendable {
   var urgency = Remark.Urgency.routine
 
   private let humidityRef = Reference<UInt>()
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    "RH/"
-    Capture(as: humidityRef) {
-      Repeat(.digit, 1...3)
-    } transform: {
-      .init($0)!
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      "RH/"
+      Capture(as: humidityRef) {
+        Repeat(.digit, 1...3)
+      } transform: {
+        .init($0)!
+      }
+      Anchor.wordBoundary
     }
-    Anchor.wordBoundary
-  }
+  )
 
   func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }

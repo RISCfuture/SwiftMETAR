@@ -1,7 +1,7 @@
 import Foundation
 import RegexBuilder
 
-class WindsAloftHeaderParser {
+final class WindsAloftHeaderParser: WarmableParser, @unchecked Sendable {
 
   private let dayHourMinuteParser = DayHourMinuteParser()
   private let hourMinutePeriodParser = HourMinutePeriodParser()
@@ -11,31 +11,43 @@ class WindsAloftHeaderParser {
   private let productIDRef = Reference<Substring>()
   private let issuingOfficeRef = Reference<Substring>()
 
-  private lazy var wmoRx = Regex {
-    Capture(as: productIDRef) { OneOrMore(.word) }
-    OneOrMore(.whitespace)
-    Capture(as: issuingOfficeRef) { OneOrMore(.word) }
-    OneOrMore(.whitespace)
-    dayHourMinuteParser.rx
-  }
+  private lazy var wmoRx = LockedRegex(
+    Regex {
+      Capture(as: productIDRef) { OneOrMore(.word) }
+      OneOrMore(.whitespace)
+      Capture(as: issuingOfficeRef) { OneOrMore(.word) }
+      OneOrMore(.whitespace)
+      dayHourMinuteParser.rx
+    }
+  )
 
   // MARK: - "DATA BASED ON 031800Z"
 
-  private lazy var basedOnRx = Regex {
-    "DATA BASED ON "
-    dayHourMinuteParser.rx
-  }
+  private lazy var basedOnRx = LockedRegex(
+    Regex {
+      "DATA BASED ON "
+      dayHourMinuteParser.rx
+    }
+  )
 
   // MARK: - "VALID 040000Z   FOR USE 2000-0300Z. TEMPS NEG ABV 24000"
 
-  private lazy var validLineRx = Regex {
-    "VALID "
-    dayHourMinuteParser.rx
-    OneOrMore(.whitespace)
-    "FOR USE "
-    hourMinutePeriodParser.rx
-    "."
-    Optionally { OneOrMore(.any) }
+  private lazy var validLineRx = LockedRegex(
+    Regex {
+      "VALID "
+      dayHourMinuteParser.rx
+      OneOrMore(.whitespace)
+      "FOR USE "
+      hourMinutePeriodParser.rx
+      "."
+      Optionally { OneOrMore(.any) }
+    }
+  )
+
+  func warmUp() {
+    _ = try? wmoRx.firstMatch(in: "")
+    _ = try? basedOnRx.firstMatch(in: "")
+    _ = try? validLineRx.firstMatch(in: "")
   }
 
   /// Parses the header lines of a winds aloft product and returns a

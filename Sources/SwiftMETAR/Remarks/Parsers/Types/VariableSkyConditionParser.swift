@@ -1,7 +1,7 @@
 import Foundation
 import RegexBuilder
 
-final class VariableSkyConditionParser: RemarkParser {
+final class VariableSkyConditionParser: RemarkParser, @unchecked Sendable {
   var urgency = Remark.Urgency.routine
 
   private let coverage1Ref = Reference<Remark.Coverage>()
@@ -9,28 +9,30 @@ final class VariableSkyConditionParser: RemarkParser {
   private let heightRef = Reference<UInt?>()
 
   // swiftlint:disable force_try
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    Capture(as: coverage1Ref) {
-      try! Remark.Coverage.rx
-    } transform: {
-      .init(rawValue: String($0))!
-    }
-    Optionally {
-      Capture(as: heightRef) {
-        Repeat(.digit, count: 3)
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      Capture(as: coverage1Ref) {
+        try! Remark.Coverage.rx
       } transform: {
-        .init($0)
+        .init(rawValue: String($0))!
       }
+      Optionally {
+        Capture(as: heightRef) {
+          Repeat(.digit, count: 3)
+        } transform: {
+          .init($0)
+        }
+      }
+      " V "
+      Capture(as: coverage2Ref) {
+        try! Remark.Coverage.rx
+      } transform: {
+        .init(rawValue: String($0))!
+      }
+      Anchor.wordBoundary
     }
-    " V "
-    Capture(as: coverage2Ref) {
-      try! Remark.Coverage.rx
-    } transform: {
-      .init(rawValue: String($0))!
-    }
-    Anchor.wordBoundary
-  }
+  )
   // swiftlint:enable force_try
 
   func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {

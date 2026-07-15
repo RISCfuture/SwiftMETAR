@@ -1,7 +1,7 @@
 import Foundation
 
 /// A report on the condition and strength of the winds.
-public enum Wind: Codable, Equatable, Sendable {
+public enum Wind: CodedRepresentable, Equatable, Sendable {
 
   /// No winds detected, or variable winds with speed under 3 knots.
   case calm
@@ -42,44 +42,42 @@ public enum Wind: Codable, Equatable, Sendable {
     gust: Speed? = nil
   )
 
-  public init(from decoder: Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    switch try container.decode(String.self, forKey: .type) {
-      case "calm":
-        self = .calm
-      case "variable":
-        let speed = try container.decode(Speed.self, forKey: .speed)
-        let headingLow = try container.decode(Optional<UInt16>.self, forKey: .headingLow)
-        let headingHigh = try container.decode(Optional<UInt16>.self, forKey: .headingHigh)
-        if let headingLow, let headingHigh {
-          self = .variable(speed: speed, headingRange: (headingLow, headingHigh))
-        } else {
-          self = .variable(speed: speed)
-        }
-      case "direction":
-        let speed = try container.decode(Speed.self, forKey: .speed)
-        let gust = try container.decode(Optional<Speed>.self, forKey: .gust)
-        let heading = try container.decode(UInt16.self, forKey: .heading)
-        self = .direction(heading, speed: speed, gust: gust)
-      case "range":
-        let speed = try container.decode(Speed.self, forKey: .speed)
-        let gust = try container.decode(Optional<Speed>.self, forKey: .gust)
-        let heading = try container.decode(UInt16.self, forKey: .heading)
-        let headingLow = try container.decode(UInt16.self, forKey: .headingLow)
-        let headingHigh = try container.decode(UInt16.self, forKey: .headingHigh)
-        self = .directionRange(
-          heading,
-          headingRange: (headingLow, headingHigh),
-          speed: speed,
-          gust: gust
-        )
-      default:
-        throw DecodingError.dataCorruptedError(
-          forKey: .type,
-          in: container,
-          debugDescription: "Unknown enum value"
-        )
+  /**
+   The coded representation of these winds, e.g. `"03015KT"`, `"03015G25KT"`,
+   `"VRB02KT"`, or `"00000KT"` for calm. Direction ranges append the variable
+   group as a second token, e.g. `"28025G37KT 250V310"`.
+   */
+  public var codedString: String {
+    switch self {
+      case .calm:
+        return "00000KT"
+      case let .variable(speed, headingRange):
+        let base = "VRB\(speed.speedDigits)\(speed.unitCode)"
+        guard let headingRange else { return base }
+        return "\(base) \(Self.heading(headingRange.0))V\(Self.heading(headingRange.1))"
+      case let .direction(heading, speed, gust):
+        return "\(Self.heading(heading))\(Self.speedGroup(speed, gust: gust))\(speed.unitCode)"
+      case let .directionRange(heading, headingRange, speed, gust):
+        let base = "\(Self.heading(heading))\(Self.speedGroup(speed, gust: gust))\(speed.unitCode)"
+        return "\(base) \(Self.heading(headingRange.0))V\(Self.heading(headingRange.1))"
     }
+  }
+
+  public init(coded: String) throws {
+    var parts = coded.split(whereSeparator: \.isWhitespace)
+    guard let wind = try WindParser.parse(&parts), parts.isEmpty else {
+      throw Error.invalidWinds(coded)
+    }
+    self = wind
+  }
+
+  private static func heading(_ value: UInt16) -> String {
+    String(format: "%03d", value)
+  }
+
+  private static func speedGroup(_ speed: Speed, gust: Speed?) -> String {
+    guard let gust else { return speed.speedDigits }
+    return "\(speed.speedDigits)G\(gust.speedDigits)"
   }
 
   public static func == (lhs: Self, rhs: Self) -> Bool {
@@ -102,39 +100,8 @@ public enum Wind: Codable, Equatable, Sendable {
     }
   }
 
-  public func encode(to encoder: Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
-    switch self {
-      case .calm:
-        try container.encode("calm", forKey: .type)
-      case let .variable(speed, headingRange):
-        try container.encode("variable", forKey: .type)
-        try container.encode(speed, forKey: .speed)
-        if let range = headingRange {
-          try container.encode(range.0, forKey: .headingLow)
-          try container.encode(range.1, forKey: .headingHigh)
-        }
-      case let .direction(heading, speed, gust):
-        try container.encode("direction", forKey: .type)
-        try container.encode(speed, forKey: .speed)
-        try container.encode(gust, forKey: .gust)
-        try container.encode(heading, forKey: .heading)
-      case let .directionRange(heading, headingRange, speed, gust):
-        try container.encode("range", forKey: .type)
-        try container.encode(speed, forKey: .speed)
-        try container.encode(gust, forKey: .gust)
-        try container.encode(heading, forKey: .heading)
-        try container.encode(headingRange.0, forKey: .headingLow)
-        try container.encode(headingRange.1, forKey: .headingHigh)
-    }
-  }
-
-  enum CodingKeys: String, CodingKey {
-    case type, speed, gust, heading, headingLow, headingHigh
-  }
-
   /// A wind speed.
-  public enum Speed: Codable, Comparable, Sendable {
+  public enum Speed: CodedRepresentable, Comparable, Sendable {
 
     /**
      A wind speed in knots.
@@ -167,25 +134,38 @@ public enum Wind: Codable, Equatable, Sendable {
       }
     }
 
-    public init(from decoder: Decoder) throws {
-      let container = try decoder.container(keyedBy: CodingKeys.self)
-      switch try container.decode(String.self, forKey: .unit) {
-        case "KT":
-          let quantity = try container.decode(UInt16.self, forKey: .quantity)
-          self = .knots(quantity)
-        case "KPH":
-          let quantity = try container.decode(UInt16.self, forKey: .quantity)
-          self = .kph(quantity)
-        case "MPS":
-          let quantity = try container.decode(UInt16.self, forKey: .quantity)
-          self = .mps(quantity)
-        default:
-          throw DecodingError.dataCorruptedError(
-            forKey: .unit,
-            in: container,
-            debugDescription: "Unknown enum value"
-          )
+    /// The coded unit suffix for this speed, e.g. `"KT"`, `"KPH"`, or `"MPS"`.
+    public var unitCode: String {
+      switch self {
+        case .knots: "KT"
+        case .kph: "KPH"
+        case .mps: "MPS"
       }
+    }
+
+    /// The quantity as coded digits, zero-padded to at least two places
+    /// (e.g. `5` → `"05"`), without a unit suffix.
+    public var speedDigits: String {
+      let quantity =
+        switch self {
+          case .knots(let quantity), .kph(let quantity), .mps(let quantity): quantity
+        }
+      return String(format: "%02d", quantity)
+    }
+
+    /// The coded representation of this speed, e.g. `"15KT"`.
+    public var codedString: String { "\(speedDigits)\(unitCode)" }
+
+    public init(coded: String) throws {
+      let units: [(suffix: String, make: (UInt16) -> Self)] = [
+        ("KTS", Self.knots), ("KT", Self.knots), ("MPS", Self.mps), ("KPH", Self.kph)
+      ]
+      for (suffix, make) in units where coded.hasSuffix(suffix) {
+        guard let quantity = UInt16(coded.dropLast(suffix.count)) else { break }
+        self = make(quantity)
+        return
+      }
+      throw Error.invalidWinds(coded)
     }
 
     public static func == (lhs: Self, rhs: Self) -> Bool {
@@ -194,25 +174,6 @@ public enum Wind: Codable, Equatable, Sendable {
 
     public static func < (lhs: Self, rhs: Self) -> Bool {
       return lhs.measurement < rhs.measurement
-    }
-
-    public func encode(to encoder: Encoder) throws {
-      var container = encoder.container(keyedBy: CodingKeys.self)
-      switch self {
-        case .knots(let quantity):
-          try container.encode("KT", forKey: .unit)
-          try container.encode(quantity, forKey: .quantity)
-        case .kph(let quantity):
-          try container.encode("KPH", forKey: .unit)
-          try container.encode(quantity, forKey: .quantity)
-        case .mps(let quantity):
-          try container.encode("MPS", forKey: .unit)
-          try container.encode(quantity, forKey: .quantity)
-      }
-    }
-
-    enum CodingKeys: String, CodingKey {
-      case unit, quantity
     }
   }
 }

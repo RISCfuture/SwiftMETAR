@@ -1,19 +1,21 @@
 import Foundation
 import RegexBuilder
 
-final class DailyTemperatureExtremeParser: RemarkParser {
+final class DailyTemperatureExtremeParser: RemarkParser, @unchecked Sendable {
   var urgency = Remark.Urgency.routine
 
   private let highParser = NumericSignedIntegerParser(width: 3)
   private let lowParser = NumericSignedIntegerParser(width: 3)
 
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    "4"
-    highParser.rx
-    lowParser.rx
-    Anchor.wordBoundary
-  }
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      "4"
+      highParser.rx
+      lowParser.rx
+      Anchor.wordBoundary
+    }
+  )
 
   func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
     guard let result = try rx.firstMatch(in: remarks),

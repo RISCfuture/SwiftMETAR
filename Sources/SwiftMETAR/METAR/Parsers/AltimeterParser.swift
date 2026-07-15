@@ -1,47 +1,51 @@
 import Foundation
 import RegexBuilder
 
-class AltimeterParser {
-  private let unitRef = Reference<Substring>()
-  private let valueRef = Reference<UInt16>()
+final class AltimeterParser: WarmableParser, @unchecked Sendable {
+  private static let unitRef = Reference<Substring>()
+  private static let valueRef = Reference<UInt16>()
 
-  private lazy var METARAltRx = Regex {
-    Anchor.startOfSubject
-    Capture(as: unitRef) { CharacterClass.anyOf("AQ") }
-    Capture(as: valueRef) {
-      Repeat(.digit, count: 4)
-    } transform: {
-      .init($0)!
+  private static let METARAltRx = LockedRegex(
+    Regex {
+      Anchor.startOfSubject
+      Capture(as: unitRef) { CharacterClass.anyOf("AQ") }
+      Capture(as: valueRef) {
+        Repeat(.digit, count: 4)
+      } transform: {
+        .init($0)!
+      }
+      Anchor.endOfSubject
     }
-    Anchor.endOfSubject
-  }
+  )
 
-  private lazy var TAFAltRx = Regex {
-    Anchor.startOfSubject
-    "QNH"
-    Capture(as: valueRef) {
-      Repeat(.digit, count: 4)
-    } transform: {
-      .init($0)!
-    }
-    Capture(as: unitRef) {
-      ChoiceOf {
-        "INS"
-        "HPA"
+  private static let TAFAltRx = LockedRegex(
+    Regex {
+      Anchor.startOfSubject
+      "QNH"
+      Capture(as: valueRef) {
+        Repeat(.digit, count: 4)
+      } transform: {
+        .init($0)!
+      }
+      Capture(as: unitRef) {
+        ChoiceOf {
+          "INS"
+          "HPA"
+        }
       }
     }
-  }
+  )
 
   func parseMETAR(_ parts: inout [String.SubSequence]) throws -> Altimeter? {
     guard !parts.isEmpty else { return nil }
 
     let altStr = String(parts[0])
-    guard let match = try METARAltRx.wholeMatch(in: altStr) else { return nil }
+    guard let match = try Self.METARAltRx.wholeMatch(in: altStr) else { return nil }
     parts.removeFirst()
 
-    let value = match[valueRef]
+    let value = match[Self.valueRef]
 
-    switch match[unitRef] {
+    switch match[Self.unitRef] {
       case "A": return .inHg(value)
       case "Q": return .hPa(value)
       default: throw Error.invalidAltimeter(String(altStr))
@@ -52,14 +56,14 @@ class AltimeterParser {
     guard !parts.isEmpty else { return nil }
 
     let altStr = String(parts[0])
-    guard let match = try TAFAltRx.wholeMatch(in: altStr) else {
+    guard let match = try Self.TAFAltRx.wholeMatch(in: altStr) else {
       return nil
     }
     parts.removeFirst()
 
-    let value = match[valueRef]
+    let value = match[Self.valueRef]
 
-    switch match[unitRef] {
+    switch match[Self.unitRef] {
       case "INS": return .inHg(value)
       case "HPA": return .hPa(value)
       default: throw Error.invalidAltimeter(String(altStr))

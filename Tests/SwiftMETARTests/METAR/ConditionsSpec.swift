@@ -119,4 +119,48 @@ struct ConditionsTests {
     #expect(conditions[1] == .scattered(2400))
     #expect(conditions[2] == .broken(4800))
   }
+
+  @Test
+  func emitsCanonicalCodedStrings() {
+    #expect(Condition.clear.codedString == "CLR")
+    #expect(Condition.skyClear.codedString == "SKC")
+    #expect(Condition.noSignificantClouds.codedString == "NSC")
+    #expect(Condition.cavok.codedString == "CAVOK")
+    #expect(Condition.few(2000).codedString == "FEW020")
+    #expect(Condition.scattered(2300, type: .toweringCumulus).codedString == "SCT023TCU")
+    #expect(Condition.broken(5000, type: .cumulonimbus).codedString == "BKN050CB")
+    #expect(Condition.overcast(25_000).codedString == "OVC250")
+    #expect(Condition.indefinite(200).codedString == "VV002")
+  }
+
+  @Test(arguments: [
+    Condition.clear,
+    .skyClear,
+    .noSignificantClouds,
+    .cavok,
+    .few(2000),
+    .scattered(2300, type: .toweringCumulus),
+    .broken(5000, type: .cumulonimbus),
+    .overcast(25_000),
+    .indefinite(200)
+  ])
+  func roundTripsCodedString(_ condition: Condition) throws {
+    #expect(try Condition(coded: condition.codedString) == condition)
+  }
+
+  @Test
+  func rejectsInvalidCodedStrings() {
+    #expect(throws: Error.self) { try Condition(coded: "XYZ") }
+    #expect(throws: Error.self) { try Condition(coded: "") }
+    #expect(throws: Error.self) { try Condition(coded: "VV002CB") }
+  }
+
+  @Test
+  func roundTripsThroughCodable() throws {
+    let condition = Condition.broken(5000, type: .cumulonimbus)
+    let data = try JSONEncoder().encode(condition)
+
+    #expect(String(data: data, encoding: .utf8) == #""BKN050CB""#)
+    #expect(try JSONDecoder().decode(Condition.self, from: data) == condition)
+  }
 }

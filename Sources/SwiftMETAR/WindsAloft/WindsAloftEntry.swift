@@ -2,7 +2,7 @@ import Foundation
 
 /// A single winds and temperatures aloft data group, representing the wind
 /// and optional temperature at a specific altitude for a station.
-public enum WindsAloftEntry: Codable, Equatable, Sendable {
+public enum WindsAloftEntry: CodedRepresentable, Equatable, Sendable {
 
   /// Light and variable winds (less than 5 knots). Encoded as `9900` in the
   /// product.
@@ -49,39 +49,45 @@ public enum WindsAloftEntry: Codable, Equatable, Sendable {
     }
   }
 
-  public init(from decoder: Decoder) throws {
-    let container = try decoder.container(keyedBy: CodingKeys.self)
-    switch try container.decode(String.self, forKey: .type) {
-      case "lightAndVariable":
-        self = .lightAndVariable
-      case "wind":
-        let direction = try container.decode(UInt16.self, forKey: .direction)
-        let speed = try container.decode(Wind.Speed.self, forKey: .speed)
-        let temperature = try container.decode(Int8?.self, forKey: .temperature)
-        self = .wind(direction: direction, speed: speed, temperature: temperature)
-      default:
-        throw DecodingError.dataCorruptedError(
-          forKey: .type,
-          in: container,
-          debugDescription: "Unknown enum value"
-        )
-    }
-  }
+  /**
+   The canonical coded winds-aloft data group, e.g. `"3209+02"` for a
+   320° wind at 9 knots and +2°C, or `"9900"` for light and variable.
 
-  public func encode(to encoder: Encoder) throws {
-    var container = encoder.container(keyedBy: CodingKeys.self)
+   Directions are emitted in tens of degrees; speeds of 100 knots or more
+   add 50 to the direction figure and subtract 100 from the speed figure.
+   Temperatures, when present, are always emitted in the explicit signed
+   form (`±TT`), even for values that could also be coded in the six-digit
+   unsigned high-altitude form.
+   */
+  public var codedString: String {
     switch self {
       case .lightAndVariable:
-        try container.encode("lightAndVariable", forKey: .type)
+        return "9900"
       case let .wind(direction, speed, temperature):
-        try container.encode("wind", forKey: .type)
-        try container.encode(direction, forKey: .direction)
-        try container.encode(speed, forKey: .speed)
-        try container.encode(temperature, forKey: .temperature)
+        let knots = UInt16(speed.measurement.converted(to: .knots).value.rounded())
+        var dd = direction / 10
+        var ff = knots
+        if knots >= 100 {
+          dd += 50
+          ff -= 100
+        }
+        let base = String(format: "%02d%02d", Int(dd), Int(ff))
+        guard let temperature else { return base }
+        return base + String(format: "%+03d", Int(temperature))
     }
   }
 
-  enum CodingKeys: String, CodingKey {
-    case type, direction, speed, temperature
+  /**
+   Parses a coded winds-aloft data group into a value.
+
+   - Parameter coded: The coded group, e.g. `"3209+02"` or `"9900"`.
+   - Throws: ``Error/invalidWindsAloftGroup(_:)`` if `coded` is not a valid
+             winds-aloft data group.
+   */
+  public init(coded: String) throws {
+    guard let entry = try WindsAloftDataGroupParser().parse(coded) else {
+      throw Error.invalidWindsAloftGroup(coded)
+    }
+    self = entry
   }
 }

@@ -1,78 +1,84 @@
 import Foundation
 import RegexBuilder
 
-class WindsAloftDataGroupParser {
+final class WindsAloftDataGroupParser: WarmableParser, @unchecked Sendable {
 
   // MARK: - Regex references
 
-  private let ddRef = Reference<UInt16>()
-  private let ffRef = Reference<UInt16>()
-  private let signedTempRef = Reference<Int8>()
-  private let unsignedTempRef = Reference<UInt8>()
+  private static let ddRef = Reference<UInt16>()
+  private static let ffRef = Reference<UInt16>()
+  private static let signedTempRef = Reference<Int8>()
+  private static let unsignedTempRef = Reference<UInt8>()
 
   // MARK: - Signed format: "3209+02", "3209-02"
 
-  private lazy var signedRx = Regex {
-    Anchor.startOfSubject
-    Capture(as: ddRef) {
-      Repeat(.digit, count: 2)
-    } transform: {
-      UInt16($0)!
-    }
-    Capture(as: ffRef) {
-      Repeat(.digit, count: 2)
-    } transform: {
-      UInt16($0)!
-    }
-    Capture(as: signedTempRef) {
-      ChoiceOf {
-        "+"; "-"
+  private static let signedRx = LockedRegex(
+    Regex {
+      Anchor.startOfSubject
+      Capture(as: WindsAloftDataGroupParser.ddRef) {
+        Repeat(.digit, count: 2)
+      } transform: {
+        UInt16($0)!
       }
-      OneOrMore(.digit)
-    } transform: {
-      Int8($0)!
+      Capture(as: WindsAloftDataGroupParser.ffRef) {
+        Repeat(.digit, count: 2)
+      } transform: {
+        UInt16($0)!
+      }
+      Capture(as: WindsAloftDataGroupParser.signedTempRef) {
+        ChoiceOf {
+          "+"; "-"
+        }
+        OneOrMore(.digit)
+      } transform: {
+        Int8($0)!
+      }
+      Anchor.endOfSubject
     }
-    Anchor.endOfSubject
-  }
+  )
 
   // MARK: - 4-digit format: "3214"
 
-  private lazy var fourDigitRx = Regex {
-    Anchor.startOfSubject
-    Capture(as: ddRef) {
-      Repeat(.digit, count: 2)
-    } transform: {
-      UInt16($0)!
+  private static let fourDigitRx = LockedRegex(
+    Regex {
+      Anchor.startOfSubject
+      Capture(as: WindsAloftDataGroupParser.ddRef) {
+        Repeat(.digit, count: 2)
+      } transform: {
+        UInt16($0)!
+      }
+      Capture(as: WindsAloftDataGroupParser.ffRef) {
+        Repeat(.digit, count: 2)
+      } transform: {
+        UInt16($0)!
+      }
+      Anchor.endOfSubject
     }
-    Capture(as: ffRef) {
-      Repeat(.digit, count: 2)
-    } transform: {
-      UInt16($0)!
-    }
-    Anchor.endOfSubject
-  }
+  )
 
   // MARK: - 6-digit unsigned format: "295947"
 
-  private lazy var sixDigitRx = Regex {
-    Anchor.startOfSubject
-    Capture(as: ddRef) {
-      Repeat(.digit, count: 2)
-    } transform: {
-      UInt16($0)!
+  private static let sixDigitRx = LockedRegex(
+    Regex {
+      Anchor.startOfSubject
+      Capture(as: WindsAloftDataGroupParser.ddRef) {
+        Repeat(.digit, count: 2)
+      } transform: {
+        UInt16($0)!
+      }
+      Capture(as: WindsAloftDataGroupParser.ffRef) {
+        Repeat(.digit, count: 2)
+      } transform: {
+        UInt16($0)!
+      }
+      Capture(as: WindsAloftDataGroupParser.unsignedTempRef) {
+        Repeat(.digit, count: 2)
+      } transform: {
+        UInt8($0)!
+      }
+      Anchor.endOfSubject
     }
-    Capture(as: ffRef) {
-      Repeat(.digit, count: 2)
-    } transform: {
-      UInt16($0)!
-    }
-    Capture(as: unsignedTempRef) {
-      Repeat(.digit, count: 2)
-    } transform: {
-      UInt8($0)!
-    }
-    Anchor.endOfSubject
-  }
+  )
 
   /// Decodes a single winds aloft data group string into a
   /// ``WindsAloftEntry``, or `nil` if the group is blank (missing data).
@@ -96,22 +102,35 @@ class WindsAloftDataGroupParser {
       return .lightAndVariable
     }
 
-    if let match = try signedRx.wholeMatch(in: trimmed) {
-      let (direction, speed) = decodeDirectionSpeed(dd: match[ddRef], ff: match[ffRef])
-      return .wind(direction: direction, speed: .knots(speed), temperature: match[signedTempRef])
-    }
-
-    if let match = try sixDigitRx.wholeMatch(in: trimmed) {
-      let (direction, speed) = decodeDirectionSpeed(dd: match[ddRef], ff: match[ffRef])
+    if let match = try Self.signedRx.wholeMatch(in: trimmed) {
+      let (direction, speed) = decodeDirectionSpeed(
+        dd: match[Self.ddRef],
+        ff: match[Self.ffRef]
+      )
       return .wind(
         direction: direction,
         speed: .knots(speed),
-        temperature: -Int8(match[unsignedTempRef])
+        temperature: match[Self.signedTempRef]
       )
     }
 
-    if let match = try fourDigitRx.wholeMatch(in: trimmed) {
-      let (direction, speed) = decodeDirectionSpeed(dd: match[ddRef], ff: match[ffRef])
+    if let match = try Self.sixDigitRx.wholeMatch(in: trimmed) {
+      let (direction, speed) = decodeDirectionSpeed(
+        dd: match[Self.ddRef],
+        ff: match[Self.ffRef]
+      )
+      return .wind(
+        direction: direction,
+        speed: .knots(speed),
+        temperature: -Int8(match[Self.unsignedTempRef])
+      )
+    }
+
+    if let match = try Self.fourDigitRx.wholeMatch(in: trimmed) {
+      let (direction, speed) = decodeDirectionSpeed(
+        dd: match[Self.ddRef],
+        ff: match[Self.ffRef]
+      )
       return .wind(direction: direction, speed: .knots(speed), temperature: nil)
     }
 

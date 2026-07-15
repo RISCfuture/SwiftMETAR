@@ -1,7 +1,7 @@
 import Foundation
 import RegexBuilder
 
-final class ThunderstormLocationParser: RemarkParser {
+final class ThunderstormLocationParser: RemarkParser, @unchecked Sendable {
   var urgency = Remark.Urgency.urgent
 
   private let proximityRef = Reference<Remark.Proximity?>()
@@ -9,29 +9,31 @@ final class ThunderstormLocationParser: RemarkParser {
   private let movingDirectionParser = RemarkDirectionParser()
 
   // swiftlint:disable force_try
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    "TS"
-    Optionally {
-      " "
-      Capture(as: proximityRef) {
-        try! Remark.Proximity.rx
-      } transform: {
-        .init(rawValue: String($0))
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      "TS"
+      Optionally {
+        " "
+        Capture(as: proximityRef) {
+          try! Remark.Proximity.rx
+        } transform: {
+          .init(rawValue: String($0))
+        }
       }
+      Optionally {
+        CharacterClass.anyOf(" -")
+        directionsParser.rx
+      }
+      Optionally {
+        " MOV"
+        Optionally("G")
+        " "
+        movingDirectionParser.rx
+      }
+      Anchor.wordBoundary
     }
-    Optionally {
-      CharacterClass.anyOf(" -")
-      directionsParser.rx
-    }
-    Optionally {
-      " MOV"
-      Optionally("G")
-      " "
-      movingDirectionParser.rx
-    }
-    Anchor.wordBoundary
-  }
+  )
   // swiftlint:enable force_try
 
   func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {

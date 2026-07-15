@@ -1,21 +1,23 @@
 import Foundation
 import RegexBuilder
 
-final class HourlyPrecipitationAmountParser: RemarkParser {
+final class HourlyPrecipitationAmountParser: RemarkParser, @unchecked Sendable {
   var urgency = Remark.Urgency.routine
 
   private let amountRef = Reference<Float>()
 
-  private lazy var rx = Regex {
-    Anchor.wordBoundary
-    "P"
-    Capture(as: amountRef) {
-      Repeat(.digit, count: 4)
-    } transform: {
-      .init($0)! / 100.0
+  private lazy var rx = LockedRegex(
+    Regex {
+      Anchor.wordBoundary
+      "P"
+      Capture(as: amountRef) {
+        Repeat(.digit, count: 4)
+      } transform: {
+        .init($0)! / 100.0
+      }
+      Anchor.wordBoundary
     }
-    Anchor.wordBoundary
-  }
+  )
 
   func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }

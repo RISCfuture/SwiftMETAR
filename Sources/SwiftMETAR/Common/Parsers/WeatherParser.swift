@@ -1,34 +1,38 @@
 import Foundation
 import RegexBuilder
 
-class WeatherParser {
-  private let intensityRef = Reference<Weather.Intensity>()
-  private let descriptorRef = Reference<Weather.Descriptor?>()
-  private let phenomenaRef = Reference<Substring>()
+final class WeatherParser: WarmableParser, @unchecked Sendable {
+  private static let intensityRef = Reference<Weather.Intensity>()
+  private static let descriptorRef = Reference<Weather.Descriptor?>()
+  private static let phenomenaRef = Reference<Substring>()
 
   // swiftlint:disable force_try
-  private lazy var weatherRx = Regex {
-    Anchor.startOfSubject
-    Capture(as: intensityRef) {
-      try! Weather.Intensity.rx
-    } transform: {
-      .init(rawValue: String($0))!
+  private static let weatherRx = LockedRegex(
+    Regex {
+      Anchor.startOfSubject
+      Capture(as: intensityRef) {
+        try! Weather.Intensity.rx
+      } transform: {
+        .init(rawValue: String($0))!
+      }
+      Capture(as: descriptorRef) {
+        Optionally { try! Weather.Descriptor.rx }
+      } transform: {
+        .init(rawValue: String($0))
+      }
+      Capture(as: phenomenaRef) {
+        OneOrMore { try! Weather.Phenomenon.rx }
+      }
+      Anchor.endOfSubject
     }
-    Capture(as: descriptorRef) {
-      Optionally { try! Weather.Descriptor.rx }
-    } transform: {
-      .init(rawValue: String($0))
+  )
+  private static let noRecordedWx = LockedRegex(
+    Regex {
+      Anchor.startOfSubject
+      Repeat("/", 2...)
+      Anchor.endOfSubject
     }
-    Capture(as: phenomenaRef) {
-      OneOrMore { try! Weather.Phenomenon.rx }
-    }
-    Anchor.endOfSubject
-  }
-  private lazy var noRecordedWx = Regex {
-    Anchor.startOfSubject
-    Repeat("/", 2...)
-    Anchor.endOfSubject
-  }
+  )
   // swiftlint:enable force_try
 
   func parse(_ parts: inout [String.SubSequence]) throws -> [Weather]? {
@@ -47,18 +51,18 @@ class WeatherParser {
         parts.removeFirst()
         continue
       }
-      if try noRecordedWx.wholeMatch(in: weatherStr) != nil {
+      if try Self.noRecordedWx.wholeMatch(in: weatherStr) != nil {
         parts.removeFirst()
         return []
       }
 
-      if let match = try weatherRx.wholeMatch(in: weatherStr) {
+      if let match = try Self.weatherRx.wholeMatch(in: weatherStr) {
         parts.removeFirst()
 
-        let intensity = match[intensityRef]
-        let descriptor = match[descriptorRef]
+        let intensity = match[Self.intensityRef]
+        let descriptor = match[Self.descriptorRef]
 
-        let phenomenaStr = match[phenomenaRef]
+        let phenomenaStr = match[Self.phenomenaRef]
         let phenomenaStrs = String(phenomenaStr).partition(by: 2)
         let phenomena = try phenomenaStrs.map { code -> Weather.Phenomenon in
           guard let phenomenon = Weather.Phenomenon(rawValue: code) else {
