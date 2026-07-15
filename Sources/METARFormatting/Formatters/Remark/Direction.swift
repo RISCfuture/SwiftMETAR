@@ -72,12 +72,16 @@ extension Remark.Direction {
   @Buildable
   public struct RangeFormatStyle: Foundation.FormatStyle, Sendable {
 
+    private static let compassPoints: Set<Remark.Direction> = [
+      .north, .northeast, .east, .southeast, .south, .southwest, .west, .northwest
+    ]
+
     /// The width to use.
     public var width = Remark.Direction.FormatStyle.Width.full
 
     public func format(_ value: Set<Remark.Direction>) -> String {
       let summary = FormatStyle(width: width)
-      if value.contains(.all) {
+      if value.contains(.all) || value == Self.compassPoints {
         return summary.format(.all)
       }
       if value.isEmpty {
@@ -102,10 +106,6 @@ extension Remark.Direction {
         } else {
           ranges.append((direction, direction))
         }
-      }
-
-      if ranges.count == 1 && ranges[0].0 == ranges[0].1 {
-        return summary.format(.all)
       }
 
       let values = ranges.map { range in
