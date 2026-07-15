@@ -50,7 +50,7 @@ public enum Altimeter: Codable, Comparable, Sendable {
     switch self {
       case .inHg(let value):
         try container.encode(value, forKey: .value)
-        try container.encode("inHq", forKey: .units)
+        try container.encode("inHg", forKey: .units)
       case .hPa(let value):
         try container.encode(value, forKey: .value)
         try container.encode("hPa", forKey: .units)

@@ -26,4 +26,12 @@ struct AltimeterTests {
       abs(observation.altimeter!.measurement.converted(to: .inchesOfMercury).value - 30.15) < 0.01
     )
   }
+
+  @Test(arguments: [Altimeter.inHg(2992), .hPa(1021)])
+  func roundTripsThroughCodable(_ altimeter: Altimeter) throws {
+    let data = try JSONEncoder().encode(altimeter)
+    let decoded = try JSONDecoder().decode(Altimeter.self, from: data)
+
+    #expect(decoded == altimeter)
+  }
 }
