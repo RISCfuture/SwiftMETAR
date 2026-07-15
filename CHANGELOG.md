@@ -1,5 +1,22 @@
 # Change Log
 
+## [3.2.1] - 2026-07-15
+
+### Fixed
+
+- `Altimeter` encoded the inHg discriminator as `"inHq"` while decoding `"inHg"`,
+  so inHg altimeters could not round-trip through `Codable`.
+- `Remark.heightMeasurement` returned `nil` for a `variableSkyCondition` remark
+  even though its ceiling height was documented as available; it now surfaces
+  that height when the remark carries one.
+- `Remark.Direction.RangeFormatStyle` collapsed a lone direction (e.g. `LTG DSNT
+  NE`) to “all quadrants”; only a set containing all eight compass points now
+  does so.
+- `Remark.Direction.RangeFormatStyle` produced fragmented direction output (e.g.
+  “north, east, and northeast” instead of “north through east”) because
+  consolidation depended on `Set` iteration order; points are now sorted
+  clockwise from north before merging.
+
 ## [3.2.0] - 2026-07-06
 
 ### Added
