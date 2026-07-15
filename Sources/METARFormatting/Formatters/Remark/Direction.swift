@@ -3,19 +3,14 @@ import Foundation
 import SwiftMETAR
 
 extension Remark.Direction {
-  var next: Self {
-    switch self {
-      case .all: .all
-      case .north: .northeast
-      case .northeast: .east
-      case .east: .southeast
-      case .southeast: .south
-      case .south: .southwest
-      case .southwest: .west
-      case .west: .northwest
-      case .northwest: .north
-    }
-  }
+
+  /// The eight compass points in clockwise order from north.
+  static let compassOrder: [Remark.Direction] = [
+    .north, .northeast, .east, .southeast, .south, .southwest, .west, .northwest
+  ]
+
+  /// Position clockwise from north, or `nil` for ``all``.
+  var compassIndex: Int? { Self.compassOrder.firstIndex(of: self) }
 }
 
 extension Remark.Direction {
@@ -72,9 +67,7 @@ extension Remark.Direction {
   @Buildable
   public struct RangeFormatStyle: Foundation.FormatStyle, Sendable {
 
-    private static let compassPoints: Set<Remark.Direction> = [
-      .north, .northeast, .east, .southeast, .south, .southwest, .west, .northwest
-    ]
+    private static let compassPoints = Set(Remark.Direction.compassOrder)
 
     /// The width to use.
     public var width = Remark.Direction.FormatStyle.Width.full
@@ -88,27 +81,7 @@ extension Remark.Direction {
         return String(localized: "<unknown direction>")
       }
 
-      var ranges = [(Remark.Direction, Remark.Direction)]()
-      for direction in value {
-        if ranges.isEmpty {
-          ranges.append((direction, direction))
-          continue
-        }
-        if ranges.last!.1.next == direction {
-          let range = ranges.popLast()!
-          ranges.append((range.0, direction))
-          if ranges.last!.1 == ranges.first!.0 {
-            let firstRange = ranges.removeFirst()
-            let lastRange = ranges.popLast()!
-            ranges.insert((lastRange.0, firstRange.1), at: 0)
-            break
-          }
-        } else {
-          ranges.append((direction, direction))
-        }
-      }
-
-      let values = ranges.map { range in
+      let values = consolidatedRanges(from: value).map { range in
         if range.0 == range.1 {
           summary.format(range.0)
         } else {
@@ -120,6 +93,35 @@ extension Remark.Direction {
       }
 
       return ListFormatStyle.list(type: .and).format(values)
+    }
+
+    /// Groups the directions into ranges of consecutive compass points, sorted
+    /// clockwise from north. A run that wraps past north (e.g. northwest through
+    /// northeast) is joined into a single range.
+    private func consolidatedRanges(
+      from directions: Set<Remark.Direction>
+    ) -> [(Remark.Direction, Remark.Direction)] {
+      let sorted = directions.sorted { ($0.compassIndex ?? .max) < ($1.compassIndex ?? .max) }
+
+      var ranges = [(Remark.Direction, Remark.Direction)]()
+      for direction in sorted {
+        guard let last = ranges.last,
+          let previousIndex = last.1.compassIndex,
+          let currentIndex = direction.compassIndex,
+          currentIndex == previousIndex + 1
+        else {
+          ranges.append((direction, direction))
+          continue
+        }
+        ranges[ranges.endIndex - 1].1 = direction
+      }
+
+      if ranges.count > 1, ranges.first!.0 == .north, ranges.last!.1 == .northwest {
+        let wrap = ranges.removeLast()
+        ranges[0].0 = wrap.0
+      }
+
+      return ranges
     }
   }
 }
