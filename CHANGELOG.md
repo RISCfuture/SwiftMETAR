@@ -1,5 +1,37 @@
 # Change Log
 
+## [4.0.0] - Unreleased
+
+### Changed
+
+- **Breaking:** weather types now serialize through `Codable` as their coded
+  METAR/TAF text rather than structured JSON. Each converted type conforms to the
+  new `CodedRepresentable` protocol — exposing a canonical `codedString` and an
+  `init(coded:)` — and encodes/decodes as a single coded string. A `Wind` becomes
+  `"03015KT"`, a `Weather` `"+TSRA"`, an `Altimeter` `"A2992"`, a `TAF.Group` its
+  coded group, and a `METAR`/`TAF` its full flat coded report. This composes, so
+  `Codable` can serialize a whole report or any subcomponent through one
+  mechanism. JSON archives produced by 3.x will no longer decode.
+- Converted types: `Wind`, `Wind.Speed`, `Visibility` (and `Visibility.Value`),
+  `Weather`, `Condition`, `Altimeter`, `Windshear`, `RunwayVisibility`, `Icing`,
+  `Turbulence`, `WindsAloftEntry`, `WindsAloft`, `TAF.Group.Period`, `TAF.Group`,
+  `TAF`, `METAR`, and every `Remark` case (e.g. `Remark.seaLevelPressure` becomes
+  `"SLP132"`, `Remark.peakWinds` becomes `"PK WND 28045/1547"`). Within a full
+  `METAR`/`TAF`, remarks are still preserved verbatim via the report's remarks
+  text; a standalone `Remark` now also encodes as its coded string. `WindsAloft`
+  encodes as the raw bulletin text when present, regenerating a re-parseable
+  fixed-width bulletin otherwise. Some coded forms are canonical rather than
+  byte-identical (direction sets, missing-value sentinels, and remark date/period
+  fields resolved from context re-encode to one canonical spelling).
+
+### Added
+
+- `CodedRepresentable` protocol providing single-value coded-string `Codable`,
+  plus `codedString` and `init(coded:)` on all converted types.
+- A synchronous decode path for `METAR`/`TAF`/`TAF.Group` (used by `Codable`)
+  that leaves the async `from(string:)` parsers unchanged. Parser regexes are
+  shared as `static let` storage (compiled once) so neither path recompiles them.
+
 ## [3.2.1] - 2026-07-15
 
 ### Fixed
