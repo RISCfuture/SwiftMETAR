@@ -43,9 +43,8 @@ extension METAR: CodedRepresentable {
    Parses a coded METAR, e.g.
    `"METAR KSFO 121953Z 03015KT 10SM FEW020 18/12 A2992 RMK AO2"`. This is the
    synchronous decoding path used by `Codable`; unlike ``from(string:on:lenientRemarks:)``
-   it takes no reference date (dates resolve against the current date) and builds
-   its parsers fresh, so it is intended for occasional decoding rather than
-   high-volume parsing.
+   it takes no reference date, so dates resolve against the current date. It
+   shares the same cached, pre-warmed parsers as the async path.
 
    - Parameter coded: The coded METAR string.
    - Throws: An ``Error`` if `coded` is not a valid METAR.

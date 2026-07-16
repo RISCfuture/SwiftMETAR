@@ -40,8 +40,8 @@ public enum Visibility: CodedRepresentable, Equatable, Sendable {
    The coded representation of this visibility, e.g. `"10SM"`, `"3/4SM"`,
    `"1 1/2SM"` (a whole number plus a fraction is a single value written with a
    space), `"1200FT"`, or `"3000"` (bare metric meters). A range is prefixed with
-   `M` for ``lessThan`` (e.g. `"M1/4SM"`) or `P` for ``greaterThan``
-   (e.g. `"P6SM"`). A ``variable`` visibility joins its two bounds with `V`,
+   `M` for ``lessThan(_:)`` (e.g. `"M1/4SM"`) or `P` for ``greaterThan(_:)``
+   (e.g. `"P6SM"`). A ``variable(_:_:)`` visibility joins its two bounds with `V`,
    e.g. `"1000FTV1400FT"`.
 
    `notRecorded` has no standard coded token; it is emitted as `"////SM"`, which

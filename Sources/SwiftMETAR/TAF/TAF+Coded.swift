@@ -33,9 +33,9 @@ extension TAF: CodedRepresentable {
 
   /**
    Parses a coded TAF. This is the synchronous decoding path used by `Codable`;
-   unlike ``from(string:on:)`` it takes no reference date (dates resolve against
-   the current date) and builds its parsers fresh, so it is intended for
-   occasional decoding rather than high-volume parsing.
+   unlike ``from(string:on:)`` it takes no reference date, so dates resolve
+   against the current date. It shares the same cached, pre-warmed parsers as
+   the async path.
 
    - Parameter coded: The coded TAF string.
    - Throws: An ``Error`` if `coded` is not a valid TAF.

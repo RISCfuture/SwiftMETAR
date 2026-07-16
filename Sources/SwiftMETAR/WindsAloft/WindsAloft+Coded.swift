@@ -49,9 +49,8 @@ extension WindsAloft: CodedRepresentable {
   /**
    Parses a coded winds aloft bulletin. This is the synchronous decoding path
    used by `Codable`; unlike ``from(string:on:)`` it takes no reference date,
-   so partial dates resolve against the current date, and it builds its parsers
-   fresh, making it suited to occasional decoding rather than high-volume
-   parsing.
+   so partial dates resolve against the current date. It shares the same cached,
+   pre-warmed parsers as the async path.
 
    - Parameter coded: The coded winds aloft bulletin.
    - Throws: An ``Error`` if `coded` is not a valid winds aloft bulletin.

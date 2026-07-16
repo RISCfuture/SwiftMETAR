@@ -1,4 +1,8 @@
-# Winds and Temperatures Aloft
+# ``SwiftMETAR/WindsAloft``
+
+@Metadata {
+    @DisplayName("Winds and Temperatures Aloft")
+}
 
 Parse NWS Winds and Temperatures Aloft (FB/FD) products into structured data.
 
@@ -37,7 +41,7 @@ Each data group in the product uses a compact encoding:
 | `DDff` | `3214` | 320° at 14 kt, no temperature |
 | `DDff±TT` | `3209+02` | 320° at 9 kt, +2°C |
 | `DDffTT` | `295947` | Above 24,000 ft: 290° at 59 kt, −47°C |
-| DD ≥ 51 | `7308` | High wind: (73−50)×10 = 230°, 08+100 = 108 kt |
+| DD 51–86 | `7308` | High wind: (73−50)×10 = 230°, 08+100 = 108 kt |
 
 ## Topics
 

@@ -52,8 +52,8 @@ dependencies: [
 
 ## Tests
 
-Unit testing is done using Nimble and Quick. Simply test the `SwiftMETAR` target
-to run tests.
+Unit testing is done using the [Swift Testing](https://developer.apple.com/documentation/testing)
+framework. Simply test the `SwiftMETAR` target to run tests.
 
 The `DecodeMETAR`, `DecodeTAF`, and `DecodeWindsAloft` targets provide
 command-line tools that allow you to decode METARs, TAFs, and winds aloft

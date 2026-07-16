@@ -190,7 +190,7 @@ public enum Remark: Equatable, Sendable {
    - Parameter character: Whether the pressure was rising or falling during
                           the 3-hour period, and how quickly.
    - Parameter change: The pressure change, in hectopascals.
-   - SeeAlso: ``pressureChangeMeasurement
+   - SeeAlso: ``pressureMeasurement``
    */
   case pressureTendency(character: PressureCharacter, change: Float)
 

@@ -91,7 +91,7 @@ final class WindsAloftDataGroupParser: WarmableParser, @unchecked Sendable {
   ///   signed temperature
   /// - 6 digits unsigned (`DDffTT`): above 24,000 ft, temperature always
   ///   negative
-  /// - DD ≥ 51 (and not 99): high-wind encoding, direction = (DD−50)×10,
+  /// - DD 51–86: high-wind encoding, direction = (DD−50)×10,
   ///   speed = ff+100
   func parse(_ group: String) throws -> WindsAloftEntry? {
     let trimmed = group.trimmingCharacters(in: .whitespaces)
@@ -138,7 +138,7 @@ final class WindsAloftDataGroupParser: WarmableParser, @unchecked Sendable {
   }
 
   /// Decodes the DD and ff components, handling the high-wind encoding
-  /// where DD ≥ 51 means direction = (DD−50)×10, speed = ff+100.
+  /// where DD 51–86 means direction = (DD−50)×10, speed = ff+100.
   private func decodeDirectionSpeed(dd: UInt16, ff: UInt16) -> (
     direction: UInt16, speed: UInt16
   ) {

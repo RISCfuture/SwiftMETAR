@@ -6,7 +6,7 @@ extension Remark {
     /// Runway visual range transmissometer is inoperative.
     case RVR
 
-    /// Ceilometer is inoperative.
+    /// Present weather sensor is inoperative.
     case presentWeather
 
     /// Rain accumulation sensor is inoperative.

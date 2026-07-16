@@ -10,7 +10,7 @@ can query for weather information:
 
 ``` swift
 let observation = try await METAR.from(string: myString)
-if let winds = observation.winds {
+if let winds = observation.wind {
     switch winds {
         case let .direction(heading, speed, gust):
             switch speed {
@@ -60,8 +60,10 @@ Both ``METAR`` and ``TAF`` have vars allowing you to retrieve these values as
 
 If you are working with the aviationweather.gov bulk cache XML files
 (`metars.cache.xml.gz` or `tafs.cache.xml.gz`), you can parse them
-directly. The XML parser returns an `AsyncStream` of `Result` values,
-allowing you to handle parse errors for individual entries:
+directly. The XML parser returns an `AsyncStream` of ``XMLParseResult``
+values, allowing you to handle parse errors for individual entries. Unlike
+the standard `Result`, a failed entry also carries the raw METAR/TAF string
+(when available), so you can fall back to textual parsing:
 
 ``` swift
 let data = try Data(contentsOf: metarsCacheURL)
@@ -69,8 +71,8 @@ for await result in METAR.from(xml: data) {
     switch result {
         case .success(let observation):
             print("\(observation.stationID): \(observation.wind)")
-        case .failure(let error):
-            print("Parse error: \(error)")
+        case .failure(let error, let rawText):
+            print("Parse error: \(error) (raw: \(rawText ?? "n/a"))")
     }
 }
 ```
