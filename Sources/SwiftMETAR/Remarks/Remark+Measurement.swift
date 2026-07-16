@@ -61,13 +61,17 @@ extension Remark {
   /**
    The height as a `Measurement`, which can be converted to other units. `nil`
    if this is not an ``obscuration(type:amount:height:)``,
-   ``runwayCeiling(runway:height:)``, or ``variableSkyCondition(low:high:height:)``.
+   ``runwayCeiling(runway:height:)``, or a ``variableSkyCondition(low:high:height:)``
+   that carries a height.
    */
   public var heightMeasurement: Measurement<UnitLength>? {
     switch self {
       case .obscuration(_, _, let height):
         return .init(value: Double(height), unit: .feet)
       case .runwayCeiling(_, let height):
+        return .init(value: Double(height), unit: .feet)
+      case .variableSkyCondition(_, _, let height):
+        guard let height else { return nil }
         return .init(value: Double(height), unit: .feet)
       default: return nil
     }
