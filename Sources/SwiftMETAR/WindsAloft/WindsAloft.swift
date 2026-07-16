@@ -6,7 +6,7 @@ import Foundation
  Winds aloft forecasts are fixed-width tabular documents that provide wind
  direction, speed, and temperature at standard altitude levels for reporting
  stations across the US. They are issued for both low-level (3,000–39,000 ft)
- and high-level (24,000–53,000 ft) products.
+ and high-level (45,000–53,000 ft) products.
 
  To parse a winds aloft product:
 
@@ -82,7 +82,7 @@ public struct WindsAloft: Codable, Equatable, Sendable {
   public enum Level: String, Codable, Sendable {
     /// Low-level product (typically 3,000–39,000 ft).
     case low
-    /// High-level product (typically 24,000–53,000 ft).
+    /// High-level product (typically 45,000–53,000 ft).
     case high
   }
 
