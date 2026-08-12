@@ -3,6 +3,11 @@ import RegexBuilder
 
 final class WindsAloftHeaderParser: WarmableParser, @unchecked Sendable {
 
+  /// The AWC data API replaces the WMO header line of a regional excerpt with a
+  /// notice naming the bulletin it was taken from, e.g.
+  /// `(Extracted from FBUS33 KWNO 121359)`.
+  private static let extractionNotice = (prefix: "(Extracted from ", suffix: ")")
+
   private let dayHourMinuteParser = DayHourMinuteParser()
   private let hourMinutePeriodParser = HourMinutePeriodParser()
 
@@ -81,7 +86,9 @@ final class WindsAloftHeaderParser: WarmableParser, @unchecked Sendable {
     guard !lines.isEmpty else { throw Error.invalidWindsAloftHeader("") }
 
     // Line 1: WMO header — "FBUS31 KWNO 032000"
-    let wmoLine = lines.removeFirst().trimmingCharacters(in: .whitespaces)
+    let wmoLine = unwrappingExtractionNotice(
+      lines.removeFirst().trimmingCharacters(in: .whitespaces)
+    )
     guard let wmoMatch = try wmoRx.wholeMatch(in: wmoLine) else {
       throw Error.invalidWindsAloftHeader(wmoLine)
     }
@@ -135,5 +142,13 @@ final class WindsAloftHeaderParser: WarmableParser, @unchecked Sendable {
     )
 
     return (header, basedOn, validAt, usePeriod)
+  }
+
+  /// The WMO header line an AWC extraction notice names, or `line` unchanged when
+  /// it is already a bare WMO header.
+  private func unwrappingExtractionNotice(_ line: String) -> String {
+    let (prefix, suffix) = Self.extractionNotice
+    guard line.hasPrefix(prefix), line.hasSuffix(suffix) else { return line }
+    return String(line.dropFirst(prefix.count).dropLast(suffix.count))
   }
 }

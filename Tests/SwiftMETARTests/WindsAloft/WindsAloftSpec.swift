@@ -10,11 +10,14 @@ struct WindsAloftTests {
   /// groups, and signed temperatures, reused by the round-trip tests.
   private static let lowLevelBulletin = bulletin(validAt: "040000Z", forUse: "2000-0300Z")
 
-  /// A low-level bulletin with the given `VALID` and `FOR USE` header values.
-  private static func bulletin(validAt: String, forUse: String) -> String {
-    [
-      "000",
-      "FBUS31 KWNO 032000",
+  /// A low-level bulletin with the given `VALID` and `FOR USE` header values,
+  /// optionally preceded by something other than the usual WMO header lines.
+  private static func bulletin(
+    validAt: String,
+    forUse: String,
+    wmoHeader: [String] = ["000", "FBUS31 KWNO 032000"]
+  ) -> String {
+    (wmoHeader + [
       "FD1US1",
       "DATA BASED ON 031800Z",
       "VALID \(validAt)   FOR USE \(forUse). TEMPS NEG ABV 24000",
@@ -23,7 +26,7 @@ struct WindsAloftTests {
       "ABI      0517+06 3209+02 3221-05 2941-18 2953-31 295947 288253 770853",
       "ABQ              3325+03 3427-02 3343-16 3347-30 355547 354956 285561",
       "ABR 3214 3431-04 3540-09 3536-15 3431-28 3335-41 312756 323555 344353"
-    ].joined(separator: "\n")
+    ]).joined(separator: "\n")
   }
 
   /// Formats date components the way a bulletin writes them: `DDHHMM`.
@@ -115,6 +118,23 @@ struct WindsAloftTests {
 
     #expect(result.altitudeMeasurements.count == 9)
     #expect(result.altitudeMeasurements[0] == Measurement<UnitLength>(value: 3000, unit: .feet))
+  }
+
+  /// The AWC data API replaces the WMO header line of a regional excerpt with a
+  /// notice naming the bulletin the excerpt came from.
+  @Test
+  func parsesARegionalExcerpt() async throws {
+    let string = Self.bulletin(
+      validAt: "040000Z",
+      forUse: "2000-0300Z",
+      wmoHeader: ["(Extracted from FBUS31 KWNO 032000)"]
+    )
+    let result = try await WindsAloft.from(string: string)
+
+    #expect(result.header.productID == "FBUS31")
+    #expect(result.header.issuingOffice == "KWNO")
+    #expect(result.header.bulletinID == "FD1US1")
+    #expect(result.stations.count == 3)
   }
 
   // MARK: - high-level product

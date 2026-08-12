@@ -42,6 +42,10 @@
   USE` period ending at `0000` landing a day late, which stretched the 06Z
   bulletin's `FOR USE 1500-0000Z` into a 33-hour interval; the resulting
   interval can no longer be empty or inverted.
+- Requesting a single region from the AWC data API returns the bulletin with its
+  WMO header line replaced by a notice naming the source bulletin (e.g.
+  `(Extracted from FBUS33 KWNO 121359)`). The header parser rejected that line,
+  so every regional request failed with “Couldn't parse Winds Aloft product.”
 
 ## [3.2.1] - 2026-07-15
 
