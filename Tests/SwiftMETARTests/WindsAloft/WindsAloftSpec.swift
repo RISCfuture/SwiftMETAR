@@ -8,18 +8,33 @@ struct WindsAloftTests {
 
   /// A low-level fixture with a mix of missing altitudes, four- and six-digit
   /// groups, and signed temperatures, reused by the round-trip tests.
-  private static let lowLevelBulletin = [
-    "000",
-    "FBUS31 KWNO 032000",
-    "FD1US1",
-    "DATA BASED ON 031800Z",
-    "VALID 040000Z   FOR USE 2000-0300Z. TEMPS NEG ABV 24000",
-    "",
-    "FT  3000    6000    9000   12000   18000   24000  30000  34000  39000",
-    "ABI      0517+06 3209+02 3221-05 2941-18 2953-31 295947 288253 770853",
-    "ABQ              3325+03 3427-02 3343-16 3347-30 355547 354956 285561",
-    "ABR 3214 3431-04 3540-09 3536-15 3431-28 3335-41 312756 323555 344353"
-  ].joined(separator: "\n")
+  private static let lowLevelBulletin = bulletin(validAt: "040000Z", forUse: "2000-0300Z")
+
+  /// A low-level bulletin with the given `VALID` and `FOR USE` header values.
+  private static func bulletin(validAt: String, forUse: String) -> String {
+    [
+      "000",
+      "FBUS31 KWNO 032000",
+      "FD1US1",
+      "DATA BASED ON 031800Z",
+      "VALID \(validAt)   FOR USE \(forUse). TEMPS NEG ABV 24000",
+      "",
+      "FT  3000    6000    9000   12000   18000   24000  30000  34000  39000",
+      "ABI      0517+06 3209+02 3221-05 2941-18 2953-31 295947 288253 770853",
+      "ABQ              3325+03 3427-02 3343-16 3347-30 355547 354956 285561",
+      "ABR 3214 3431-04 3540-09 3536-15 3431-28 3335-41 312756 323555 344353"
+    ].joined(separator: "\n")
+  }
+
+  /// Formats date components the way a bulletin writes them: `DDHHMM`.
+  private static func dayHourMinute(_ components: DateComponents) -> String {
+    String(
+      format: "%02d%02d%02d",
+      components.day ?? 0,
+      components.hour ?? 0,
+      components.minute ?? 0
+    )
+  }
 
   // MARK: - low-level product
 
@@ -131,6 +146,40 @@ struct WindsAloftTests {
     #expect(abi[45000] == .wind(direction: 280, speed: .knots(84), temperature: -54))
     // ABI at 53000: 275466 → 270° at 54 knots, −66°C
     #expect(abi[53000] == .wind(direction: 270, speed: .knots(54), temperature: -66))
+  }
+
+  // MARK: - use period
+
+  /// The `FOR USE` period brackets the `VALID` time, so it begins at the most
+  /// recent occurrence of its start time at or before that time — on the previous
+  /// day whenever the start hour falls later in the day than the valid hour.
+  /// Expected times are `DDHHMM`.
+  @Test(
+    arguments: [
+      // 12Z 12-hour bulletin: the period starts the day before the valid time.
+      (validAt: "130000Z", forUse: "2100-0600Z", start: "122100", end: "130600"),
+      // 12Z 6-hour bulletin: the period falls entirely within the valid day.
+      (validAt: "121800Z", forUse: "1400-2100Z", start: "121400", end: "122100"),
+      // 06Z 12-hour bulletin: the period ends at midnight the following day.
+      (validAt: "121800Z", forUse: "1500-0000Z", start: "121500", end: "130000"),
+      // Pre-2005 scheme: the period begins exactly at the valid time.
+      (validAt: "120600Z", forUse: "0600-1200Z", start: "120600", end: "121200")
+    ]
+  )
+  func anchorsTheUsePeriodToTheValidTime(
+    testCase: (validAt: String, forUse: String, start: String, end: String)
+  ) async throws {
+    let referenceDate = zuluCal.date(
+      from: .init(timeZone: zulu, year: 2026, month: 8, day: 12, hour: 14, minute: 0)
+    )
+    let result = try await WindsAloft.from(
+      string: Self.bulletin(validAt: testCase.validAt, forUse: testCase.forUse),
+      on: referenceDate
+    )
+
+    #expect(Self.dayHourMinute(result.usePeriod.start) == testCase.start)
+    #expect(Self.dayHourMinute(result.usePeriod.end) == testCase.end)
+    #expect(result.usePeriod.contains(try #require(result.validAt.date)))
   }
 
   // MARK: - station subscript

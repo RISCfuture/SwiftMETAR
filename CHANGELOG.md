@@ -32,6 +32,17 @@
   that leaves the async `from(string:)` parsers unchanged. Parser regexes are
   shared as `static let` storage (compiled once) so neither path recompiles them.
 
+### Fixed
+
+- The winds aloft `FOR USE` period, which is given only as times of day, was
+  resolved by searching forward from the start of the valid day, so it could
+  never begin before that day: `VALID 130000Z FOR USE 2100-0600Z` resolved to
+  132100Z–140600Z instead of 122100Z–130600Z. The period is now anchored at or
+  before the product's valid time (NWS TIN 05-54). This also corrects a `FOR
+  USE` period ending at `0000` landing a day late, which stretched the 06Z
+  bulletin's `FOR USE 1500-0000Z` into a 33-hour interval; the resulting
+  interval can no longer be empty or inverted.
+
 ## [3.2.1] - 2026-07-15
 
 ### Fixed
