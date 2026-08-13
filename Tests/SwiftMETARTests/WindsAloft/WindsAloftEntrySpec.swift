@@ -16,13 +16,28 @@ struct WindsAloftEntryTests {
   @Test
   func parses9900AsLightAndVariable() throws {
     let entry = try parser.parse("9900")
-    #expect(entry == .lightAndVariable)
+    #expect(entry == .lightAndVariable(temperature: nil))
   }
 
   @Test
-  func parses990000AsLightAndVariable() throws {
+  func parses9900WithSignedTemperatureAsLightAndVariable() throws {
+    // 9900-10 → light and variable, −10°C
+    #expect(try parser.parse("9900-10") == .lightAndVariable(temperature: -10))
+    #expect(try parser.parse("9900+10") == .lightAndVariable(temperature: 10))
+  }
+
+  @Test
+  func parses990000AsLightAndVariableWithUnsignedTemperature() throws {
+    // 990000 → above 24,000 ft, where temperatures are implicitly negative
     let entry = try parser.parse("990000")
-    #expect(entry == .lightAndVariable)
+    #expect(entry == .lightAndVariable(temperature: 0))
+  }
+
+  @Test(arguments: ["9912", "4500", "8700", "3712-05", "500017"])
+  func rejectsImpossibleDirectionFigures(_ group: String) throws {
+    #expect(throws: Error.invalidWindsAloftGroup(group)) {
+      try parser.parse(group)
+    }
   }
 
   @Test
@@ -116,16 +131,28 @@ struct WindsAloftEntryTests {
   }
 
   @Test
-  func returnsNilMeasurementsForLightAndVariable() throws {
-    let entry = WindsAloftEntry.lightAndVariable
+  func returnsNilWindMeasurementsForLightAndVariable() throws {
+    let entry = WindsAloftEntry.lightAndVariable(temperature: nil)
     #expect(entry.speedMeasurement == nil)
     #expect(entry.temperatureMeasurement == nil)
     #expect(entry.directionMeasurement == nil)
   }
 
   @Test
+  func providesTemperatureMeasurementForLightAndVariable() throws {
+    let entry = WindsAloftEntry.lightAndVariable(temperature: -10)
+    #expect(
+      entry.temperatureMeasurement == Measurement<UnitTemperature>(value: -10, unit: .celsius)
+    )
+    #expect(entry.speedMeasurement == nil)
+    #expect(entry.directionMeasurement == nil)
+  }
+
+  @Test
   func emitsCanonicalCodedStrings() {
-    #expect(WindsAloftEntry.lightAndVariable.codedString == "9900")
+    #expect(WindsAloftEntry.lightAndVariable(temperature: nil).codedString == "9900")
+    #expect(WindsAloftEntry.lightAndVariable(temperature: -10).codedString == "9900-10")
+    #expect(WindsAloftEntry.lightAndVariable(temperature: 10).codedString == "9900+10")
     #expect(
       WindsAloftEntry.wind(direction: 200, speed: .knots(17), temperature: nil).codedString
         == "2017"
@@ -158,7 +185,9 @@ struct WindsAloftEntryTests {
   }
 
   @Test(arguments: [
-    WindsAloftEntry.lightAndVariable,
+    WindsAloftEntry.lightAndVariable(temperature: nil),
+    .lightAndVariable(temperature: -10),
+    .lightAndVariable(temperature: 10),
     .wind(direction: 200, speed: .knots(17), temperature: nil),
     .wind(direction: 320, speed: .knots(9), temperature: 2),
     .wind(direction: 320, speed: .knots(21), temperature: -5),

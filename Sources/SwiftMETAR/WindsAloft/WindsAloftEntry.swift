@@ -4,9 +4,17 @@ import Foundation
 /// and optional temperature at a specific altitude for a station.
 public enum WindsAloftEntry: CodedRepresentable, Equatable, Sendable {
 
-  /// Light and variable winds (less than 5 knots). Encoded as `9900` in the
-  /// product.
-  case lightAndVariable
+  /**
+   Light and variable winds (less than 5 knots), encoded as `9900` in the
+   product.
+
+   - Parameter temperature: The temperature in degrees Celsius, or `nil` if not
+                            reported at this altitude. Temperatures are omitted
+                            at 3,000 ft and reported at every altitude above it,
+                            so a light and variable group carries a temperature
+                            at all but the lowest level.
+   */
+  case lightAndVariable(temperature: Int8?)
 
   /**
    Wind with direction, speed, and optional temperature.
@@ -19,6 +27,9 @@ public enum WindsAloftEntry: CodedRepresentable, Equatable, Sendable {
    */
   case wind(direction: UInt16, speed: Wind.Speed, temperature: Int8?)
 
+  /// The direction and speed figures that mark a group as light and variable.
+  private static let lightAndVariableGroup = "9900"
+
   /// The wind speed expressed as a `Measurement`, which is convertible to
   /// other units. Returns `nil` for light and variable.
   public var speedMeasurement: Measurement<UnitSpeed>? {
@@ -29,12 +40,11 @@ public enum WindsAloftEntry: CodedRepresentable, Equatable, Sendable {
   }
 
   /// The temperature expressed as a `Measurement`, which is convertible to
-  /// other units. Returns `nil` for light and variable or when temperature
-  /// is not reported.
+  /// other units. Returns `nil` when temperature is not reported at this
+  /// altitude.
   public var temperatureMeasurement: Measurement<UnitTemperature>? {
     switch self {
-      case .lightAndVariable: nil
-      case .wind(_, _, let temperature):
+      case let .lightAndVariable(temperature), let .wind(_, _, temperature):
         temperature.map { .init(value: Double($0), unit: .celsius) }
     }
   }
@@ -51,7 +61,8 @@ public enum WindsAloftEntry: CodedRepresentable, Equatable, Sendable {
 
   /**
    The canonical coded winds-aloft data group, e.g. `"3209+02"` for a
-   320° wind at 9 knots and +2°C, or `"9900"` for light and variable.
+   320° wind at 9 knots and +2°C, or `"9900-10"` for light and variable
+   at −10°C.
 
    Directions are emitted in tens of degrees; speeds of 100 knots or more
    add 50 to the direction figure and subtract 100 from the speed figure.
@@ -61,8 +72,8 @@ public enum WindsAloftEntry: CodedRepresentable, Equatable, Sendable {
    */
   public var codedString: String {
     switch self {
-      case .lightAndVariable:
-        return "9900"
+      case let .lightAndVariable(temperature):
+        return Self.lightAndVariableGroup + Self.codedTemperature(temperature)
       case let .wind(direction, speed, temperature):
         let knots = UInt16(speed.measurement.converted(to: .knots).value.rounded())
         var dd = direction / 10
@@ -71,9 +82,8 @@ public enum WindsAloftEntry: CodedRepresentable, Equatable, Sendable {
           dd += 50
           ff -= 100
         }
-        let base = String(format: "%02d%02d", Int(dd), Int(ff))
-        guard let temperature else { return base }
-        return base + String(format: "%+03d", Int(temperature))
+        return String(format: "%02d%02d", Int(dd), Int(ff))
+          + Self.codedTemperature(temperature)
     }
   }
 
@@ -89,5 +99,12 @@ public enum WindsAloftEntry: CodedRepresentable, Equatable, Sendable {
       throw Error.invalidWindsAloftGroup(coded)
     }
     self = entry
+  }
+
+  /// Renders a temperature in the explicit signed form (`±TT`), or the empty
+  /// string when no temperature is reported.
+  private static func codedTemperature(_ temperature: Int8?) -> String {
+    guard let temperature else { return "" }
+    return String(format: "%+03d", Int(temperature))
   }
 }

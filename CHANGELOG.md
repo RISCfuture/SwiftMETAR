@@ -23,6 +23,11 @@
   fixed-width bulletin otherwise. Some coded forms are canonical rather than
   byte-identical (direction sets, missing-value sentinels, and remark date/period
   fields resolved from context re-encode to one canonical spelling).
+- **Breaking:** `WindsAloftEntry.lightAndVariable` now carries the temperature
+  reported at its altitude: `case lightAndVariable(temperature: Int8?)`. Pattern
+  matches that bind the case or compare it with `==` must be updated;
+  `temperatureMeasurement` now returns a value for a light and variable entry
+  that reports one.
 
 ### Added
 
@@ -46,6 +51,15 @@
   WMO header line replaced by a notice naming the source bulletin (e.g.
   `(Extracted from FBUS33 KWNO 121359)`). The header parser rejected that line,
   so every regional request failed with “Couldn't parse Winds Aloft product.”
+- A light and variable winds aloft group carrying a temperature (`9900-10`)
+  decoded as a 990° wind at 0 knots. The `9900` indicator is a prefix, not a
+  whole group — temperatures are reported at every altitude above 3,000 ft — but
+  it was matched against the entire group, so those forms fell through to the
+  wind formats. The whole-group match on `990000` had also been discarding its
+  temperature.
+- Winds aloft direction figures outside 00–36 and the 51–86 high-wind range now
+  throw `Error.invalidWindsAloftGroup` instead of decoding to impossible
+  directions (e.g. `9912` as 990°).
 
 ## [3.2.1] - 2026-07-15
 

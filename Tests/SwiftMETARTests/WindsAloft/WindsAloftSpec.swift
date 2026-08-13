@@ -273,6 +273,7 @@ struct WindsAloftTests {
     let result = try await WindsAloft.from(string: string)
 
     let tst = result.stations[0]
-    #expect(tst[3000] == .lightAndVariable)
+    #expect(tst[3000] == .lightAndVariable(temperature: nil))
+    #expect(tst[6000] == .lightAndVariable(temperature: 10))
   }
 }

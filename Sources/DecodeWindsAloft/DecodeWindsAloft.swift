@@ -100,8 +100,12 @@ struct DecodeWindsAloft: AsyncParsableCommand {
     for entry in station.entries {
       let dataStr: String
       switch entry.data {
-        case .lightAndVariable:
-          dataStr = "Light and variable"
+        case let .lightAndVariable(temperature):
+          var parts = ["Light and variable"]
+          if let temperature {
+            parts.append("temp \(temperature)°C")
+          }
+          dataStr = parts.joined(separator: " ")
         case let .wind(direction, speed, temperature):
           var parts = ["\(direction)° at"]
           switch speed {
