@@ -50,6 +50,23 @@ jobs:
         run: swift build -v
       - name: Test
         run: swift test -v
+  documentation:
+    name: Build Documentation
+    runs-on: macos-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: SwiftyLab/setup-swift@latest
+        with:
+          swift-version: "6.2"
+      - name: Build documentation
+        run: |
+          swift package \
+           --allow-writing-to-directory "$RUNNER_TEMP/docs" \
+           generate-documentation \
+           --target SwiftMETAR --target METARFormatting \
+           --output-path "$RUNNER_TEMP/docs" \
+           --enable-experimental-combined-documentation \
+           --warnings-as-errors
   lint:
     name: Run SwiftLint
     runs-on: ubuntu-latest
