@@ -8,6 +8,17 @@ jobs:
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v6
+      - name: Record Swift version
+        id: swift
+        run: echo "version=$(swift --version | head -n1 | sed 's/[^[:alnum:].]/-/g')" >> "$GITHUB_OUTPUT"
+      - name: Cache SwiftPM build products
+        uses: actions/cache@v6
+        with:
+          path: |
+            .build
+            ~/.cache/org.swift.swiftpm
+            ~/Library/Caches/org.swift.swiftpm
+          key: swiftpm-periphery-macos-latest-${{ steps.swift.outputs.version }}-${{ hashFiles('Package.resolved') }}
       - name: Install Periphery
         run: brew install peripheryapp/periphery/periphery
       - name: Run Periphery
