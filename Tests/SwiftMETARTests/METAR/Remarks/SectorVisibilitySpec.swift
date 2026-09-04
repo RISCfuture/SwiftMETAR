@@ -7,7 +7,7 @@ import Testing
 @Suite
 struct SectorVisibilityTests {
   @Test
-  func parsesAVISNE212Remark() async throws {
+  func `parses a VIS NE 2 1/2 remark`() async throws {
     let string = "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 VIS NE 2 1/2"
     let observation = try await METAR.from(string: string)
 

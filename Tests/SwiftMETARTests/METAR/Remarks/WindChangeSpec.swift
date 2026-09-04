@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct WindChangeTests {
   @Test
-  func parsesAWND14006KTAFT2701Remark() async throws {
+  func `parses a WND VRB06KT AFT 2707 remark`() async throws {
     let string = """
       TAF KLUF
           261200Z 2612/2718 VRB06KT 9999 SKC QNH2974INS
@@ -23,7 +23,7 @@ struct WindChangeTests {
   }
 
   @Test
-  func parsesAWNDVRB06KTAFT2707Remark() async throws {
+  func `parses a WND 14006KT AFT 2701 remark`() async throws {
     let string = """
       TAF KSKF
           261800Z 2618/2800 19008KT 9999 SKC QNH2988INS WND 14006KT AFT 2701

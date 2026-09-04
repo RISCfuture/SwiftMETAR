@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct RunwayCeilingTests {
   @Test
-  func parsesACIG002RWY11Remark() async throws {
+  func `parses a CIG 002 RWY11 remark`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 CIG 002 RWY11"
     let observation = try await METAR.from(string: string)

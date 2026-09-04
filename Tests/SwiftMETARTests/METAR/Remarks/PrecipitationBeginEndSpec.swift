@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct PrecipitationBeginEndTests {
   @Test
-  func parsesARAB05E30SNB20E55Remark() async throws {
+  func `parses an RAB05E30SNB20E55 remark`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 RAB05E30SNB20E55"
     let observation = try await METAR.from(string: string)
@@ -29,7 +29,7 @@ struct PrecipitationBeginEndTests {
   }
 
   @Test
-  func parsesASHRAB05E30SHSNB20E55Remark() async throws {
+  func `parses an SHRAB05E30SHSNB20E55 remark`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 SHRAB05E30SHSNB20E55"
     let observation = try await METAR.from(string: string)
@@ -52,7 +52,7 @@ struct PrecipitationBeginEndTests {
   }
 
   @Test
-  func parsesARAB0456E09B26Remark() async throws {
+  func `parses an RAB0456E09B26 remark`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 RAB0456E09B26"
     let observation = try await METAR.from(string: string)

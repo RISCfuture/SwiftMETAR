@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct TemperaturesTests {
   @Test
-  func parsesTemperatures() async throws {
+  func `parses temperatures`() async throws {
     let string = """
       TAF KFHU 251400Z
           2514/2620 25009KT 9999 FEW300 QNH3007INS

@@ -7,7 +7,7 @@ import Testing
 @Suite
 struct VisibilityTests {
   @Test
-  func parsesFractionalVisibilitiesLessThan1SM() async throws {
+  func `parses fractional visibilities less than 1 SM`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let visibility = try await METAR.from(string: string).visibility
@@ -15,7 +15,7 @@ struct VisibilityTests {
   }
 
   @Test
-  func parsesFractionalVisibilitiesGreaterThan1SM() async throws {
+  func `parses fractional visibilities greater than 1 SM`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 1 1/2SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let visibility = try await METAR.from(string: string).visibility
@@ -23,7 +23,7 @@ struct VisibilityTests {
   }
 
   @Test
-  func parsesWholeVisibilitiesGreaterThan1SM() async throws {
+  func `parses whole visibilities greater than 1 SM`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let visibility = try await METAR.from(string: string).visibility
@@ -31,7 +31,7 @@ struct VisibilityTests {
   }
 
   @Test
-  func parsesVisibilitiesLessThan1SlashFourSM() async throws {
+  func `parses visibilities less than 1/4 SM`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 M1/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let visibility = try await METAR.from(string: string).visibility
@@ -39,7 +39,7 @@ struct VisibilityTests {
   }
 
   @Test
-  func parsesVisibilitiesGreaterThanOrEqualTo10SM() async throws {
+  func `parses visibilities greater than or equal to 10 SM`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 10SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let visibility = try await METAR.from(string: string).visibility
@@ -47,7 +47,7 @@ struct VisibilityTests {
   }
 
   @Test
-  func parsesVisibilitiesInMeters() async throws {
+  func `parses visibilities in meters`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3000 R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let visibility = try await METAR.from(string: string).visibility
@@ -55,7 +55,7 @@ struct VisibilityTests {
   }
 
   @Test
-  func parsesVisibilitiesGreaterThanOrEqualTo9999M() async throws {
+  func `parses visibilities greater than or equal to 9999 m`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 9999 R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let visibility = try await METAR.from(string: string).visibility
@@ -63,7 +63,7 @@ struct VisibilityTests {
   }
 
   @Test
-  func parsesMissingVisibilities() async throws {
+  func `parses missing visibilities`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 M R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let metar = try await METAR.from(string: string)
@@ -71,7 +71,7 @@ struct VisibilityTests {
   }
 
   @Test
-  func emitsCanonicalCodedStrings() {
+  func `emits canonical coded strings`() {
     #expect(Visibility.equal(.statuteMiles(3 / 4 as Ratio)).codedString == "3/4SM")
     #expect(Visibility.equal(.statuteMiles(3 / 2 as Ratio)).codedString == "1 1/2SM")
     #expect(Visibility.equal(.statuteMiles(3 as Ratio)).codedString == "3SM")
@@ -106,7 +106,7 @@ struct VisibilityTests {
     .variable(.equal(.feet(1000)), .equal(.feet(1400))),
     .notRecorded
   ])
-  func roundTripsCodedString(_ visibility: Visibility) throws {
+  func `round trips coded string`(_ visibility: Visibility) throws {
     #expect(try Visibility(coded: visibility.codedString) == visibility)
   }
 
@@ -117,12 +117,12 @@ struct VisibilityTests {
     .feet(1200),
     .meters(3000)
   ])
-  func roundTripsValueCodedString(_ value: Visibility.Value) throws {
+  func `round trips a visibility value coded string`(_ value: Visibility.Value) throws {
     #expect(try Visibility.Value(coded: value.codedString) == value)
   }
 
   @Test
-  func roundTripsThroughCodable() throws {
+  func `round trips through Codable`() throws {
     let visibility = Visibility.equal(.feet(1200))
     let data = try JSONEncoder().encode(visibility)
 

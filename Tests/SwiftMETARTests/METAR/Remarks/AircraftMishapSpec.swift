@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct AircraftMishapTests {
   @Test
-  func parsesAACFTMSHPRemark() async throws {
+  func `parses an ACFT MSHP remark`() async throws {
     let string = "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 ACFT MSHP"
     let observation = try await METAR.from(string: string)
 

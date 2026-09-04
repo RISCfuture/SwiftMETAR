@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct PeriodTests {
   @Test
-  func parsesTAFWithGroupThatCrossesMonthBoundary() async throws {
+  func `parses a TAF with a group that crosses a month boundary`() async throws {
     let string = """
       TAF KDVT 311746Z 3118/0118 12007KT P6SM -RA SCT030 OVC050 TEMPO 3118/3119 4SM RA BR BKN020 \
       OVC040 FM311900 13008KT P6SM VCSH SCT030 OVC050 FM312200 12009KT P6SM SCT030 BKN060 FM010800 \
@@ -28,7 +28,7 @@ struct PeriodTests {
   }
 
   @Test
-  func throwsErrorForMalformedBECMGWithEndDateBeforeStartDate() async throws {
+  func `throws an error for a BECMG whose end date precedes its start date`() async throws {
     let string = """
       TAF COR SPJL 241715Z 2418/2518 32018KT 9999 BKN020 TX17/2419Z TN04/2510Z TEMPO 2418/2422 \
       32022G35KT SCT020TCU SCT100 BECMG 2423/2224 23007KT FM250300 VRB02KT 9999 SCT020
@@ -50,12 +50,12 @@ struct PeriodTests {
   @Test(arguments: [
     "2515/2615", "FM261500", "TEMPO 2515/2615", "BECMG 2515/2615", "PROB30 2515/2615"
   ])
-  func roundTripsCodedString(_ coded: String) throws {
+  func `round trips coded string`(_ coded: String) throws {
     #expect(try TAF.Group.Period(coded: coded).codedString == coded)
   }
 
   @Test
-  func roundTripsThroughCodable() throws {
+  func `round trips through Codable`() throws {
     let coded = "PROB30 2515/2615"
     let period = try TAF.Group.Period(coded: coded)
     let data = try JSONEncoder().encode(period)

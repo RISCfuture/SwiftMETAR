@@ -42,7 +42,7 @@ struct WindsAloftTests {
   // MARK: - low-level product
 
   @Test
-  func parsesALowLevelWindsAloftProduct() async throws {
+  func `parses a low-level winds aloft product`() async throws {
     let string = [
       "000",
       "FBUS31 KWNO 032000",
@@ -103,7 +103,7 @@ struct WindsAloftTests {
   }
 
   @Test
-  func providesAltitudeMeasurements() async throws {
+  func `provides altitude measurements`() async throws {
     let string = [
       "000",
       "FBUS31 KWNO 032000",
@@ -123,7 +123,7 @@ struct WindsAloftTests {
   /// The AWC data API replaces the WMO header line of a regional excerpt with a
   /// notice naming the bulletin the excerpt came from.
   @Test
-  func parsesARegionalExcerpt() async throws {
+  func `parses a regional excerpt`() async throws {
     let string = Self.bulletin(
       validAt: "040000Z",
       forUse: "2000-0300Z",
@@ -140,7 +140,7 @@ struct WindsAloftTests {
   // MARK: - high-level product
 
   @Test
-  func parsesAHighLevelWindsAloftProduct() async throws {
+  func `parses a high-level winds aloft product`() async throws {
     let string = [
       "000",
       "FBUS37 KWNO 032000",
@@ -186,7 +186,7 @@ struct WindsAloftTests {
       (validAt: "120600Z", forUse: "0600-1200Z", start: "120600", end: "121200")
     ]
   )
-  func anchorsTheUsePeriodToTheValidTime(
+  func `anchors the use period to the valid time`(
     testCase: (validAt: String, forUse: String, start: String, end: String)
   ) async throws {
     let referenceDate = zuluCal.date(
@@ -205,7 +205,7 @@ struct WindsAloftTests {
   // MARK: - station subscript
 
   @Test
-  func looksUpEntriesByAltitude() throws {
+  func `looks up entries by altitude`() throws {
     let station = WindsAloft.Station(
       id: "TST",
       entries: [
@@ -222,7 +222,7 @@ struct WindsAloftTests {
   // MARK: - coded round-tripping
 
   @Test
-  func regeneratesAReParseableBulletin() async throws {
+  func `regenerates a re-parseable bulletin`() async throws {
     let original = try await WindsAloft.from(string: Self.lowLevelBulletin)
 
     // Drop the raw text so `codedString` regenerates the table from components.
@@ -245,7 +245,7 @@ struct WindsAloftTests {
   }
 
   @Test
-  func roundTripsThroughJSON() async throws {
+  func `round trips through JSON`() async throws {
     let original = try await WindsAloft.from(string: Self.lowLevelBulletin)
 
     let data = try JSONEncoder().encode(original)
@@ -259,7 +259,7 @@ struct WindsAloftTests {
   // MARK: - light and variable in product
 
   @Test
-  func parses9900EntriesCorrectly() async throws {
+  func `parses 9900 entries correctly`() async throws {
     let string = [
       "000",
       "FBUS31 KWNO 032000",

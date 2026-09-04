@@ -7,7 +7,7 @@ import Testing
 @Suite
 struct TAFXMLTests {
   @Test
-  func parsesABasicTAF() async throws {
+  func `parses a basic TAF`() async throws {
     let xml = """
       <response><data>
       <TAF>
@@ -45,7 +45,7 @@ struct TAFXMLTests {
   }
 
   @Test
-  func parsesFMGroups() async throws {
+  func `parses FM groups`() async throws {
     let xml = """
       <response><data>
       <TAF>
@@ -95,7 +95,7 @@ struct TAFXMLTests {
   }
 
   @Test
-  func parsesTEMPOGroups() async throws {
+  func `parses TEMPO groups`() async throws {
     let xml = """
       <response><data>
       <TAF>
@@ -139,7 +139,7 @@ struct TAFXMLTests {
   }
 
   @Test
-  func parsesBECMGGroups() async throws {
+  func `parses BECMG groups`() async throws {
     let xml = """
       <response><data>
       <TAF>
@@ -177,7 +177,7 @@ struct TAFXMLTests {
   }
 
   @Test
-  func parsesPROBGroups() async throws {
+  func `parses PROB groups`() async throws {
     let xml = """
       <response><data>
       <TAF>
@@ -218,7 +218,7 @@ struct TAFXMLTests {
   }
 
   @Test
-  func parsesWindshear() async throws {
+  func `parses windshear`() async throws {
     let xml = """
       <response><data>
       <TAF>
@@ -251,7 +251,7 @@ struct TAFXMLTests {
   }
 
   @Test
-  func parsesTurbulenceConditions() async throws {
+  func `parses turbulence conditions`() async throws {
     let xml = """
       <response><data>
       <TAF>
@@ -286,7 +286,7 @@ struct TAFXMLTests {
   }
 
   @Test
-  func parsesIcingConditions() async throws {
+  func `parses icing conditions`() async throws {
     let xml = """
       <response><data>
       <TAF>
@@ -319,7 +319,7 @@ struct TAFXMLTests {
   }
 
   @Test
-  func parsesMultipleTAFs() async throws {
+  func `parses multiple TAFs`() async throws {
     let xml = """
       <response><data>
       <TAF>
@@ -360,7 +360,7 @@ struct TAFXMLTests {
   }
 
   @Test
-  func parsesRemarksString() async throws {
+  func `parses the remarks string`() async throws {
     let xml = """
       <response><data>
       <TAF>
@@ -389,7 +389,7 @@ struct TAFXMLTests {
   }
 
   @Test
-  func reportsErrorOnEntriesWithNoValidForecastGroups() async throws {
+  func `reports error on entries with no valid forecast groups`() async throws {
     let xml = """
       <response><data>
       <TAF>
@@ -413,7 +413,7 @@ struct TAFXMLTests {
   }
 
   @Test
-  func reportsErrorOnInvalidPeriod() async throws {
+  func `reports error on invalid period`() async throws {
     let xml = """
       <response><data>
       <TAF>

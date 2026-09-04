@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct DailyTemperatureExtremeTests {
   @Test
-  func parsesA401001015Remark() async throws {
+  func `parses a 401001015 remark`() async throws {
     let string = "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 401001015"
     let observation = try await METAR.from(string: string)
 
@@ -18,7 +18,7 @@ struct DailyTemperatureExtremeTests {
   }
 
   @Test
-  func parsesA401120084Remark() async throws {
+  func `parses a 401120084 remark`() async throws {
     let string = "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 401120084"
     let observation = try await METAR.from(string: string)
 

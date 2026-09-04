@@ -18,7 +18,7 @@ struct METARCodedTests {
       "METAR KJFK 121951Z VRB03KT CAVOK 22/13 A3001"
     ]
   )
-  func codedStringReparsesToSameValues(_ string: String) async throws {
+  func `coded string reparses to same values`(_ string: String) async throws {
     let original = try await METAR.from(string: string)
     let reparsed = try await METAR.from(string: original.codedString)
 
@@ -36,7 +36,7 @@ struct METARCodedTests {
   }
 
   @Test
-  func encodesAndDecodesAsASingleCodedStringViaCodable() throws {
+  func `encodes and decodes as a single coded string via Codable`() throws {
     let metar = try METAR(coded: "METAR KSFO 121953Z 03015KT 10SM FEW020 18/12 A2992 RMK AO2")
     let data = try JSONEncoder().encode(metar)
 
@@ -56,7 +56,7 @@ struct METARCodedTests {
   /// nor corrupt results, guarding against the regex-construction data race the
   /// coded-string representation originally introduced.
   @Test
-  func decodesConcurrentlyWithoutCrashing() async throws {
+  func `decodes concurrently without crashing`() async throws {
     let metar = try METAR(coded: "METAR KSFO 121953Z 03015KT 10SM FEW020 18/12 A2992 RMK AO2")
     let data = try JSONEncoder().encode(metar)
 

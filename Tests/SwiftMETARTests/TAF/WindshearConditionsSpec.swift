@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct WindshearConditionsTests {
   @Test
-  func parsesWindshearConditions() async throws {
+  func `parses windshear conditions`() async throws {
     let string = """
       TAF KVOK 251700Z
           2517/2623 09012KT 6000 -RA BKN005 OVC015 QNH2981INS

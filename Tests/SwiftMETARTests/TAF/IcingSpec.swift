@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct IcingConditionsTests {
   @Test
-  func parsesIcingConditions() async throws {
+  func `parses icing conditions`() async throws {
     let string = """
       TAF KBLV 251800Z
           2515/2615 14005KT 8000 BR FEW030 QNH2960INS
@@ -25,7 +25,7 @@ struct IcingConditionsTests {
   }
 
   @Test
-  func emitsCanonicalCodedStrings() {
+  func `emits canonical coded strings`() {
     #expect(Icing(type: .lightRime, base: 3000, depth: 4000).codedString == "620304")
     #expect(Icing(type: .lightMixed, base: 9000, depth: 9000).codedString == "610909")
     #expect(Icing(type: .traceNone, base: 0, depth: 0).codedString == "600000")
@@ -38,12 +38,12 @@ struct IcingConditionsTests {
     Icing(type: .traceNone, base: 0, depth: 0),
     Icing(type: .severeClear, base: 9900, depth: 9000)
   ])
-  func roundTripsCodedString(_ icing: Icing) throws {
+  func `round trips coded string`(_ icing: Icing) throws {
     #expect(try Icing(coded: icing.codedString) == icing)
   }
 
   @Test
-  func roundTripsThroughCodable() throws {
+  func `round trips through Codable`() throws {
     let icing = Icing(type: .lightRime, base: 3000, depth: 4000)
     let data = try JSONEncoder().encode(icing)
 

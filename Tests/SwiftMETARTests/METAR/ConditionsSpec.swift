@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct ConditionsTests {
   @Test
-  func parsesSkyClear() async throws {
+  func `parses sky clear`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR SKC 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let conditions = try await METAR.from(string: string).conditions
@@ -16,7 +16,7 @@ struct ConditionsTests {
   }
 
   @Test
-  func parsesSkyClearBelow12000() async throws {
+  func `parses sky clear below 12000`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR CLR 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let conditions = try await METAR.from(string: string).conditions
@@ -26,7 +26,7 @@ struct ConditionsTests {
   }
 
   @Test
-  func parsesFewAt400() async throws {
+  func `parses few at 400`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR FEW004 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let conditions = try await METAR.from(string: string).conditions
@@ -36,7 +36,7 @@ struct ConditionsTests {
   }
 
   @Test
-  func parsesScatteredToweringCumulusAt2300() async throws {
+  func `parses scattered towering cumulus at 2300`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR SCT023TCU 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let conditions = try await METAR.from(string: string).conditions
@@ -46,7 +46,7 @@ struct ConditionsTests {
   }
 
   @Test
-  func parsesBrokenAt10500() async throws {
+  func `parses broken at 10500`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR BKN105 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let conditions = try await METAR.from(string: string).conditions
@@ -56,7 +56,7 @@ struct ConditionsTests {
   }
 
   @Test
-  func parsesOvercastAt25000() async throws {
+  func `parses overcast at 25000`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR OVC250 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let conditions = try await METAR.from(string: string).conditions
@@ -66,7 +66,7 @@ struct ConditionsTests {
   }
 
   @Test
-  func parsesVerticalVisibility100() async throws {
+  func `parses vertical visibility 100`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR VV001 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let conditions = try await METAR.from(string: string).conditions
@@ -76,7 +76,7 @@ struct ConditionsTests {
   }
 
   @Test
-  func parsesFewAt1200ScatteredAt4600() async throws {
+  func `parses few at 1200 and scattered at 4600`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR FEW012 SCT046 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let conditions = try await METAR.from(string: string).conditions
@@ -87,7 +87,7 @@ struct ConditionsTests {
   }
 
   @Test
-  func parsesScatteredAt3300BrokenAt8500() async throws {
+  func `parses scattered at 3300 and broken at 8500`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR SCT033 BKN085 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let conditions = try await METAR.from(string: string).conditions
@@ -98,7 +98,7 @@ struct ConditionsTests {
   }
 
   @Test
-  func parsesScatteredAt1800OvercastCumulonimbusAt3200() async throws {
+  func `parses scattered at 1800 and overcast cumulonimbus at 3200`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR SCT018 OVC032CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let conditions = try await METAR.from(string: string).conditions
@@ -109,7 +109,7 @@ struct ConditionsTests {
   }
 
   @Test
-  func parsesScatteredAt900ScatteredAt2400BrokenAt4800() async throws {
+  func `parses scattered at 900 and 2400 and broken at 4800`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR SCT009 SCT024 BKN048 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let conditions = try await METAR.from(string: string).conditions
@@ -121,7 +121,7 @@ struct ConditionsTests {
   }
 
   @Test
-  func emitsCanonicalCodedStrings() {
+  func `emits canonical coded strings`() {
     #expect(Condition.clear.codedString == "CLR")
     #expect(Condition.skyClear.codedString == "SKC")
     #expect(Condition.noSignificantClouds.codedString == "NSC")
@@ -144,19 +144,19 @@ struct ConditionsTests {
     .overcast(25_000),
     .indefinite(200)
   ])
-  func roundTripsCodedString(_ condition: Condition) throws {
+  func `round trips coded string`(_ condition: Condition) throws {
     #expect(try Condition(coded: condition.codedString) == condition)
   }
 
   @Test
-  func rejectsInvalidCodedStrings() {
+  func `rejects invalid coded strings`() {
     #expect(throws: Error.self) { try Condition(coded: "XYZ") }
     #expect(throws: Error.self) { try Condition(coded: "") }
     #expect(throws: Error.self) { try Condition(coded: "VV002CB") }
   }
 
   @Test
-  func roundTripsThroughCodable() throws {
+  func `round trips through Codable`() throws {
     let condition = Condition.broken(5000, type: .cumulonimbus)
     let data = try JSONEncoder().encode(condition)
 

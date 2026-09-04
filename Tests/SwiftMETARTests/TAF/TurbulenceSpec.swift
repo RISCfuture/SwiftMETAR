@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct TurbulenceTests {
   @Test
-  func parsesTurbulence() async throws {
+  func `parses turbulence`() async throws {
     let string = """
       TAF KBLV 251800Z
           2515/2615 14005KT 8000 BR FEW030 QNH2960INS
@@ -31,7 +31,7 @@ struct TurbulenceTests {
   }
 
   @Test
-  func emitsCanonicalCodedStrings() {
+  func `emits canonical coded strings`() {
     #expect(
       Turbulence(
         location: .clearAir,
@@ -111,12 +111,12 @@ struct TurbulenceTests {
     ),
     Turbulence(location: nil, intensity: .extreme, frequency: nil, base: 20000, depth: 5000)
   ])
-  func roundTripsCodedString(_ turbulence: Turbulence) throws {
+  func `round trips coded string`(_ turbulence: Turbulence) throws {
     #expect(try Turbulence(coded: turbulence.codedString) == turbulence)
   }
 
   @Test
-  func roundTripsThroughCodable() throws {
+  func `round trips through Codable`() throws {
     let turbulence = Turbulence(
       location: .clearAir,
       intensity: .moderate,
