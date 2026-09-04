@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// METAR, TAF, and Winds Aloft parsing errors.
 public enum Error: Swift.Error, Equatable {

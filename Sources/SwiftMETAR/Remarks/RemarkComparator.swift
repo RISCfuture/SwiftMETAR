@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Orders ``RemarkEntry`` records by their ``RemarkEntry/urgency``.
 public struct RemarkComparator: SortComparator {

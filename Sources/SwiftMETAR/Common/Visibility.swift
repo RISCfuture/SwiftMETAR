@@ -1,5 +1,5 @@
-import Foundation
-import NumberKit
+public import Foundation
+public import NumberKit
 
 /// A visibility report, made by a human or a transmissometer.
 public enum Visibility: CodedRepresentable, Equatable, Sendable {

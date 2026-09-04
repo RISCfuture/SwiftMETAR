@@ -141,7 +141,7 @@ struct DecodeTAF: AsyncParsableCommand {
   }
 
   private func loadTAFsFromXML(
-    errorHandler: (String?, Swift.Error) -> Void
+    errorHandler: (String?, any Swift.Error) -> Void
   ) async throws -> [TAF] {
     logMessage("Loading TAFs from XML…\n")
 
@@ -165,7 +165,7 @@ struct DecodeTAF: AsyncParsableCommand {
     return tafs
   }
 
-  private func loadTAFs(errorHandler: ((String, Swift.Error) throws -> Void)) async throws
+  private func loadTAFs(errorHandler: ((String, any Swift.Error) throws -> Void)) async throws
     -> [String: TAF]
   {
     logMessage("Loading TAFs…\n")

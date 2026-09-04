@@ -1,5 +1,5 @@
-import Foundation
-import NumberKit
+public import Foundation
+public import NumberKit
 
 /// Types of METAR remarks.
 public enum Remark: Equatable, Sendable {

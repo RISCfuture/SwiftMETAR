@@ -1,7 +1,7 @@
 import BuildableMacro
-import Foundation
+public import Foundation
 import METARFormatting
-import SwiftMETAR
+public import SwiftMETAR
 
 extension RemarkEntry {
 

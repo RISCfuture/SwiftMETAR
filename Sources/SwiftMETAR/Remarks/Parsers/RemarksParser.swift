@@ -5,7 +5,7 @@ enum RemarksParser {
   /// One shared set of remark parsers, built and warmed once. Warming compiles every
   /// parser's regexes single-threaded here, so both the async and synchronous parsing
   /// paths reuse the same compiled regexes and never build them concurrently.
-  static let sharedParsers: [RemarkParser] = {
+  static let sharedParsers: [any RemarkParser] = {
     let parsers = makeParsers()
     for parser in parsers { parser.warmUp() }
     return parsers
@@ -13,7 +13,7 @@ enum RemarksParser {
 
   /// Builds the set of remark parsers. Called once to populate ``sharedParsers``,
   /// which every parsing path then reuses.
-  static func makeParsers() -> [RemarkParser] {
+  static func makeParsers() -> [any RemarkParser] {
     [
       ThunderstormBeginEndParser(),
 
@@ -45,7 +45,7 @@ enum RemarksParser {
   /// path and the `Codable` decode path. Both pass ``sharedParsers``.
   static func parse(
     _ parts: inout [String.SubSequence],
-    using parsers: [RemarkParser],
+    using parsers: [any RemarkParser],
     date: DateComponents,
     lenientRemarks: Bool = false
   ) throws -> ([RemarkEntry], String?) {

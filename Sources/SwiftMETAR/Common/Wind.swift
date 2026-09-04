@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// A report on the condition and strength of the winds.
 public enum Wind: CodedRepresentable, Equatable, Sendable {

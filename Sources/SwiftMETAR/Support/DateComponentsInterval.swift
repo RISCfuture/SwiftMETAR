@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// This class is used to replicate the functionality of the Foundation class
 /// `DateInterval`, but while storing a range of dates as components, rather than a
@@ -22,7 +22,7 @@ public struct DateComponentsInterval: Comparable, Hashable, Codable, Sendable {
     self.end = zuluCal.dateComponents(in: zulu, from: end)
   }
 
-  public init(from decoder: Decoder) throws {
+  public init(from decoder: any Decoder) throws {
     let container = try decoder.container(keyedBy: CodingKeys.self)
     start = try container.decode(DateComponents.self, forKey: .start)
     end = try container.decode(DateComponents.self, forKey: .end)
@@ -52,7 +52,7 @@ public struct DateComponentsInterval: Comparable, Hashable, Codable, Sendable {
     return dateInterval.contains(date)
   }
 
-  public func encode(to encoder: Encoder) throws {
+  public func encode(to encoder: any Encoder) throws {
     var container = encoder.container(keyedBy: CodingKeys.self)
     try container.encode(start, forKey: .start)
     try container.encode(end, forKey: .end)

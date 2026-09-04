@@ -2,9 +2,13 @@
 
 import PackageDescription
 
-let approachableConcurrency: [SwiftSetting] = [
+let upcomingFeatures: [SwiftSetting] = [
   .enableUpcomingFeature("NonisolatedNonsendingByDefault"),
-  .enableUpcomingFeature("InferIsolatedConformances")
+  .enableUpcomingFeature("InferIsolatedConformances"),
+  .enableUpcomingFeature("ImmutableWeakCaptures"),
+  .enableUpcomingFeature("MemberImportVisibility"),
+  .enableUpcomingFeature("ExistentialAny"),
+  .enableUpcomingFeature("InternalImportsByDefault")
 ]
 
 // METARFormatting (and DecodeMETAR/DecodeTAF, which depend on it) format `Measurement`
@@ -28,12 +32,12 @@ var targets: [Target] = [
     name: "SwiftMETAR",
     dependencies: [.product(name: "NumberKit", package: "swift-numberkit")],
     resources: [.process("Resources")],
-    swiftSettings: approachableConcurrency
+    swiftSettings: upcomingFeatures
   ),
   .testTarget(
     name: "SwiftMETARTests",
     dependencies: ["SwiftMETAR"],
-    swiftSettings: approachableConcurrency
+    swiftSettings: upcomingFeatures
   ),
   .executableTarget(
     name: "DecodeWindsAloft",
@@ -41,7 +45,7 @@ var targets: [Target] = [
       "SwiftMETAR",
       .product(name: "ArgumentParser", package: "swift-argument-parser")
     ],
-    swiftSettings: approachableConcurrency
+    swiftSettings: upcomingFeatures
   )
 ]
 
@@ -63,7 +67,7 @@ var targets: [Target] = [
         .product(name: "BuildableMacro", package: "BuildableMacro")
       ],
       resources: [.process("Resources")],
-      swiftSettings: approachableConcurrency
+      swiftSettings: upcomingFeatures
     ),
     .executableTarget(
       name: "DecodeMETAR",
@@ -72,7 +76,7 @@ var targets: [Target] = [
         "METARFormatting",
         .product(name: "ArgumentParser", package: "swift-argument-parser")
       ],
-      swiftSettings: approachableConcurrency
+      swiftSettings: upcomingFeatures
     ),
     .executableTarget(
       name: "DecodeTAF",
@@ -81,7 +85,7 @@ var targets: [Target] = [
         "METARFormatting",
         .product(name: "ArgumentParser", package: "swift-argument-parser")
       ],
-      swiftSettings: approachableConcurrency
+      swiftSettings: upcomingFeatures
     )
   ]
 #endif

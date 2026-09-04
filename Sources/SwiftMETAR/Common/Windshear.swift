@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// An abrupt change in wind direction and/or speed at a certain altitude.
 public struct Windshear: CodedRepresentable, Equatable, Sendable {
