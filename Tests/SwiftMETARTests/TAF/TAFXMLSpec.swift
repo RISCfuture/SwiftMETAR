@@ -1,4 +1,5 @@
 import Foundation
+import NumberKit
 import Testing
 
 @testable import SwiftMETAR

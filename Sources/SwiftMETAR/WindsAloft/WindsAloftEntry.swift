@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// A single winds and temperatures aloft data group, representing the wind
 /// and optional temperature at a specific altitude for a station.

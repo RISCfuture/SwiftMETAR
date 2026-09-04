@@ -1,7 +1,7 @@
 import BuildableMacro
-import Foundation
-import NumberKit
-import SwiftMETAR
+public import Foundation
+public import NumberKit
+public import SwiftMETAR
 
 extension Ratio {
 

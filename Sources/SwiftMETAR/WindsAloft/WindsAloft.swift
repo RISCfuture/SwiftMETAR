@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /**
  A parsed NWS Winds and Temperatures Aloft (FB/FD) product.

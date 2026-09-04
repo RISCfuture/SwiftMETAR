@@ -141,7 +141,7 @@ struct DecodeMETAR: AsyncParsableCommand {
   }
 
   private func loadMETARsFromXML(
-    errorHandler: (String?, Swift.Error) -> Void
+    errorHandler: (String?, any Swift.Error) -> Void
   ) async throws -> [METAR] {
     logMessage("Loading METARs from XML…\n")
 
@@ -165,7 +165,7 @@ struct DecodeMETAR: AsyncParsableCommand {
     return metars
   }
 
-  private func loadMETARs(errorHandler: ((String, Swift.Error) throws -> Void)) async throws
+  private func loadMETARs(errorHandler: ((String, any Swift.Error) throws -> Void)) async throws
     -> [String: METAR]
   {
     logMessage("Loading METARs…\n")

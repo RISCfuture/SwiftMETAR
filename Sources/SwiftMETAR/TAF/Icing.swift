@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Forecasted icing conditions in a military TAF.
 public struct Icing: Equatable, Sendable {

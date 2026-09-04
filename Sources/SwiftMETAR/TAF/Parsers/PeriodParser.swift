@@ -10,7 +10,7 @@ final class PeriodParser: WarmableParser, @unchecked Sendable {
 
   // `rangeParser` comes last: it matches a bare period range, which several of the other
   // subparsers consume after their own prefix, so they must get first refusal.
-  private lazy var subparsers: [Subparser] = [
+  private lazy var subparsers: [any Subparser] = [
     fromParser, temporaryParser, becomingParser, probabilityParser, rangeParser
   ]
 

@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// A sea-level pressure altimeter setting.
 public enum Altimeter: CodedRepresentable, Comparable, Sendable {

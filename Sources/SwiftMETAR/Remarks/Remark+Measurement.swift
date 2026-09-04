@@ -1,4 +1,6 @@
-import Foundation
+public import Foundation
+
+import NumberKit
 
 extension Remark {
 

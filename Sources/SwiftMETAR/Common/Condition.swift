@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// A sky condition, either a cloud layer or the presence of a clear sky.
 public enum Condition: CodedRepresentable, Equatable, Sendable {

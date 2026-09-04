@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /**
  Terminal aerodrome forecasts (TAFs) are point forecasts of a 5-mile area around

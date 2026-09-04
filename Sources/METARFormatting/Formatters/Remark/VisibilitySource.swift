@@ -1,6 +1,6 @@
 import BuildableMacro
-import Foundation
-import SwiftMETAR
+public import Foundation
+public import SwiftMETAR
 
 extension Remark.VisibilitySource {
 

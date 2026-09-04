@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 extension Remark {
   /// An occurrence of precipitation beginning or ending.

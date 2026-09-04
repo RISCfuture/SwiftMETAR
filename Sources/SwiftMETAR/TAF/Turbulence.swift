@@ -1,4 +1,4 @@
-import Foundation
+public import Foundation
 
 /// Forecasted turbulence conditions in a military TAF.
 public struct Turbulence: Equatable, Sendable {
