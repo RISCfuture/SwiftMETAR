@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct ObservationTypeTests {
   @Test
-  func parsesAAO1Remark() async throws {
+  func `parses an AO1 remark`() async throws {
     let string = "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO1 ACFT MSHP"
     let observation = try await METAR.from(string: string)
 
@@ -16,7 +16,7 @@ struct ObservationTypeTests {
   }
 
   @Test
-  func parsesAAO2Remark() async throws {
+  func `parses an AO2 remark`() async throws {
     let string = "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 ACFT MSHP"
     let observation = try await METAR.from(string: string)
 
@@ -28,7 +28,7 @@ struct ObservationTypeTests {
   }
 
   @Test
-  func parsesAA02Remark() async throws {
+  func `parses an A02 remark`() async throws {
     let string = "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK A02 ACFT MSHP"
     let observation = try await METAR.from(string: string)
 
@@ -40,7 +40,7 @@ struct ObservationTypeTests {
   }
 
   @Test
-  func parsesAAO2ARemark() async throws {
+  func `parses an AO2A remark`() async throws {
     let string = "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2A ACFT MSHP"
     let observation = try await METAR.from(string: string)
 

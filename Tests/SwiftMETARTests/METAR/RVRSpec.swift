@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct RVRTests {
   @Test
-  func parsesVisibilitiesInFeet() async throws {
+  func `parses visibilities in feet`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let visibilities = try await METAR.from(string: string).runwayVisibility
@@ -17,7 +17,7 @@ struct RVRTests {
   }
 
   @Test
-  func parsesVisibilitiesInMeters() async throws {
+  func `parses visibilities in meters`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/0800M +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let visibilities = try await METAR.from(string: string).runwayVisibility
@@ -28,7 +28,7 @@ struct RVRTests {
   }
 
   @Test
-  func parsesVisibilityRanges() async throws {
+  func `parses visibility ranges`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R01L/0600V1000FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let visibilities = try await METAR.from(string: string).runwayVisibility
@@ -39,7 +39,7 @@ struct RVRTests {
   }
 
   @Test
-  func parsesLessThanVisibilities() async throws {
+  func `parses less-than visibilities`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R01L/M0600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let visibilities = try await METAR.from(string: string).runwayVisibility
@@ -50,7 +50,7 @@ struct RVRTests {
   }
 
   @Test
-  func parsesGreaterThanVisibilities() async throws {
+  func `parses greater-than visibilities`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R27/P6000FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let visibilities = try await METAR.from(string: string).runwayVisibility
@@ -74,7 +74,7 @@ struct RVRTests {
       visibility: .variable(.lessThan(.meters(600)), .greaterThan(.meters(1200)))
     )
   ])
-  func roundTripsCodedString(_ value: RunwayVisibility) throws {
+  func `round trips coded string`(_ value: RunwayVisibility) throws {
     #expect(try RunwayVisibility(coded: value.codedString) == value)
   }
 
@@ -91,12 +91,12 @@ struct RVRTests {
     (RunwayVisibility(runwayID: "01L", visibility: .lessThan(.feet(600))), "R01L/M600FT"),
     (RunwayVisibility(runwayID: "27", visibility: .greaterThan(.feet(6000))), "R27/P6000FT")
   ])
-  func emitsCanonicalCodedStrings(_ value: RunwayVisibility, _ expected: String) {
+  func `emits canonical coded strings`(_ value: RunwayVisibility, _ expected: String) {
     #expect(value.codedString == expected)
   }
 
   @Test
-  func roundTripsThroughJSON() throws {
+  func `round trips through JSON`() throws {
     let value = RunwayVisibility(
       runwayID: "01L",
       visibility: .variable(.equal(.feet(600)), .equal(.feet(1000)))

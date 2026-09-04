@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct MaintenanceTests {
   @Test
-  func parsesADollarRemark() async throws {
+  func `parses a $ remark`() async throws {
     let string = "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 ACFT MSHP $"
     let observation = try await METAR.from(string: string)
 
@@ -14,7 +14,7 @@ struct MaintenanceTests {
   }
 
   @Test
-  func parsesADollarWithTrailingSpaceRemark() async throws {
+  func `parses a $ remark with a trailing space`() async throws {
     let string = "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 ACFT MSHP $ "
     let observation = try await METAR.from(string: string)
 

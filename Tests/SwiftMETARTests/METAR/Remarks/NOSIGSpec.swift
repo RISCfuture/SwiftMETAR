@@ -7,7 +7,7 @@ import Testing
 @Suite
 struct NOSIGTests {
   @Test
-  func parsesANOSIGRemark() async throws {
+  func `parses a NOSIG remark`() async throws {
     let string = "LOWK 031520Z AUTO VRB01KT 9999 NCD 05/02 Q1005 NOSIG"
     let observation = try await METAR.from(string: string, lenientRemarks: true)
 

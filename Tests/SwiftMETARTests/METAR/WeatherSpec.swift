@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct WeatherTests {
   @Test
-  func parsesLightDrizzle() async throws {
+  func `parses light drizzle`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT -DZ OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let phenomena = try await METAR.from(string: string).weather!
@@ -18,7 +18,7 @@ struct WeatherTests {
   }
 
   @Test
-  func parsesLightRainAndSnow() async throws {
+  func `parses light rain and snow`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT -RASN OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let phenomena = try await METAR.from(string: string).weather!
@@ -30,7 +30,7 @@ struct WeatherTests {
   }
 
   @Test
-  func parsesSnowAndMist() async throws {
+  func `parses snow and mist`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT SN BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let phenomena = try await METAR.from(string: string).weather!
@@ -45,7 +45,7 @@ struct WeatherTests {
   }
 
   @Test
-  func parsesLightFreezingRainAndFog() async throws {
+  func `parses light freezing rain and fog`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT -FZRA FG OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let phenomena = try await METAR.from(string: string).weather!
@@ -60,7 +60,7 @@ struct WeatherTests {
   }
 
   @Test
-  func parsesModerateRainshower() async throws {
+  func `parses moderate rainshower`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT SHRA OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let phenomena = try await METAR.from(string: string).weather!
@@ -72,7 +72,7 @@ struct WeatherTests {
   }
 
   @Test
-  func parsesBlowingSandInTheVicinity() async throws {
+  func `parses blowing sand in the vicinity`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT VCBLSA OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let phenomena = try await METAR.from(string: string).weather!
@@ -84,7 +84,7 @@ struct WeatherTests {
   }
 
   @Test
-  func parsesLightRainAndSnowFogAndHaze() async throws {
+  func `parses light rain and snow fog and haze`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT -RASN FG HZ OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let phenomena = try await METAR.from(string: string).weather!
@@ -102,7 +102,7 @@ struct WeatherTests {
   }
 
   @Test
-  func parsesThunderstorms() async throws {
+  func `parses thunderstorms`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT TS OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let phenomena = try await METAR.from(string: string).weather!
@@ -114,7 +114,7 @@ struct WeatherTests {
   }
 
   @Test
-  func parsesThunderstormHeavyRain() async throws {
+  func `parses thunderstorm heavy rain`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let phenomena = try await METAR.from(string: string).weather!
@@ -126,7 +126,7 @@ struct WeatherTests {
   }
 
   @Test
-  func parsesTornadoThunderstormAssociatedRainAndHailAndMist() async throws {
+  func `parses tornado thunderstorm associated rain and hail and mist`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +FC TSRAGR BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let phenomena = try await METAR.from(string: string).weather!
@@ -147,7 +147,7 @@ struct WeatherTests {
   }
 
   @Test
-  func parsesMissingWeather() async throws {
+  func `parses missing weather`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT M OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let metar = try await METAR.from(string: string)
@@ -155,7 +155,7 @@ struct WeatherTests {
   }
 
   @Test
-  func emitsCanonicalCodedStrings() {
+  func `emits canonical coded strings`() {
     #expect(
       Weather(intensity: .heavy, descriptor: .showering, phenomena: [.rain]).codedString == "+SHRA"
     )
@@ -198,12 +198,12 @@ struct WeatherTests {
     Weather(intensity: .vicinity, descriptor: .blowing, phenomena: [.sand]),
     Weather(intensity: .moderate, descriptor: .thunderstorms, phenomena: [.rain, .hail])
   ])
-  func roundTripsCodedString(_ weather: Weather) throws {
+  func `round trips coded string`(_ weather: Weather) throws {
     #expect(try Weather(coded: weather.codedString) == weather)
   }
 
   @Test
-  func roundTripsThroughCodable() throws {
+  func `round trips through Codable`() throws {
     let weather = Weather(intensity: .heavy, descriptor: .thunderstorms, phenomena: [.rain])
     let data = try JSONEncoder().encode(weather)
 

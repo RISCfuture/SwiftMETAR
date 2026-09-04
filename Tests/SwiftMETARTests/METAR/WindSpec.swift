@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct WindTests {
   @Test
-  func parsesWindsLessThan10Knots() async throws {
+  func `parses winds less than 10 knots`() async throws {
     let string =
       #"METAR KOKC 011955Z AUTO 05008KT 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"#
     let wind = try await METAR.from(string: string).wind
@@ -14,7 +14,7 @@ struct WindTests {
   }
 
   @Test
-  func parsesWindsLessThan100Knots() async throws {
+  func `parses winds less than 100 knots`() async throws {
     let string =
       #"METAR KOKC 011955Z AUTO 15014KT 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"#
     let wind = try await METAR.from(string: string).wind
@@ -22,7 +22,7 @@ struct WindTests {
   }
 
   @Test
-  func parsesWindsGreaterThanOrEqualTo100Knots() async throws {
+  func `parses winds greater than or equal to 100 knots`() async throws {
     let string =
       #"METAR KOKC 011955Z AUTO 340112KT 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"#
     let wind = try await METAR.from(string: string).wind
@@ -30,7 +30,7 @@ struct WindTests {
   }
 
   @Test
-  func parsesWindGusts() async throws {
+  func `parses wind gusts`() async throws {
     let string =
       #"METAR KOKC 011955Z AUTO 27020G35KT 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"#
     let wind = try await METAR.from(string: string).wind
@@ -38,7 +38,7 @@ struct WindTests {
   }
 
   @Test
-  func parsesLightVariableWinds() async throws {
+  func `parses light variable winds`() async throws {
     let string =
       #"METAR KOKC 011955Z AUTO VRB03KT 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"#
     let wind = try await METAR.from(string: string).wind
@@ -46,7 +46,7 @@ struct WindTests {
   }
 
   @Test
-  func parsesLightVariableWindsWithHeadingRange() async throws {
+  func `parses light variable winds with heading range`() async throws {
     let string =
       #"METAR KOKC 011955Z AUTO VRB03KT 030V150 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"#
     let wind = try await METAR.from(string: string).wind
@@ -54,7 +54,7 @@ struct WindTests {
   }
 
   @Test
-  func parsesStrongVariableWinds() async throws {
+  func `parses strong variable winds`() async throws {
     let string =
       #"METAR KOKC 011955Z AUTO 21010KT 180V240 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"#
     let wind = try await METAR.from(string: string).wind
@@ -62,7 +62,7 @@ struct WindTests {
   }
 
   @Test
-  func parsesCalmWinds() async throws {
+  func `parses calm winds`() async throws {
     let string =
       #"METAR KOKC 011955Z AUTO 00000KT 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"#
     let wind = try await METAR.from(string: string).wind
@@ -70,7 +70,7 @@ struct WindTests {
   }
 
   @Test
-  func emitsCanonicalCodedStrings() {
+  func `emits canonical coded strings`() {
     #expect(Wind.calm.codedString == "00000KT")
     #expect(Wind.direction(50, speed: .knots(8)).codedString == "05008KT")
     #expect(Wind.direction(340, speed: .knots(112)).codedString == "340112KT")
@@ -97,12 +97,12 @@ struct WindTests {
     .direction(90, speed: .mps(5)),
     .direction(90, speed: .kph(15))
   ])
-  func roundTripsCodedString(_ wind: Wind) throws {
+  func `round trips coded string`(_ wind: Wind) throws {
     #expect(try Wind(coded: wind.codedString) == wind)
   }
 
   @Test
-  func roundTripsThroughCodable() throws {
+  func `round trips through Codable`() throws {
     let wind = Wind.direction(270, speed: .knots(20), gust: .knots(35))
     let data = try JSONEncoder().encode(wind)
 

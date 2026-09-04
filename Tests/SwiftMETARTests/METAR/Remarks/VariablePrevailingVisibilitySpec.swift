@@ -7,7 +7,7 @@ import Testing
 @Suite
 struct VariablePrevailingVisibilityTests {
   @Test
-  func parsesAVIS12V112Remark() async throws {
+  func `parses a VIS 1/2V1 1/2 remark`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 VIS 1/2V1 1/2"
     let observation = try await METAR.from(string: string)
@@ -20,7 +20,7 @@ struct VariablePrevailingVisibilityTests {
   }
 
   @Test
-  func parsesAVIS12V5Remark() async throws {
+  func `parses a VIS 1/2V5 remark`() async throws {
     let string = "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 VIS 1/2V5"
     let observation = try await METAR.from(string: string)
 
@@ -32,7 +32,7 @@ struct VariablePrevailingVisibilityTests {
   }
 
   @Test
-  func parsesAVIS2V4Remark() async throws {
+  func `parses a VIS 2V4 remark`() async throws {
     let string = "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 VIS 2V4"
     let observation = try await METAR.from(string: string)
 

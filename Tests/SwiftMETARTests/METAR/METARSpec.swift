@@ -8,7 +8,7 @@ struct METARTests {
   // MARK: - report type
 
   @Test
-  func parsesTheReportType() async throws {
+  func `parses the report type`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let metar = try await METAR.from(string: string)
@@ -18,7 +18,7 @@ struct METARTests {
   // MARK: - station identifier
 
   @Test
-  func parsesTheStationIdentifier() async throws {
+  func `parses the station identifier`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let metar = try await METAR.from(string: string)
@@ -28,7 +28,7 @@ struct METARTests {
   // MARK: - date and time
 
   @Test
-  func parsesTheDate() async throws {
+  func `parses the date`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let date = try await METAR.from(string: string).calendarDate
@@ -37,7 +37,7 @@ struct METARTests {
   }
 
   @Test
-  func parsesTheDateFromAReferenceDate() async throws {
+  func `parses the date from a reference date`() async throws {
     let referenceComponents = DateComponents(year: 2005, month: 11)
     let referenceDate = zuluCal.nextDate(
       after: Date(),
@@ -57,7 +57,7 @@ struct METARTests {
   // MARK: - observer
 
   @Test
-  func parsesAutomatedReports() async throws {
+  func `parses automated reports`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let metar = try await METAR.from(string: string)
@@ -65,7 +65,7 @@ struct METARTests {
   }
 
   @Test
-  func parsesCorrectedReports() async throws {
+  func `parses corrected reports`() async throws {
     let string =
       "METAR KOKC 011955Z COR 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let metar = try await METAR.from(string: string)
@@ -73,7 +73,7 @@ struct METARTests {
   }
 
   @Test
-  func parsesHumanObservedReports() async throws {
+  func `parses human observed reports`() async throws {
     let string =
       "METAR KOKC 011955Z 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992 RMK AO2 TSB25 TS OHD MOV E SLP132"
     let metar = try await METAR.from(string: string)
@@ -83,7 +83,7 @@ struct METARTests {
   // MARK: - remarks
 
   @Test
-  func parsesEmptyRemarks() async throws {
+  func `parses empty remarks`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 180V250 3/4SM R17L/2600FT +TSRA BR OVC010CB 18/16 A2992"
     let observation = try await METAR.from(string: string)

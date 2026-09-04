@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct SeaLevelPressureTests {
   @Test
-  func parsesASLP982Remark() async throws {
+  func `parses an SLP982 remark`() async throws {
     let string = "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 SLP982"
     let observation = try await METAR.from(string: string)
 
@@ -14,7 +14,7 @@ struct SeaLevelPressureTests {
   }
 
   @Test
-  func parsesASLPNORemark() async throws {
+  func `parses an SLPNO remark`() async throws {
     let string = "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 SLPNO"
     let observation = try await METAR.from(string: string)
 

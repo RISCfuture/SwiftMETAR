@@ -18,7 +18,7 @@ struct TAFCodedTests {
         + "3200 -RA OVC030 620304 610909 QNH2958INS BECMG 2614/2615 30008KT 9999 SKC QNH2950INS"
     ]
   )
-  func codedStringReparsesToSameValues(_ string: String) async throws {
+  func `coded string reparses to same values`(_ string: String) async throws {
     let original = try await TAF.from(string: string)
     let reparsed = try await TAF.from(string: original.codedString)
 
@@ -37,7 +37,7 @@ struct TAFCodedTests {
   }
 
   @Test
-  func encodesAndDecodesAsASingleCodedStringViaCodable() throws {
+  func `encodes and decodes as a single coded string via Codable`() throws {
     let taf = try TAF(
       coded: "TAF KSFO 121720Z 1218/1318 09010KT P6SM FEW020 FM130200 05005KT P6SM SCT040"
     )
@@ -59,7 +59,7 @@ struct TAFCodedTests {
       "PROB30 0108/0112 3SM -TSRA BR OVC040CB"
     ]
   )
-  func decodesAndReEncodesAGroup(_ coded: String) throws {
+  func `decodes and re-encodes a group`(_ coded: String) throws {
     let group = try TAF.Group(coded: coded)
 
     #expect(group.codedString == coded)

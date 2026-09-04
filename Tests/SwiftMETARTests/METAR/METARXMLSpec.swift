@@ -7,7 +7,7 @@ import Testing
 @Suite
 struct METARXMLTests {
   @Test
-  func parsesABasicMETAR() async throws {
+  func `parses a basic METAR`() async throws {
     let xml = """
       <response><data>
       <METAR>
@@ -54,7 +54,7 @@ struct METARXMLTests {
   }
 
   @Test
-  func parsesASPECIReport() async throws {
+  func `parses a SPECI report`() async throws {
     let xml = """
       <response><data>
       <METAR>
@@ -86,7 +86,7 @@ struct METARXMLTests {
   }
 
   @Test
-  func parsesCalmWinds() async throws {
+  func `parses calm winds`() async throws {
     let xml = """
       <response><data>
       <METAR>
@@ -118,7 +118,7 @@ struct METARXMLTests {
   }
 
   @Test
-  func parsesCorrectedReport() async throws {
+  func `parses a corrected report`() async throws {
     let xml = """
       <response><data>
       <METAR>
@@ -149,7 +149,7 @@ struct METARXMLTests {
   }
 
   @Test
-  func parsesLowVisibilityAsLessThanM1SlashFourSMThreshold() async throws {
+  func `parses low visibility below the M1/4SM threshold`() async throws {
     let xml = """
       <response><data>
       <METAR>
@@ -179,7 +179,7 @@ struct METARXMLTests {
   }
 
   @Test
-  func parsesVerticalVisibility() async throws {
+  func `parses vertical visibility`() async throws {
     let xml = """
       <response><data>
       <METAR>
@@ -206,7 +206,7 @@ struct METARXMLTests {
   }
 
   @Test
-  func parsesMultipleMETARs() async throws {
+  func `parses multiple METARs`() async throws {
     let xml = """
       <response><data>
       <METAR>
@@ -245,7 +245,7 @@ struct METARXMLTests {
   }
 
   @Test
-  func throwsOnMissingStationId() async throws {
+  func `throws on a missing station ID`() async throws {
     let xml = """
       <response><data>
       <METAR>
@@ -270,7 +270,7 @@ struct METARXMLTests {
   }
 
   @Test
-  func reportsErrorOnInvalidObservationTime() async throws {
+  func `reports error on invalid observation time`() async throws {
     let xml = """
       <response><data>
       <METAR>
@@ -301,7 +301,7 @@ struct METARXMLTests {
   }
 
   @Test
-  func reportsErrorOnInvalidVisibility() async throws {
+  func `reports error on invalid visibility`() async throws {
     let xml = """
       <response><data>
       <METAR>
@@ -332,7 +332,7 @@ struct METARXMLTests {
   }
 
   @Test
-  func parsesWeatherPhenomenaFromWxString() async throws {
+  func `parses weather phenomena from the wx string`() async throws {
     let xml = """
       <response><data>
       <METAR>
@@ -369,7 +369,7 @@ struct METARXMLTests {
   }
 
   @Test
-  func parsesVariableWindsDir0WithSpeedGreaterThan0() async throws {
+  func `parses variable winds with direction 0 and a speed greater than 0`() async throws {
     let xml = """
       <response><data>
       <METAR>
@@ -396,7 +396,7 @@ struct METARXMLTests {
   }
 
   @Test
-  func roundsTemperaturesCorrectlyHalfTowardZero() async throws {
+  func `rounds half-degree temperatures toward zero`() async throws {
     let xml = """
       <response><data>
       <METAR>
@@ -425,7 +425,7 @@ struct METARXMLTests {
   }
 
   @Test
-  func rounds5ValuesTowardZeroMatchingMETARFormat() async throws {
+  func `rounds 5 values toward zero to match the METAR format`() async throws {
     let xml = """
       <response><data>
       <METAR>
@@ -454,7 +454,7 @@ struct METARXMLTests {
   }
 
   @Test
-  func parsesTheRawText() async throws {
+  func `parses the raw text`() async throws {
     let xml = """
       <response><data>
       <METAR>
@@ -481,7 +481,7 @@ struct METARXMLTests {
   }
 
   @Test
-  func parsesOVXWithVerticalVisibilityFromSkyCondition() async throws {
+  func `parses OVX vertical visibility from the sky condition`() async throws {
     let xml = """
       <response><data>
       <METAR>

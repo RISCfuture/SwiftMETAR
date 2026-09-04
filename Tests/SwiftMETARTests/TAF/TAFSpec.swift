@@ -7,7 +7,7 @@ import Testing
 @Suite
 struct TAFTests {
   @Test
-  func parsesExample1() async throws {
+  func `parses example 1`() async throws {
     let string = """
       TAF KPIR
           111140Z 1112/1212 13012KT P6SM BKN100 WS020/35035KT
@@ -135,7 +135,7 @@ struct TAFTests {
   }
 
   @Test
-  func parsesExample2() async throws {
+  func `parses example 2`() async throws {
     let string = """
       TAF AMD KEYW
           131555Z 1316/1412 VRB03KT P6SM VCTS SCT025CB BKN250
@@ -249,7 +249,7 @@ struct TAFTests {
   }
 
   @Test
-  func parsesExample3() async throws {
+  func `parses example 3`() async throws {
     let string = """
       TAF
           KCRP 111730Z 1118/1218 19007KT P6SM SCT030
@@ -363,7 +363,7 @@ struct TAFTests {
   // MARK: - during
 
   @Test
-  func returnsTheConditionsActiveAtATime() async throws {
+  func `returns the conditions active at a time`() async throws {
     let string = """
       TAF KPIR
           111140Z 1112/1212 13012KT P6SM BKN100 WS020/35035KT
@@ -399,7 +399,7 @@ struct TAFTests {
   }
 
   @Test
-  func returnsNilIfTheTimeIsOutsideTheForecastPeriod() async throws {
+  func `returns nil if the time is outside the forecast period`() async throws {
     let string = """
       TAF KPIR
           111140Z 1112/1212 13012KT P6SM BKN100 WS020/35035KT
@@ -419,7 +419,7 @@ struct TAFTests {
   }
 
   @Test
-  func parsesATAFWithoutAForecastTime() async throws {
+  func `parses a TAF without a forecast time`() async throws {
     let string = """
       TAF KNFG
           2521/2621 21007KT 9999 SKC QNH2989INS
@@ -464,7 +464,7 @@ struct TAFTests {
   }
 
   @Test
-  func parsesGroupComments() async throws {
+  func `parses group comments`() async throws {
     let string = """
       TAF KNID
           2523/2623 VRB05KT 9999 SCT270 QNH2975INS

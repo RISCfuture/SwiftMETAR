@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct WindshearTests {
   @Test
-  func emitsCanonicalCodedStrings() {
+  func `emits canonical coded strings`() {
     #expect(
       Windshear(height: 2000, wind: .direction(240, speed: .knots(25))).codedString
         == "WS020/24025KT"
@@ -26,12 +26,12 @@ struct WindshearTests {
     Windshear(height: 1500, wind: .variable(speed: .knots(10))),
     Windshear(height: 300, wind: .direction(90, speed: .mps(5)))
   ])
-  func roundTripsCodedString(_ windshear: Windshear) throws {
+  func `round trips coded string`(_ windshear: Windshear) throws {
     #expect(try Windshear(coded: windshear.codedString) == windshear)
   }
 
   @Test
-  func roundTripsThroughCodable() throws {
+  func `round trips through Codable`() throws {
     let windshear = Windshear(height: 2000, wind: .direction(240, speed: .knots(25)))
     let encoder = JSONEncoder()
     encoder.outputFormatting = .withoutEscapingSlashes

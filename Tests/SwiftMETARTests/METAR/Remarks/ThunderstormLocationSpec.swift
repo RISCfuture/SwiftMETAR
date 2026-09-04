@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct ThunderstormLocationTests {
   @Test
-  func parsesATSSEMovNERemark() async throws {
+  func `parses a TS SE MOV NE remark`() async throws {
     let string = "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 TS SE MOV NE"
     let observation = try await METAR.from(string: string)
 
@@ -22,7 +22,7 @@ struct ThunderstormLocationTests {
   }
 
   @Test
-  func parsesATSSEThruNWRemark() async throws {
+  func `parses a TS SE THRU NW remark`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 TS SE THRU NW"
     let observation = try await METAR.from(string: string)
@@ -39,7 +39,7 @@ struct ThunderstormLocationTests {
   }
 
   @Test
-  func parsesATSSENERemark() async throws {
+  func `parses a TS SE-NE remark`() async throws {
     let string = "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 TS SE-NE"
     let observation = try await METAR.from(string: string)
 
@@ -55,7 +55,7 @@ struct ThunderstormLocationTests {
   }
 
   @Test
-  func parsesATSSEAndNERemark() async throws {
+  func `parses a TS SE AND NE remark`() async throws {
     let string = "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 TS SE AND NE"
     let observation = try await METAR.from(string: string)
 
@@ -71,7 +71,7 @@ struct ThunderstormLocationTests {
   }
 
   @Test
-  func parsesATSNAndESRemark() async throws {
+  func `parses a TS N AND E-S remark`() async throws {
     let string = "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 TS N AND E-S"
     let observation = try await METAR.from(string: string)
 
@@ -87,7 +87,7 @@ struct ThunderstormLocationTests {
   }
 
   @Test
-  func parsesATSNAndEAndSRemark() async throws {
+  func `parses a TS N AND E AND S remark`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 TS N AND E AND S"
     let observation = try await METAR.from(string: string)
@@ -104,7 +104,7 @@ struct ThunderstormLocationTests {
   }
 
   @Test
-  func parsesATSSENEAndNRemark() async throws {
+  func `parses a TS SE NE AND N remark`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 TS SE NE AND N"
     let observation = try await METAR.from(string: string)
@@ -121,7 +121,7 @@ struct ThunderstormLocationTests {
   }
 
   @Test
-  func parsesATSOHDMovNRemark() async throws {
+  func `parses a TS OHD MOV N remark`() async throws {
     let string = "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 TS OHD MOV N"
     let observation = try await METAR.from(string: string)
 
@@ -133,7 +133,7 @@ struct ThunderstormLocationTests {
   }
 
   @Test
-  func parsesATSMovNRemark() async throws {
+  func `parses a TS MOV N remark`() async throws {
     let string = "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 TS MOV N"
     let observation = try await METAR.from(string: string)
 

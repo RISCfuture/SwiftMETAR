@@ -6,7 +6,7 @@ import Testing
 @Suite
 struct LightningTests {
   @Test
-  func parsesAOCNLLTGICCGOHDRemark() async throws {
+  func `parses an OCNL LTGICCG OHD remark`() async throws {
     let string =
       "METAR KOKC 011955Z AUTO 22015G25KT 3/4SM CLR 18/16 A2992 RMK AO2 OCNL LTGICCG OHD"
     let observation = try await METAR.from(string: string)
