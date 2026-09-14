@@ -14,13 +14,21 @@ class RemarkDirectionParser {
     "ALQS": .all,
     "ALQDS": .all
   ]
+  /// Alternatives ordered longest-first.
+  ///
+  /// Alternation matches leftmost-first, so a shorter alternative that prefixes a longer one wins
+  /// and truncates the match — `N` would claim the `N` of `NE`. Length order also makes the pattern
+  /// stable: `keys` has no guaranteed order, and Swift seeds hashing per process, so joining it
+  /// directly built a different regex from run to run.
+  private static let directionAlternatives = directionFromString.keys
+    .sorted { ($0.count, $1) > ($1.count, $0) }
+    .joined(separator: "|")
+
   private let directionRef = Reference<Remark.Direction?>()
   // swiftlint:disable force_try
   lazy var rx = Regex {
     Capture(as: directionRef) {
-      try! Regex<Substring>(
-        "(?:\(RemarkDirectionParser.directionFromString.keys.joined(separator: "|")))"
-      )
+      try! Regex<Substring>("(?:\(RemarkDirectionParser.directionAlternatives))")
     } transform: {
       RemarkDirectionParser.directionFromString[String($0)]
     }
