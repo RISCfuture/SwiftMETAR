@@ -6,22 +6,21 @@ final class WeatherParser: WarmableParser, @unchecked Sendable {
   private static let descriptorRef = Reference<Weather.Descriptor?>()
   private static let phenomenaRef = Reference<Substring>()
 
-  // swiftlint:disable force_try
   private static let weatherRx = LockedRegex(
     Regex {
       Anchor.startOfSubject
       Capture(as: intensityRef) {
-        try! Weather.Intensity.rx
+        Weather.Intensity.rx
       } transform: {
         .init(rawValue: String($0))!
       }
       Capture(as: descriptorRef) {
-        Optionally { try! Weather.Descriptor.rx }
+        Optionally { Weather.Descriptor.rx }
       } transform: {
         .init(rawValue: String($0))
       }
       Capture(as: phenomenaRef) {
-        OneOrMore { try! Weather.Phenomenon.rx }
+        OneOrMore { Weather.Phenomenon.rx }
       }
       Anchor.endOfSubject
     }
@@ -33,7 +32,6 @@ final class WeatherParser: WarmableParser, @unchecked Sendable {
       Anchor.endOfSubject
     }
   )
-  // swiftlint:enable force_try
 
   func parse(_ parts: inout [String.SubSequence]) throws(Error) -> [Weather]? {
     var weather = [Weather]()

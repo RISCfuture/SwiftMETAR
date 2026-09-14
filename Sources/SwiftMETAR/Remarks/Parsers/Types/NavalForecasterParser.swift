@@ -7,13 +7,12 @@ final class NavalForecasterParser: RemarkParser, @unchecked Sendable {
   private let centerRef = Reference<Remark.NavalWeatherCenter>()
   private let forecasterRef = Reference<UInt>()
 
-  // swiftlint:disable force_try
   private lazy var rx = LockedRegex(
     Regex {
       Anchor.wordBoundary
       "F"
       Capture(as: centerRef) {
-        try! Remark.NavalWeatherCenter.rx
+        Remark.NavalWeatherCenter.rx
       } transform: {
         .init(rawValue: String($0))!
       }
@@ -25,7 +24,6 @@ final class NavalForecasterParser: RemarkParser, @unchecked Sendable {
       Anchor.wordBoundary
     }
   )
-  // swiftlint:enable force_try
 
   func parse(remarks: inout String, date _: DateComponents) throws(Error) -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }

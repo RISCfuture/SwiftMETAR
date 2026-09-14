@@ -6,18 +6,16 @@ final class ThunderstormBeginEndParser: RemarkParser, @unchecked Sendable {
 
   private let typeRef = Reference<Remark.EventType>()
   private let timeParser = HourMinuteParser()
-  // swiftlint:disable force_try
   private lazy var eventRx = LockedRegex(
     Regex {
       Capture(as: typeRef) {
-        try! Remark.EventType.rx
+        Remark.EventType.rx
       } transform: {
         .init(rawValue: String($0))!
       }
       timeParser.hourOptionalRx
     }
   )
-  // swiftlint:enable force_try
 
   private let eventsRef = Reference<Substring>()
   private lazy var rx = LockedRegex(

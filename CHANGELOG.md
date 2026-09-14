@@ -13,6 +13,9 @@
   `CodedRepresentable.init(coded:)`. Callers need no changes — `catch` blocks
   that matched `SwiftMETAR.Error` keep working, and exhaustive `catch` over the
   enum's cases is now possible without a fallback clause.
+- Case-set regexes (`Weather.Phenomenon`, `Remark.Coverage`, and the other
+  `RawRepresentable` code sets) are built with RegexBuilder and cached per type
+  instead of being assembled as a pattern string and recompiled on every access.
 
 ## [4.1.0] - 2026-09-14
 
