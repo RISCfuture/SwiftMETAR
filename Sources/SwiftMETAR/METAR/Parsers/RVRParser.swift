@@ -92,7 +92,7 @@ final class RVRParser: WarmableParser, @unchecked Sendable {
     }
   )
 
-  func parse(_ parts: inout [String.SubSequence]) throws -> [RunwayVisibility] {
+  func parse(_ parts: inout [String.SubSequence]) throws(Error) -> [RunwayVisibility] {
     var visibilities = [RunwayVisibility]()
 
     while true {

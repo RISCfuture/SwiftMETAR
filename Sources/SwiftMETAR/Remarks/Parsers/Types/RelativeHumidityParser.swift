@@ -18,7 +18,7 @@ final class RelativeHumidityParser: RemarkParser, @unchecked Sendable {
     }
   )
 
-  func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
+  func parse(remarks: inout String, date _: DateComponents) throws(Error) -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }
     let humidity = result[humidityRef]
 

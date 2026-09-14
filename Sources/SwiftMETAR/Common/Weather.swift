@@ -205,7 +205,7 @@ extension Weather: CodedRepresentable {
    - Throws: ``Error/invalidWeather(_:)`` if `coded` is not a single valid
              weather group.
    */
-  public init(coded: String) throws {
+  public init(coded: String) throws(Error) {
     var parts = coded.split(whereSeparator: \.isWhitespace)
     guard let weather = try WeatherParser().parse(&parts),
       weather.count == 1, parts.isEmpty

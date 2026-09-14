@@ -65,7 +65,7 @@ public enum Visibility: CodedRepresentable, Equatable, Sendable {
    - Throws: ``Error/invalidVisibility(_:)`` if `coded` is not a valid
              visibility group.
    */
-  public init(coded: String) throws {
+  public init(coded: String) throws(Error) {
     var parts = coded.split(whereSeparator: \.isWhitespace)
     if let visibility = try VisibilityParser().parse(&parts), parts.isEmpty {
       self = visibility
@@ -172,7 +172,7 @@ public enum Visibility: CodedRepresentable, Equatable, Sendable {
      - Throws: ``Error/invalidVisibility(_:)`` if `coded` is not a valid,
                unqualified distance.
      */
-    public init(coded: String) throws {
+    public init(coded: String) throws(Error) {
       guard case let .equal(value) = try Visibility(coded: coded) else {
         throw Error.invalidVisibility(coded)
       }

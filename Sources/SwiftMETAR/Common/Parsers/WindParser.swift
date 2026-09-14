@@ -70,7 +70,7 @@ enum WindParser {
     }
   )
 
-  static func parse(_ parts: inout [String.SubSequence]) throws -> Wind? {
+  static func parse(_ parts: inout [String.SubSequence]) throws(Error) -> Wind? {
     guard !parts.isEmpty else { return nil }
     let dirAndSpeed = String(parts[0])
 
@@ -122,7 +122,7 @@ enum WindParser {
     }
   }
 
-  static func parse<T>(match: Regex<T>.Match, originalString: String) throws -> Wind {
+  static func parse<T>(match: Regex<T>.Match, originalString: String) throws(Error) -> Wind {
     let speedValue = match[speedRef]
     let speed: Wind.Speed =
       switch match[unitRef] {
@@ -155,7 +155,7 @@ enum WindParser {
   private static func parseDirectionRange(
     _ parts: inout [String.SubSequence],
     rangeSeq: String.SubSequence
-  ) throws -> (UInt16, UInt16)? {
+  ) throws(Error) -> (UInt16, UInt16)? {
     let rangeStr = String(rangeSeq)
 
     guard let variableMatch = try variableRx.wholeMatch(in: rangeStr),

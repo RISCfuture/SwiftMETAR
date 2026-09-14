@@ -26,7 +26,7 @@ final class RapidSnowIncreaseParser: RemarkParser, @unchecked Sendable {
     }
   )
 
-  func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
+  func parse(remarks: inout String, date _: DateComponents) throws(Error) -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }
     let increase = result[increaseRef]
     let total = result[totalRef]

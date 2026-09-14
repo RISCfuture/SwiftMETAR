@@ -13,7 +13,7 @@ actor METARXMLParser {
 
   // MARK: - Type Methods
 
-  private static func buildMETAR(from entry: Entry) throws -> METAR {
+  private static func buildMETAR(from entry: Entry) throws(Error) -> METAR {
     guard let stationID = entry.stationID else {
       throw Error.badFormat
     }

@@ -114,7 +114,7 @@ extension Turbulence: CodedRepresentable {
    - Throws: ``Error/invalidTurbulence(_:)`` if `coded` is not a valid turbulence
              representation.
    */
-  public init(coded: String) throws {
+  public init(coded: String) throws(Error) {
     var parts = coded.split(whereSeparator: \.isWhitespace)
     guard let turbulence = try TurbulenceParser().parse(&parts), parts.isEmpty else {
       throw Error.invalidTurbulence(coded)

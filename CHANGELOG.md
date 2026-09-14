@@ -1,5 +1,24 @@
 # Change Log
 
+## [Unreleased]
+
+### Changed
+
+- Every throwing API now declares its error type: `throws(Error)` replaces
+  untyped `throws` across the parsers and on public entry points such as
+  `METAR.from(string:on:)`, `TAF.from(string:on:)`, and
+  `CodedRepresentable.init(coded:)`. Callers need no changes — `catch` blocks
+  that matched `SwiftMETAR.Error` keep working, and exhaustive `catch` over the
+  enum's cases is now possible without a fallback clause.
+- Case-set regexes (`Weather.Phenomenon`, `Remark.Coverage`, and the other
+  `RawRepresentable` code sets) are built with RegexBuilder and cached per type
+  instead of being assembled as a pattern string and recompiled on every access.
+- Remark direction abbreviations are matched longest-first, so `ALQDS` and the
+  two-letter quadrants can no longer be shadowed by a shorter abbreviation they
+  start with.
+- ISO 8601 timestamps in aviationweather.gov XML are parsed with
+  `Date.ISO8601FormatStyle` rather than `ISO8601DateFormatter`.
+
 ## [4.1.0] - 2026-09-14
 
 ### Changed

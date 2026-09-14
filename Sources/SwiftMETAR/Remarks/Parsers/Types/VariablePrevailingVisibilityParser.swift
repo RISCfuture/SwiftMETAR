@@ -18,7 +18,7 @@ final class VariablePrevailingVisibilityParser: RemarkParser, @unchecked Sendabl
     }
   )
 
-  func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
+  func parse(remarks: inout String, date _: DateComponents) throws(Error) -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }
     let low = lowParser.parse(result)
     let high = highParser.parse(result)

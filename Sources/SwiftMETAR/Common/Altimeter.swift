@@ -40,7 +40,7 @@ public enum Altimeter: CodedRepresentable, Comparable, Sendable {
    - Throws: ``Error/invalidAltimeter(_:)`` if `coded` is not a valid altimeter
              setting.
    */
-  public init(coded: String) throws {
+  public init(coded: String) throws(Error) {
     var parts = coded.split(whereSeparator: \.isWhitespace)
     guard let altimeter = try AltimeterParser().parseMETAR(&parts), parts.isEmpty else {
       throw Error.invalidAltimeter(coded)

@@ -109,7 +109,7 @@ final class WindsAloftDataGroupParser: WarmableParser, @unchecked Sendable {
   ///   speed = ff+100
   /// - `9900`: light and variable, carrying the temperature of whichever form
   ///   it appears in (`9900`, `9900±TT`, or `9900TT`)
-  func parse(_ group: String) throws -> WindsAloftEntry? {
+  func parse(_ group: String) throws(Error) -> WindsAloftEntry? {
     let trimmed = group.trimmingCharacters(in: .whitespaces)
     guard !trimmed.isEmpty else { return nil }
     guard let components = try components(of: trimmed) else {
@@ -131,7 +131,7 @@ final class WindsAloftDataGroupParser: WarmableParser, @unchecked Sendable {
 
   /// Matches `group` against each supported data group format, or returns `nil`
   /// if it matches none of them.
-  private func components(of group: String) throws -> Components? {
+  private func components(of group: String) throws(Error) -> Components? {
     if let match = try Self.signedRx.wholeMatch(in: group) {
       return .init(match: match, temperature: match[Self.signedTempRef])
     }

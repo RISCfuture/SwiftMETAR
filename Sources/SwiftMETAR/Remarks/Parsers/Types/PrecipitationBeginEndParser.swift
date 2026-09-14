@@ -6,39 +6,35 @@ final class PrecipitationBeginEndParser: RemarkParser, @unchecked Sendable {
 
   private let typeRef = Reference<Remark.EventType>()
   private let timeParser = HourMinuteParser()
-  // swiftlint:disable force_try
   private lazy var timeRx = LockedRegex(
     Regex {
       Capture(as: typeRef) {
-        try! Remark.EventType.rx
+        Remark.EventType.rx
       } transform: {
         .init(rawValue: String($0))!
       }
       timeParser.hourOptionalRx
     }
   )
-  // swiftlint:enable force_try
 
   private let descriptorRef = Reference<Weather.Descriptor?>()
   private let phenomenonRef = Reference<Weather.Phenomenon>()
   private let timesRef = Reference<Substring>()
-  // swiftlint:disable force_try
   private lazy var eventRx = LockedRegex(
     Regex {
       Capture(as: descriptorRef) {
-        try! Optionally(Weather.Descriptor.rx)
+        Optionally(Weather.Descriptor.rx)
       } transform: {
         .init(rawValue: String($0))
       }
       Capture(as: phenomenonRef) {
-        try! Weather.Phenomenon.rx
+        Weather.Phenomenon.rx
       } transform: {
         .init(rawValue: String($0))!
       }
       Capture(as: timesRef) { OneOrMore(timeRx.composable) }
     }
   )
-  // swiftlint:enable force_try
 
   private let eventsRef = Reference<Substring>()
   private lazy var rx = LockedRegex(
@@ -49,7 +45,7 @@ final class PrecipitationBeginEndParser: RemarkParser, @unchecked Sendable {
     }
   )
 
-  func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
+  func parse(remarks: inout String, date: DateComponents) throws(Error) -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }
 
     let originalString = String(remarks[result.range])
@@ -67,7 +63,8 @@ final class PrecipitationBeginEndParser: RemarkParser, @unchecked Sendable {
     return .precipitationBeginEnd(events: events)
   }
 
-  private func parseEvents(from string: String, referenceDate: Date?, originalString: String) throws
+  private func parseEvents(from string: String, referenceDate: Date?, originalString: String)
+    throws(Error)
     -> [Remark.PrecipitationEvent]
   {
     let result = eventRx.allMatches(in: string)
@@ -102,19 +99,20 @@ final class PrecipitationBeginEndParser: RemarkParser, @unchecked Sendable {
     return events
   }
 
-  private func parseTimes(from string: String, referenceDate: Date?, originalString: String) throws
-    -> [(Remark.EventType, DateComponents)]
-  {
-    let result = timeRx.allMatches(in: string)
-    guard !result.isEmpty else { return [] }
-    return try result.map { match in
-      let type = match[typeRef]
+  private func parseTimes(
+    from string: String,
+    referenceDate: Date?,
+    originalString: String
+  ) throws(Error) -> [(Remark.EventType, DateComponents)] {
+    var times = [(Remark.EventType, DateComponents)]()
+    for match in timeRx.allMatches(in: string) {
       let time = try timeParser.parse(
         match: match,
         referenceDate: referenceDate,
         originalString: originalString
       )
-      return (type, time)
+      times.append((match[typeRef], time))
     }
+    return times
   }
 }

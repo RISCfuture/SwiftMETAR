@@ -8,12 +8,11 @@ final class VariableSkyConditionParser: RemarkParser, @unchecked Sendable {
   private let coverage2Ref = Reference<Remark.Coverage>()
   private let heightRef = Reference<UInt?>()
 
-  // swiftlint:disable force_try
   private lazy var rx = LockedRegex(
     Regex {
       Anchor.wordBoundary
       Capture(as: coverage1Ref) {
-        try! Remark.Coverage.rx
+        Remark.Coverage.rx
       } transform: {
         .init(rawValue: String($0))!
       }
@@ -26,16 +25,15 @@ final class VariableSkyConditionParser: RemarkParser, @unchecked Sendable {
       }
       " V "
       Capture(as: coverage2Ref) {
-        try! Remark.Coverage.rx
+        Remark.Coverage.rx
       } transform: {
         .init(rawValue: String($0))!
       }
       Anchor.wordBoundary
     }
   )
-  // swiftlint:enable force_try
 
-  func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
+  func parse(remarks: inout String, date _: DateComponents) throws(Error) -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }
     let coverage1 = result[coverage1Ref]
     let coverage2 = result[coverage2Ref]

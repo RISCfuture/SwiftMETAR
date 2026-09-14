@@ -41,7 +41,7 @@ final class VisibilityParser: WarmableParser, @unchecked Sendable {
     _ = try? fractionRx.wholeMatch(in: "")
   }
 
-  func parse(_ parts: inout [String.SubSequence]) throws -> Visibility? {
+  func parse(_ parts: inout [String.SubSequence]) throws(Error) -> Visibility? {
     guard !parts.isEmpty else { return nil }
 
     if parts.count >= 2 {
@@ -59,7 +59,7 @@ final class VisibilityParser: WarmableParser, @unchecked Sendable {
     return nil
   }
 
-  private func parse(_ vizStr: String) throws -> Visibility? {
+  private func parse(_ vizStr: String) throws(Error) -> Visibility? {
     if vizStr == "CAVOK" {
       return .greaterThan(.meters(9999))
     }
@@ -94,15 +94,13 @@ final class VisibilityParser: WarmableParser, @unchecked Sendable {
   class OpenRangeParser {
     private static let boundRef = Reference<OpenRange>()
 
-    // swiftlint:disable force_try
     static let rx = Regex {
       Capture(as: boundRef) {
-        try! OpenRange.rx
+        OpenRange.rx
       } transform: {
         .init(rawValue: String($0))!
       }
     }
-    // swiftlint:enable force_try
 
     func parse<T>(_ match: Regex<T>.Match) -> OpenRange {
       match[Self.boundRef]
@@ -124,7 +122,6 @@ final class VisibilityParser: WarmableParser, @unchecked Sendable {
     private static let valueRef = Reference<UInt16>()
     private static let unitRef = Reference<VisibilityDistanceUnit>()
 
-    // swiftlint:disable force_try
     static let rx = Regex {
       OpenRangeParser.rx
       Capture(as: valueRef) {
@@ -133,12 +130,11 @@ final class VisibilityParser: WarmableParser, @unchecked Sendable {
         .init($0)!
       }
       Capture(as: unitRef) {
-        try! Optionally(VisibilityDistanceUnit.rx)
+        Optionally(VisibilityDistanceUnit.rx)
       } transform: {
         .from(raw: String($0))!
       }
     }
-    // swiftlint:enable force_try
 
     private let openRangeParser = OpenRangeParser()
 

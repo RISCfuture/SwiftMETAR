@@ -5,21 +5,22 @@ enum XMLParsing {
 
   // MARK: - Type Methods
 
-  static func parseISO8601(_ string: String) throws -> DateComponents {
-    let formatter = ISO8601DateFormatter()
-    formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-    if let date = formatter.date(from: string) {
-      return zuluCal.dateComponents(in: zulu, from: date)
-    }
-    // Fall back to parsing without fractional seconds
-    formatter.formatOptions = [.withInternetDateTime]
-    guard let date = formatter.date(from: string) else {
-      throw Error.invalidDate(string)
-    }
+  private static let iso8601WithFractionalSeconds = Date.ISO8601FormatStyle(
+    includingFractionalSeconds: true
+  )
+  private static let iso8601 = Date.ISO8601FormatStyle()
+
+  static func parseISO8601(_ string: String) throws(Error) -> DateComponents {
+    guard
+      let date =
+        (try? iso8601WithFractionalSeconds.parse(string)) ?? (try? iso8601.parse(string))
+    else { throw Error.invalidDate(string) }
     return zuluCal.dateComponents(in: zulu, from: date)
   }
 
-  static func buildWind(dirDegrees: String?, speedKt: String?, gustKt: String?) throws -> Wind? {
+  static func buildWind(dirDegrees: String?, speedKt: String?, gustKt: String?) throws(Error)
+    -> Wind?
+  {
     guard let speedStr = speedKt else { return nil }
     guard let speed = UInt16(speedStr) else {
       throw Error.invalidWinds(speedStr)
@@ -49,7 +50,7 @@ enum XMLParsing {
     return nil
   }
 
-  static func buildVisibility(_ visStr: String?) throws -> Visibility? {
+  static func buildVisibility(_ visStr: String?) throws(Error) -> Visibility? {
     guard let visStr, !visStr.isEmpty else { return nil }
 
     // Handle "10+" or "6+" format (greater than)
@@ -80,7 +81,7 @@ enum XMLParsing {
     return .equal(.statuteMilesDecimal(value))
   }
 
-  static func buildWeather(_ wxString: String?) throws -> [Weather]? {
+  static func buildWeather(_ wxString: String?) throws(Error) -> [Weather]? {
     guard let wxString, !wxString.isEmpty else { return [] }
 
     let tokens = wxString.split(separator: " ")
@@ -92,7 +93,7 @@ enum XMLParsing {
   static func buildConditions(
     skyConditions: [SkyCondition],
     vertVisFt: String?
-  ) throws -> [Condition] {
+  ) throws(Error) -> [Condition] {
     var conditions = [Condition]()
 
     for sky in skyConditions {
@@ -139,7 +140,7 @@ enum XMLParsing {
     return conditions
   }
 
-  static func buildAltimeter(_ altimStr: String?) throws -> Altimeter? {
+  static func buildAltimeter(_ altimStr: String?) throws(Error) -> Altimeter? {
     guard let altimStr else { return nil }
     guard let value = Float(altimStr) else {
       throw Error.invalidAltimeter(altimStr)

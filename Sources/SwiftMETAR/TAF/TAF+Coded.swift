@@ -40,7 +40,7 @@ extension TAF: CodedRepresentable {
    - Parameter coded: The coded TAF string.
    - Throws: An ``Error`` if `coded` is not a valid TAF.
    */
-  public init(coded: String) throws {
+  public init(coded: String) throws(Error) {
     self = try TAFParser.parseSynchronously(coded)
   }
 }
@@ -77,7 +77,7 @@ extension TAF.Group: CodedRepresentable {
    - Parameter coded: The coded group string.
    - Throws: An ``Error`` if `coded` is not a valid forecast group.
    */
-  public init(coded: String) throws {
+  public init(coded: String) throws(Error) {
     self = try TAFParser.parseGroup(coded)
   }
 

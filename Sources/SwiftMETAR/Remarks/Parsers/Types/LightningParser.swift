@@ -9,13 +9,12 @@ final class LightningParser: RemarkParser, @unchecked Sendable {
   private let typesRef = Reference<Substring?>()
   private let proximityRef = Reference<Remark.Proximity?>()
 
-  // swiftlint:disable force_try
   private lazy var rx = LockedRegex(
     Regex {
       Anchor.wordBoundary
       Optionally {
         Capture(as: frequencyRef) {
-          try! Remark.Frequency.rx
+          Remark.Frequency.rx
         } transform: {
           .init(rawValue: String($0))
         }
@@ -24,7 +23,7 @@ final class LightningParser: RemarkParser, @unchecked Sendable {
       "LTG"
       Optionally {
         Capture(as: typesRef) {
-          OneOrMore { try! Remark.LightningType.rx }
+          OneOrMore { Remark.LightningType.rx }
         } transform: {
           $0
         }
@@ -32,7 +31,7 @@ final class LightningParser: RemarkParser, @unchecked Sendable {
       Optionally {
         " "
         Capture(as: proximityRef) {
-          try! Remark.Proximity.rx
+          Remark.Proximity.rx
         } transform: {
           .init(rawValue: String($0))
         }
@@ -44,9 +43,8 @@ final class LightningParser: RemarkParser, @unchecked Sendable {
       Anchor.wordBoundary
     }
   )
-  // swiftlint:enable force_try
 
-  func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
+  func parse(remarks: inout String, date _: DateComponents) throws(Error) -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }
 
     let frequency = result[frequencyRef]

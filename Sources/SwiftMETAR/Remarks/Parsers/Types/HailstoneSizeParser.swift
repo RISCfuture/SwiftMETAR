@@ -15,7 +15,7 @@ final class HailstoneSizeParser: RemarkParser, @unchecked Sendable {
     }
   )
 
-  func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
+  func parse(remarks: inout String, date _: DateComponents) throws(Error) -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }
     let size = sizeParser.parse(result)
 
