@@ -5,17 +5,16 @@ enum XMLParsing {
 
   // MARK: - Type Methods
 
+  private static let iso8601WithFractionalSeconds = Date.ISO8601FormatStyle(
+    includingFractionalSeconds: true
+  )
+  private static let iso8601 = Date.ISO8601FormatStyle()
+
   static func parseISO8601(_ string: String) throws(Error) -> DateComponents {
-    let formatter = ISO8601DateFormatter()
-    formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
-    if let date = formatter.date(from: string) {
-      return zuluCal.dateComponents(in: zulu, from: date)
-    }
-    // Fall back to parsing without fractional seconds
-    formatter.formatOptions = [.withInternetDateTime]
-    guard let date = formatter.date(from: string) else {
-      throw Error.invalidDate(string)
-    }
+    guard
+      let date =
+        (try? iso8601WithFractionalSeconds.parse(string)) ?? (try? iso8601.parse(string))
+    else { throw Error.invalidDate(string) }
     return zuluCal.dateComponents(in: zulu, from: date)
   }
 

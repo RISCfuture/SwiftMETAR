@@ -16,6 +16,8 @@
 - Case-set regexes (`Weather.Phenomenon`, `Remark.Coverage`, and the other
   `RawRepresentable` code sets) are built with RegexBuilder and cached per type
   instead of being assembled as a pattern string and recompiled on every access.
+- ISO 8601 timestamps in aviationweather.gov XML are parsed with
+  `Date.ISO8601FormatStyle` rather than `ISO8601DateFormatter`.
 
 ## [4.1.0] - 2026-09-14
 
