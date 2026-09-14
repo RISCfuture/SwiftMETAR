@@ -30,7 +30,7 @@ extension RunwayVisibility: CodedRepresentable {
    - Parameter coded: The coded RVR string, which must contain exactly one group.
    - Throws: ``Error/badFormat`` if `coded` is not a single valid RVR group.
    */
-  public init(coded: String) throws {
+  public init(coded: String) throws(Error) {
     var parts = coded.split(whereSeparator: \.isWhitespace)
     let visibilities = try RVRParser().parse(&parts)
     guard visibilities.count == 1, parts.isEmpty else { throw Error.badFormat }

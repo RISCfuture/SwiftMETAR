@@ -41,7 +41,7 @@ final class VisibilityParser: WarmableParser, @unchecked Sendable {
     _ = try? fractionRx.wholeMatch(in: "")
   }
 
-  func parse(_ parts: inout [String.SubSequence]) throws -> Visibility? {
+  func parse(_ parts: inout [String.SubSequence]) throws(Error) -> Visibility? {
     guard !parts.isEmpty else { return nil }
 
     if parts.count >= 2 {
@@ -59,7 +59,7 @@ final class VisibilityParser: WarmableParser, @unchecked Sendable {
     return nil
   }
 
-  private func parse(_ vizStr: String) throws -> Visibility? {
+  private func parse(_ vizStr: String) throws(Error) -> Visibility? {
     if vizStr == "CAVOK" {
       return .greaterThan(.meters(9999))
     }

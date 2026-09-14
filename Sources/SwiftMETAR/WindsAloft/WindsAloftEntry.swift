@@ -94,7 +94,7 @@ public enum WindsAloftEntry: CodedRepresentable, Equatable, Sendable {
    - Throws: ``Error/invalidWindsAloftGroup(_:)`` if `coded` is not a valid
              winds-aloft data group.
    */
-  public init(coded: String) throws {
+  public init(coded: String) throws(Error) {
     guard let entry = try WindsAloftDataGroupParser().parse(coded) else {
       throw Error.invalidWindsAloftGroup(coded)
     }

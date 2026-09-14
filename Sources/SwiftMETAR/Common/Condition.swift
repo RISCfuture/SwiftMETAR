@@ -108,7 +108,7 @@ public enum Condition: CodedRepresentable, Equatable, Sendable {
    - Throws: ``Error/invalidConditions(_:)`` if `coded` is not a valid
              representation of a single sky condition.
    */
-  public init(coded: String) throws {
+  public init(coded: String) throws(Error) {
     if coded == "CAVOK" {
       self = .cavok
       return

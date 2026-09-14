@@ -37,7 +37,7 @@ final class SensorStatusParser: RemarkParser, @unchecked Sendable {
   )
   // swiftlint:enable force_try
 
-  func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
+  func parse(remarks: inout String, date _: DateComponents) throws(Error) -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }
     let sensor = result[sensorRef]
     let secondarySensor = result[secondarySensorRef]

@@ -55,7 +55,7 @@ extension WindsAloft: CodedRepresentable {
    - Parameter coded: The coded winds aloft bulletin.
    - Throws: An ``Error`` if `coded` is not a valid winds aloft bulletin.
    */
-  public init(coded: String) throws {
+  public init(coded: String) throws(Error) {
     self = try WindsAloftParser.parseSynchronously(coded)
   }
 

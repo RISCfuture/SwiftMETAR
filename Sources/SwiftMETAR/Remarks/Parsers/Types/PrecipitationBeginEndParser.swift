@@ -49,7 +49,7 @@ final class PrecipitationBeginEndParser: RemarkParser, @unchecked Sendable {
     }
   )
 
-  func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
+  func parse(remarks: inout String, date: DateComponents) throws(Error) -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }
 
     let originalString = String(remarks[result.range])
@@ -67,7 +67,8 @@ final class PrecipitationBeginEndParser: RemarkParser, @unchecked Sendable {
     return .precipitationBeginEnd(events: events)
   }
 
-  private func parseEvents(from string: String, referenceDate: Date?, originalString: String) throws
+  private func parseEvents(from string: String, referenceDate: Date?, originalString: String)
+    throws(Error)
     -> [Remark.PrecipitationEvent]
   {
     let result = eventRx.allMatches(in: string)
@@ -102,19 +103,20 @@ final class PrecipitationBeginEndParser: RemarkParser, @unchecked Sendable {
     return events
   }
 
-  private func parseTimes(from string: String, referenceDate: Date?, originalString: String) throws
-    -> [(Remark.EventType, DateComponents)]
-  {
-    let result = timeRx.allMatches(in: string)
-    guard !result.isEmpty else { return [] }
-    return try result.map { match in
-      let type = match[typeRef]
+  private func parseTimes(
+    from string: String,
+    referenceDate: Date?,
+    originalString: String
+  ) throws(Error) -> [(Remark.EventType, DateComponents)] {
+    var times = [(Remark.EventType, DateComponents)]()
+    for match in timeRx.allMatches(in: string) {
       let time = try timeParser.parse(
         match: match,
         referenceDate: referenceDate,
         originalString: originalString
       )
-      return (type, time)
+      times.append((match[typeRef], time))
     }
+    return times
   }
 }

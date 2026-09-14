@@ -18,7 +18,7 @@ final class WindshearParser: WarmableParser, @unchecked Sendable {
     }
   )
 
-  func parse(_ parts: inout [String.SubSequence]) throws -> Windshear? {
+  func parse(_ parts: inout [String.SubSequence]) throws(Error) -> Windshear? {
     guard !parts.isEmpty else { return nil }
     let windshearStr = String(parts[0])
     guard let result = try Self.rx.wholeMatch(in: windshearStr) else { return nil }

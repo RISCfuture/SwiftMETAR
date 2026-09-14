@@ -63,7 +63,7 @@ public enum Wind: CodedRepresentable, Equatable, Sendable {
     }
   }
 
-  public init(coded: String) throws {
+  public init(coded: String) throws(Error) {
     var parts = coded.split(whereSeparator: \.isWhitespace)
     guard let wind = try WindParser.parse(&parts), parts.isEmpty else {
       throw Error.invalidWinds(coded)
@@ -156,7 +156,7 @@ public enum Wind: CodedRepresentable, Equatable, Sendable {
     /// The coded representation of this speed, e.g. `"15KT"`.
     public var codedString: String { "\(speedDigits)\(unitCode)" }
 
-    public init(coded: String) throws {
+    public init(coded: String) throws(Error) {
       let units: [(suffix: String, make: (UInt16) -> Self)] = [
         ("KTS", Self.knots), ("KT", Self.knots), ("MPS", Self.mps), ("KPH", Self.kph)
       ]

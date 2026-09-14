@@ -13,7 +13,7 @@ actor TAFXMLParser {
 
   // MARK: - Type Methods
 
-  private static func buildTAF(from entry: Entry) throws -> TAF {
+  private static func buildTAF(from entry: Entry) throws(Error) -> TAF {
     guard let stationID = entry.stationID else {
       throw Error.badFormat
     }
@@ -47,7 +47,9 @@ actor TAFXMLParser {
     )
   }
 
-  private static func buildGroup(from forecast: ForecastEntry, isFirst: Bool) throws -> TAF.Group {
+  private static func buildGroup(from forecast: ForecastEntry, isFirst: Bool) throws(Error)
+    -> TAF.Group
+  {
     let period = try buildPeriod(from: forecast, isFirst: isFirst)
 
     let wind = try XMLParsing.buildWind(
@@ -65,8 +67,8 @@ actor TAFXMLParser {
 
     let windshear = buildWindshear(from: forecast)
 
-    let turbulence = try forecast.turbulenceConditions.map { try buildTurbulence(from: $0) }
-    let icing = try forecast.icingConditions.map { try buildIcing(from: $0) }
+    let turbulence = try forecast.turbulenceConditions.map(buildTurbulence(from:))
+    let icing = try forecast.icingConditions.map(buildIcing(from:))
 
     let altimeter = try XMLParsing.buildAltimeter(forecast.altimInHg)
 
@@ -87,7 +89,7 @@ actor TAFXMLParser {
     )
   }
 
-  private static func buildPeriod(from forecast: ForecastEntry, isFirst _: Bool) throws
+  private static func buildPeriod(from forecast: ForecastEntry, isFirst _: Bool) throws(Error)
     -> TAF
     .Group
     .Period
@@ -136,7 +138,7 @@ actor TAFXMLParser {
     )
   }
 
-  private static func buildTurbulence(from entry: TurbulenceEntry) throws -> Turbulence {
+  private static func buildTurbulence(from entry: TurbulenceEntry) throws(Error) -> Turbulence {
     guard let intensityStr = entry.intensity else {
       throw Error.invalidTurbulence("")
     }
@@ -203,7 +205,7 @@ actor TAFXMLParser {
     )
   }
 
-  private static func buildIcing(from entry: IcingEntry) throws -> Icing {
+  private static func buildIcing(from entry: IcingEntry) throws(Error) -> Icing {
     guard let intensityStr = entry.intensity else {
       throw Error.invalidIcing("")
     }

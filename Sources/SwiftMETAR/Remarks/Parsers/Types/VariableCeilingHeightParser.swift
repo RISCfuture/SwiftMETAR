@@ -26,7 +26,7 @@ final class VariableCeilingHeightParser: RemarkParser, @unchecked Sendable {
     }
   )
 
-  func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
+  func parse(remarks: inout String, date _: DateComponents) throws(Error) -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }
     let low = result[lowRef]
     let high = result[highRef]

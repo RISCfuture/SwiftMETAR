@@ -17,7 +17,7 @@ final class NoAmendmentsAfterParser: RemarkParser, @unchecked Sendable {
     }
   )
 
-  func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
+  func parse(remarks: inout String, date _: DateComponents) throws(Error) -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }
     let originalString = String(remarks[result.range])
     let afterDate = try timeParser.parse(match: result, originalString: originalString)

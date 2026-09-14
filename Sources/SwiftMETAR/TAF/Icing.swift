@@ -88,7 +88,7 @@ extension Icing: CodedRepresentable {
    - Throws: ``Error/invalidIcing(_:)`` if `coded` is not a valid icing
              representation.
    */
-  public init(coded: String) throws {
+  public init(coded: String) throws(Error) {
     var parts = coded.split(whereSeparator: \.isWhitespace)
     guard let icing = try IcingParser().parse(&parts), parts.isEmpty else {
       throw Error.invalidIcing(coded)

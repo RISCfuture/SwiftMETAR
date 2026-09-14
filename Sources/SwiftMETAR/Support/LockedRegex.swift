@@ -41,28 +41,45 @@ final class LockedRegex<Output>: @unchecked Sendable {
     self.build = build
   }
 
-  func wholeMatch(in string: Substring) throws -> Regex<Output>.Match? {
-    try regex.wholeMatch(in: string)
+  func wholeMatch(in string: Substring) throws(Error) -> Regex<Output>.Match? {
+    try narrowingErrors { try regex.wholeMatch(in: string) }
   }
 
-  func wholeMatch(in string: String) throws -> Regex<Output>.Match? {
+  func wholeMatch(in string: String) throws(Error) -> Regex<Output>.Match? {
     try wholeMatch(in: string[...])
   }
 
-  func firstMatch(in string: Substring) throws -> Regex<Output>.Match? {
-    try regex.firstMatch(in: string)
+  func firstMatch(in string: Substring) throws(Error) -> Regex<Output>.Match? {
+    try narrowingErrors { try regex.firstMatch(in: string) }
   }
 
-  func firstMatch(in string: String) throws -> Regex<Output>.Match? {
+  func firstMatch(in string: String) throws(Error) -> Regex<Output>.Match? {
     try firstMatch(in: string[...])
   }
 
-  func matches(_ string: some StringProtocol) throws -> Bool {
+  func matches(_ string: some StringProtocol) throws(Error) -> Bool {
     try wholeMatch(in: Substring(string)) != nil
   }
 
   func allMatches(in string: String) -> [Regex<Output>.Match] {
     Array(string.matches(of: regex))
+  }
+
+  /// Narrows the untyped error `Regex` matching declares to this package's ``Error``.
+  ///
+  /// Matching only throws what a `transform:` closure in the regex throws, and every
+  /// transform in this package throws an ``Error``. Anything else would mean the regex
+  /// program itself failed to run, which callers can only treat as an unparseable product.
+  private func narrowingErrors(
+    _ match: () throws -> Regex<Output>.Match?
+  ) throws(Error) -> Regex<Output>.Match? {
+    do {
+      return try match()
+    } catch let error as Error {
+      throw error
+    } catch {
+      throw .badFormat
+    }
   }
 
   private func constructAndCache() -> Regex<Output> {

@@ -22,7 +22,7 @@ final class MaintenanceParser: RemarkParser, @unchecked Sendable {
 
   var urgency = Remark.Urgency.routine
 
-  func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
+  func parse(remarks: inout String, date _: DateComponents) throws(Error) -> Remark? {
     guard let result = try Self.rx.firstMatch(in: remarks) else { return nil }
 
     remarks.removeSubrange(result.range)

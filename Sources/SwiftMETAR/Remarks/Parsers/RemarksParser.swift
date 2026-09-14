@@ -48,7 +48,7 @@ enum RemarksParser {
     using parsers: [any RemarkParser],
     date: DateComponents,
     lenientRemarks: Bool = false
-  ) throws -> ([RemarkEntry], String?) {
+  ) throws(Error) -> ([RemarkEntry], String?) {
     if parts.isEmpty { return ([], nil) }
     if parts.count == 1 && parts[0].isEmpty { return ([], nil) }  // extra space after METAR
 

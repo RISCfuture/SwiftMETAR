@@ -25,7 +25,7 @@ final class CorrectionParser: RemarkParser, @unchecked Sendable {
     }
   )
 
-  func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
+  func parse(remarks: inout String, date: DateComponents) throws(Error) -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }
     let hour = result[hourRef]
     let minute = result[minuteRef]

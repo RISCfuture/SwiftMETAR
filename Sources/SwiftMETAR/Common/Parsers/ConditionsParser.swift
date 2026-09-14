@@ -29,7 +29,7 @@ final class ConditionsParser: WarmableParser, @unchecked Sendable {
   )
   // swiftlint:enable force_try
 
-  func parse(_ parts: inout [String.SubSequence]) throws -> [Condition] {
+  func parse(_ parts: inout [String.SubSequence]) throws(Error) -> [Condition] {
     if parts.isEmpty { return [] }
 
     var conditions = [Condition]()

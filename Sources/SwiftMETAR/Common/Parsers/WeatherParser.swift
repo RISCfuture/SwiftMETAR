@@ -35,7 +35,7 @@ final class WeatherParser: WarmableParser, @unchecked Sendable {
   )
   // swiftlint:enable force_try
 
-  func parse(_ parts: inout [String.SubSequence]) throws -> [Weather]? {
+  func parse(_ parts: inout [String.SubSequence]) throws(Error) -> [Weather]? {
     var weather = [Weather]()
 
     while true {
@@ -62,17 +62,16 @@ final class WeatherParser: WarmableParser, @unchecked Sendable {
         let intensity = match[Self.intensityRef]
         let descriptor = match[Self.descriptorRef]
 
-        let phenomenaStr = match[Self.phenomenaRef]
-        let phenomenaStrs = String(phenomenaStr).partition(by: 2)
-        let phenomena = try phenomenaStrs.map { code -> Weather.Phenomenon in
+        var phenomena = Set<Weather.Phenomenon>()
+        for code in String(match[Self.phenomenaRef]).partition(by: 2) {
           guard let phenomenon = Weather.Phenomenon(rawValue: code) else {
             throw Error.invalidWeather(weatherStr)
           }
-          return phenomenon
+          phenomena.insert(phenomenon)
         }
 
         weather.append(
-          Weather(intensity: intensity, descriptor: descriptor, phenomena: Set(phenomena))
+          Weather(intensity: intensity, descriptor: descriptor, phenomena: phenomena)
         )
       } else {
         return weather

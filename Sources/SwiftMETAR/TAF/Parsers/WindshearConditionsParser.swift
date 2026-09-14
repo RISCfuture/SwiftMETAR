@@ -1,6 +1,6 @@
 import Foundation
 
-func parseWindshearConditions(_ parts: inout [String.SubSequence]) throws -> Bool {
+func parseWindshearConditions(_ parts: inout [String.SubSequence]) throws(Error) -> Bool {
   guard !parts.isEmpty else { return false }
 
   if parts[0] == "WSCONDS" {

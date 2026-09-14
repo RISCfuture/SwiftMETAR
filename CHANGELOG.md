@@ -1,5 +1,19 @@
 # Change Log
 
+## [Unreleased]
+
+### Changed
+
+- **BREAKING:** `CodedRepresentable.init(coded:)` requires `throws(Error)`, so
+  a type outside the package that conforms with an untyped `throws`
+  initializer must declare `throws(SwiftMETAR.Error)` instead.
+- Every throwing API now declares its error type: `throws(Error)` replaces
+  untyped `throws` across the parsers and on public entry points such as
+  `METAR.from(string:on:)`, `TAF.from(string:on:)`, and
+  `CodedRepresentable.init(coded:)`. Callers need no changes — `catch` blocks
+  that matched `SwiftMETAR.Error` keep working, and exhaustive `catch` over the
+  enum's cases is now possible without a fallback clause.
+
 ## [4.1.0] - 2026-09-14
 
 ### Changed

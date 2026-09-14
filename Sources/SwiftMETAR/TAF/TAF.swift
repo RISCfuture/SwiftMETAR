@@ -55,7 +55,7 @@ public struct TAF: Sendable {
    - Returns: The parsed TAF.
    - Throws: If a parsing error occurs.
    */
-  public static func from(string: String, on date: Date? = nil) async throws -> Self {
+  public static func from(string: String, on date: Date? = nil) async throws(Error) -> Self {
     return try await TAFParser.shared.parse(string, on: date)
   }
 
@@ -317,7 +317,7 @@ public struct TAF: Sendable {
        - Parameter coded: The coded string.
        - Throws: ``Error/invalidPeriod(_:)`` if `coded` is not a valid period.
        */
-      public init(coded: String) throws {
+      public init(coded: String) throws(Error) {
         var parts = coded.split(whereSeparator: \.isWhitespace)
         guard let period = try PeriodParser().parse(&parts), parts.isEmpty else {
           throw Error.invalidPeriod(coded)

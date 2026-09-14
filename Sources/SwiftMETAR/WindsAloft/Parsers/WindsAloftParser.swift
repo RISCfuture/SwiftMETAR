@@ -13,7 +13,7 @@ actor WindsAloftParser {
   nonisolated static func parseSynchronously(
     _ string: String,
     on referenceDate: Date? = nil
-  ) throws -> WindsAloft {
+  ) throws(Error) -> WindsAloft {
     try assemble(string, referenceDate: referenceDate)
   }
 
@@ -22,7 +22,7 @@ actor WindsAloftParser {
   nonisolated private static func assemble(
     _ string: String,
     referenceDate: Date?
-  ) throws -> WindsAloft {
+  ) throws(Error) -> WindsAloft {
     var lines = string.components(separatedBy: .newlines)
 
     let (header, basedOn, validAt, usePeriod) =
@@ -70,7 +70,7 @@ actor WindsAloftParser {
 
   // MARK: - Column Layout
 
-  nonisolated private static func parseColumnLayout(_ line: String) throws -> ColumnLayout {
+  nonisolated private static func parseColumnLayout(_ line: String) throws(Error) -> ColumnLayout {
     guard line.contains("FT") || line.contains("3000") || line.contains("6000") else {
       throw Error.invalidWindsAloftColumns(line)
     }
@@ -129,7 +129,7 @@ actor WindsAloftParser {
   nonisolated private static func parseStationLine(
     _ line: String,
     layout: ColumnLayout
-  ) throws -> WindsAloft.Station {
+  ) throws(Error) -> WindsAloft.Station {
     let lineLength = line.count
 
     // Extract station ID from the station range
@@ -161,7 +161,7 @@ actor WindsAloftParser {
     return WindsAloft.Station(id: stationID, entries: entries)
   }
 
-  func parse(_ string: String, on referenceDate: Date? = nil) throws -> WindsAloft {
+  func parse(_ string: String, on referenceDate: Date? = nil) throws(Error) -> WindsAloft {
     try Self.assemble(string, referenceDate: referenceDate)
   }
 

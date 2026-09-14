@@ -36,7 +36,7 @@ final class DayHourMinuteParser: WarmableParser, @unchecked Sendable {
     _ = try? anchoredRx.wholeMatch(in: "")
   }
 
-  func parse(_ parts: inout [String.SubSequence], referenceDate: Date? = nil) throws
+  func parse(_ parts: inout [String.SubSequence], referenceDate: Date? = nil) throws(Error)
     -> DateComponents
   {
     guard !parts.isEmpty else { throw Error.badFormat }
@@ -48,12 +48,13 @@ final class DayHourMinuteParser: WarmableParser, @unchecked Sendable {
     return try parse(match: match, referenceDate: referenceDate, originalString: dateStr)
   }
 
-  func matchesNext(_ parts: [String.SubSequence]) throws -> Bool {
+  func matchesNext(_ parts: [String.SubSequence]) throws(Error) -> Bool {
     guard let str = parts.first else { return false }
     return try anchoredRx.matches(String(str))
   }
 
-  func parse<T>(match: Regex<T>.Match, referenceDate: Date? = nil, originalString: String) throws
+  func parse<T>(match: Regex<T>.Match, referenceDate: Date? = nil, originalString: String)
+    throws(Error)
     -> DateComponents
   {
     var (day, hour, minute) = match[dateRef]
@@ -109,7 +110,7 @@ class DayHourParser {
     referenceDate: Date? = nil,
     afterDate afterDateComponents: DateComponents? = nil,
     originalString string: String
-  ) throws -> DateComponents {
+  ) throws(Error) -> DateComponents {
     var (day, hour) = match[dateRef]
     var addDay = false
     if hour == 24 {
@@ -198,7 +199,7 @@ class HourMinutePeriodParser {
     match: Regex<T>.Match,
     referenceDate: Date? = nil,
     originalString: String
-  ) throws -> DateComponentsInterval {
+  ) throws(Error) -> DateComponentsInterval {
     let startTime = try minuteOfDay(
       hour: match[startHourRef],
       minute: match[startMinuteRef],
@@ -227,7 +228,8 @@ class HourMinutePeriodParser {
 
   /// Converts an `HHMM` time to minutes past midnight, treating `2400` as the end
   /// of the day the way ``DayHourMinuteParser`` does.
-  private func minuteOfDay(hour: UInt8, minute: UInt8, originalString: String) throws -> Int {
+  private func minuteOfDay(hour: UInt8, minute: UInt8, originalString: String) throws(Error) -> Int
+  {
     guard hour <= 24, minute <= 59, hour < 24 || minute == 0 else {
       throw Error.invalidDate(originalString)
     }
@@ -276,7 +278,7 @@ class HourMinuteParser {
   }
 
   func parse<T>(match: Regex<T>.Match, referenceDate: Date? = nil, originalString string: String)
-    throws -> DateComponents
+    throws(Error) -> DateComponents
   {
     let (hour, minute) = match[dateRef]
 

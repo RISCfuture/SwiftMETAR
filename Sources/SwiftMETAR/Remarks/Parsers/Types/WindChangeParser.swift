@@ -16,7 +16,7 @@ final class WindChangeParser: RemarkParser, @unchecked Sendable {
     }
   )
 
-  func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
+  func parse(remarks: inout String, date _: DateComponents) throws(Error) -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }
     let originalString = String(remarks[result.range])
     let wind = try WindParser.parse(match: result, originalString: originalString)

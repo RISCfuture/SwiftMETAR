@@ -31,7 +31,7 @@ final class ThunderstormBeginEndParser: RemarkParser, @unchecked Sendable {
     }
   )
 
-  func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
+  func parse(remarks: inout String, date: DateComponents) throws(Error) -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }
     let eventsStr = result[eventsRef]
     let referenceDate = zuluCal.date(from: date)
@@ -41,18 +41,18 @@ final class ThunderstormBeginEndParser: RemarkParser, @unchecked Sendable {
     return .thunderstormBeginEnd(events: events)
   }
 
-  private func parseEvents(_ string: String, referenceDate: Date? = nil) throws -> [Remark
+  private func parseEvents(_ string: String, referenceDate: Date? = nil) throws(Error) -> [Remark
     .ThunderstormEvent]
   {
-    let result = eventRx.allMatches(in: string)
-    return try result.map { match in
-      let type = match[typeRef]
+    var events = [Remark.ThunderstormEvent]()
+    for match in eventRx.allMatches(in: string) {
       let time = try timeParser.parse(
         match: match,
         referenceDate: referenceDate,
         originalString: string
       )
-      return .init(type: type, time: time)
+      events.append(.init(type: match[typeRef], time: time))
     }
+    return events
   }
 }

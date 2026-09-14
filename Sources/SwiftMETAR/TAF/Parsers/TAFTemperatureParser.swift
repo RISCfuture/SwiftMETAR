@@ -52,7 +52,8 @@ final class TAFTemperatureParser: WarmableParser, @unchecked Sendable {
     _ = try? rx.wholeMatch(in: "")
   }
 
-  func parse(_ parts: inout [String.SubSequence], date: DateComponents) throws -> [TAF.Temperature]?
+  func parse(_ parts: inout [String.SubSequence], date: DateComponents) throws(Error) -> [TAF
+    .Temperature]?
   {
     var temps = [TAF.Temperature]()
 

@@ -59,7 +59,7 @@ public struct WindsAloft: Equatable, Sendable {
                      Defaults to the current date.
    - Returns: A parsed ``WindsAloft`` value.
    */
-  public static func from(string: String, on date: Date? = nil) async throws -> Self {
+  public static func from(string: String, on date: Date? = nil) async throws(Error) -> Self {
     try await WindsAloftParser.shared.parse(string, on: date)
   }
 

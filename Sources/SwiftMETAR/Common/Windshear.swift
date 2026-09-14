@@ -30,7 +30,7 @@ public struct Windshear: CodedRepresentable, Equatable, Sendable {
    - Throws: ``Error/invalidWindshear(_:)`` if `coded` is not a valid windshear
              representation.
    */
-  public init(coded: String) throws {
+  public init(coded: String) throws(Error) {
     var parts = coded.split(whereSeparator: \.isWhitespace)
     guard let windshear = try WindshearParser().parse(&parts), parts.isEmpty else {
       throw Error.invalidWindshear(coded)

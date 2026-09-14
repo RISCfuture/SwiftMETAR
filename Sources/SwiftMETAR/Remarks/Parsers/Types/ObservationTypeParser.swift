@@ -24,7 +24,7 @@ final class ObservationTypeParser: RemarkParser, @unchecked Sendable {
     }
   )
 
-  func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
+  func parse(remarks: inout String, date _: DateComponents) throws(Error) -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }
     let typeStr = String(result[typeRef]).replacingOccurrences(of: "0", with: "O")
     let augmented = result[augmentedRef]
