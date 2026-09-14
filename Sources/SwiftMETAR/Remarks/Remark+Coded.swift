@@ -128,7 +128,7 @@ extension Remark: CodedRepresentable {
    - Parameter coded: The coded remark string.
    - Throws: An ``Error`` if `coded` contains no recognizable remark.
    */
-  public init(coded: String) throws {
+  public init(coded: String) throws(Error) {
     var parts = coded.split(whereSeparator: \.isWhitespace)
     let date = zuluCal.dateComponents(in: zulu, from: Date())
     let (entries, _) = try RemarksParser.parse(

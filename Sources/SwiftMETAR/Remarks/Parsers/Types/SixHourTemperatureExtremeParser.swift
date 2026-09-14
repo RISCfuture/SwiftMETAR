@@ -7,12 +7,11 @@ final class SixHourTemperatureExtremeParser: RemarkParser, @unchecked Sendable {
   private let extremesRef = Reference<Remark.Extreme>()
   private let temperatureParser = NumericSignedIntegerParser(width: 3)
 
-  // swiftlint:disable force_try
   private lazy var rx = LockedRegex(
     Regex {
       Anchor.wordBoundary
       Capture(as: extremesRef) {
-        try! Remark.Extreme.rx
+        Remark.Extreme.rx
       } transform: {
         .init(rawValue: String($0))!
       }
@@ -20,9 +19,8 @@ final class SixHourTemperatureExtremeParser: RemarkParser, @unchecked Sendable {
       Anchor.wordBoundary
     }
   )
-  // swiftlint:enable force_try
 
-  func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
+  func parse(remarks: inout String, date _: DateComponents) throws(Error) -> Remark? {
     guard let result = try rx.firstMatch(in: remarks),
       let temperature = temperatureParser.parse(result)
     else { return nil }

@@ -18,15 +18,25 @@ actor TAFParser {
 
   /// Parses a TAF synchronously. Used by the synchronous `Codable` decode path; shares
   /// the same cached parsers as the async path.
-  static func parseSynchronously(_ codedTAF: String, on referenceDate: Date? = nil) throws -> TAF {
-    try assemble(codedTAF, referenceDate: referenceDate) { parts, date, lenient in
-      try RemarksParser.parse(
-        &parts,
-        using: RemarksParser.sharedParsers,
-        date: date,
-        lenientRemarks: lenient
-      )
-    }
+  static func parseSynchronously(
+    _ codedTAF: String,
+    on referenceDate: Date? = nil
+  ) throws(Error) -> TAF {
+    try assemble(codedTAF, referenceDate: referenceDate, parseRemarks: parseSharedRemarks)
+  }
+
+  /// Parses remarks with the shared parser set, for callers that need no lenient-mode override.
+  private static func parseSharedRemarks(
+    _ parts: inout [Substring],
+    _ date: DateComponents,
+    _ lenient: Bool
+  ) throws(Error) -> ([RemarkEntry], String?) {
+    try RemarksParser.parse(
+      &parts,
+      using: RemarksParser.sharedParsers,
+      date: date,
+      lenientRemarks: lenient
+    )
   }
 
   /// The isolation-free parsing core, shared by the async and synchronous paths.
@@ -34,10 +44,11 @@ actor TAFParser {
   private static func assemble(
     _ codedTAF: String,
     referenceDate: Date?,
-    parseRemarks: (_ parts: inout [Substring], _ date: DateComponents, _ lenient: Bool) throws -> (
-      [RemarkEntry], String?
-    )
-  ) throws -> TAF {
+    parseRemarks: (_ parts: inout [Substring], _ date: DateComponents, _ lenient: Bool)
+      throws(Error) -> (
+        [RemarkEntry], String?
+      )
+  ) throws(Error) -> TAF {
     var parts = codedTAF.split(separator: .whitespacesAndNewlines)
 
     let issuance = try parseIssuance(&parts)
@@ -153,7 +164,7 @@ actor TAFParser {
   /// Parses a single forecast group from its coded string (e.g.
   /// `"FM130200 05005KT P6SM SCT040"`), synchronously. Used by
   /// `TAF.Group.init(coded:)`.
-  static func parseGroup(_ coded: String) throws -> TAF.Group {
+  static func parseGroup(_ coded: String) throws(Error) -> TAF.Group {
     var parts = coded.split(separator: .whitespacesAndNewlines)
     guard let period = try periodParser.parse(&parts, referenceDate: nil) else {
       throw Error.invalidPeriod(coded)
@@ -202,7 +213,9 @@ actor TAFParser {
     )
   }
 
-  private static func parseIssuance(_ parts: inout [String.SubSequence]) throws -> TAF.Issuance {
+  private static func parseIssuance(_ parts: inout [String.SubSequence]) throws(Error)
+    -> TAF.Issuance
+  {
     guard !parts.isEmpty else { throw Error.badFormat }
 
     if parts[0] != "TAF" { return .routine }
@@ -221,14 +234,11 @@ actor TAFParser {
     }
   }
 
-  func parse(_ codedTAF: String, on referenceDate: Date? = nil) throws -> TAF {
-    try Self.assemble(codedTAF, referenceDate: referenceDate) { parts, date, lenient in
-      try RemarksParser.parse(
-        &parts,
-        using: RemarksParser.sharedParsers,
-        date: date,
-        lenientRemarks: lenient
-      )
-    }
+  func parse(_ codedTAF: String, on referenceDate: Date? = nil) throws(Error) -> TAF {
+    try Self.assemble(
+      codedTAF,
+      referenceDate: referenceDate,
+      parseRemarks: Self.parseSharedRemarks
+    )
   }
 }

@@ -5,21 +5,19 @@ final class RapidPressureChangeParser: RemarkParser, @unchecked Sendable {
   var urgency = Remark.Urgency.caution
 
   private let changeRef = Reference<Remark.RapidPressureChange>()
-  // swiftlint:disable force_try
   private lazy var rx = LockedRegex(
     Regex {
       Anchor.wordBoundary
       Capture(as: changeRef) {
-        try! Remark.RapidPressureChange.rx
+        Remark.RapidPressureChange.rx
       } transform: {
         .init(rawValue: String($0))!
       }
       Anchor.wordBoundary
     }
   )
-  // swiftlint:enable force_try
 
-  func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
+  func parse(remarks: inout String, date _: DateComponents) throws(Error) -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }
     let change = result[changeRef]
 

@@ -8,31 +8,29 @@ final class CloudTypesParser: RemarkParser, @unchecked Sendable {
   private let midRef = Reference<Remark.MiddleCloudType>()
   private let highRef = Reference<Remark.HighCloudType>()
 
-  // swiftlint:disable force_try
   private lazy var rx = LockedRegex(
     Regex {
       Anchor.wordBoundary
       "8/"
       Capture(as: lowRef) {
-        try! Remark.LowCloudType.rx
+        Remark.LowCloudType.rx
       } transform: {
         .init(rawValue: String($0))!
       }
       Capture(as: midRef) {
-        try! Remark.MiddleCloudType.rx
+        Remark.MiddleCloudType.rx
       } transform: {
         .init(rawValue: String($0))!
       }
       Capture(as: highRef) {
-        try! Remark.HighCloudType.rx
+        Remark.HighCloudType.rx
       } transform: {
         .init(rawValue: String($0))!
       }
     }
   )
-  // swiftlint:enable force_try
 
-  func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
+  func parse(remarks: inout String, date _: DateComponents) throws(Error) -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }
     let low = result[lowRef]
     let mid = result[midRef]

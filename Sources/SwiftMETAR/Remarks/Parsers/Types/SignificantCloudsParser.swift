@@ -10,7 +10,6 @@ final class SignificantCloudsParser: RemarkParser, @unchecked Sendable {
   private let directionsParser = RemarkDirectionsParser()
   private let movingDirectionParser = RemarkDirectionParser()
 
-  // swiftlint:disable force_try
   private lazy var rx = LockedRegex(
     Regex {
       Anchor.wordBoundary
@@ -20,7 +19,7 @@ final class SignificantCloudsParser: RemarkParser, @unchecked Sendable {
         !$0.isEmpty
       }
       Capture(as: cloudTypeRef) {
-        try! Remark.SignificantCloudType.rx
+        Remark.SignificantCloudType.rx
       } transform: {
         .from(raw: String($0))!
       }
@@ -40,9 +39,8 @@ final class SignificantCloudsParser: RemarkParser, @unchecked Sendable {
       Anchor.wordBoundary
     }
   )
-  // swiftlint:enable force_try
 
-  func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
+  func parse(remarks: inout String, date _: DateComponents) throws(Error) -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }
 
     let apparent = result[apparentRef]

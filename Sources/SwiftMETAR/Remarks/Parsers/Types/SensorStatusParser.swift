@@ -8,19 +8,18 @@ final class SensorStatusParser: RemarkParser, @unchecked Sendable {
   private let secondarySensorRef = Reference<SecondarySensor?>()
   private let locationRef = Reference<Substring?>()
 
-  // swiftlint:disable force_try
   private lazy var rx = LockedRegex(
     Regex {
       Anchor.wordBoundary
       ChoiceOf {
         Capture(as: sensorRef) {
-          try! Sensor.rx
+          Sensor.rx
         } transform: {
           .init(rawValue: String($0))
         }
         Regex {
           Capture(as: secondarySensorRef) {
-            try! SecondarySensor.rx
+            SecondarySensor.rx
           } transform: {
             .init(rawValue: String($0))
           }
@@ -35,9 +34,8 @@ final class SensorStatusParser: RemarkParser, @unchecked Sendable {
       Anchor.wordBoundary
     }
   )
-  // swiftlint:enable force_try
 
-  func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
+  func parse(remarks: inout String, date _: DateComponents) throws(Error) -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }
     let sensor = result[sensorRef]
     let secondarySensor = result[secondarySensorRef]

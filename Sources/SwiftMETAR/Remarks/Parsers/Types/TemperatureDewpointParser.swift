@@ -28,7 +28,7 @@ final class TemperatureDewpointParser: RemarkParser, @unchecked Sendable {
     }
   )
 
-  func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
+  func parse(remarks: inout String, date _: DateComponents) throws(Error) -> Remark? {
     guard let result = try rx.firstMatch(in: remarks),
       let temperature = temperatureParser.parse(result)
     else { return nil }

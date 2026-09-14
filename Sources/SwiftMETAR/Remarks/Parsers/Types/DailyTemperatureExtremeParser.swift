@@ -17,7 +17,7 @@ final class DailyTemperatureExtremeParser: RemarkParser, @unchecked Sendable {
     }
   )
 
-  func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
+  func parse(remarks: inout String, date _: DateComponents) throws(Error) -> Remark? {
     guard let result = try rx.firstMatch(in: remarks),
       let highNum = highParser.parse(result),
       let lowNum = lowParser.parse(result)

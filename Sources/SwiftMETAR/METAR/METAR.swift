@@ -92,7 +92,7 @@ public struct METAR: Sendable {
    - Throws: If a parsing error occurs.
    */
   public static func from(string: String, on date: Date? = nil, lenientRemarks: Bool = false)
-    async throws -> Self
+    async throws(Error) -> Self
   {
     return try await METARParser.shared.parse(string, on: date, lenientRemarks: lenientRemarks)
   }

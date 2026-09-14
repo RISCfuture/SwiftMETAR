@@ -23,7 +23,7 @@ final class WindShiftParser: RemarkParser, @unchecked Sendable {
     }
   )
 
-  func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
+  func parse(remarks: inout String, date: DateComponents) throws(Error) -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }
     let originalString = String(remarks[result.range])
     let referenceDate = zuluCal.date(from: date)

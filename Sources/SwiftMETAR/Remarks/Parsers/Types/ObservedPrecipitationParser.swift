@@ -8,19 +8,18 @@ final class ObservedPrecipitationParser: RemarkParser, @unchecked Sendable {
   private let proximityRef = Reference<Remark.Proximity?>()
   private let directionsParser = RemarkDirectionsParser()
 
-  // swiftlint:disable force_try
   private lazy var rx = LockedRegex(
     Regex {
       Anchor.wordBoundary
       Capture(as: precipRef) {
-        try! Remark.ObservedPrecipitationType.rx
+        Remark.ObservedPrecipitationType.rx
       } transform: {
         .init(rawValue: String($0))!
       }
       Optionally {
         " "
         Capture(as: proximityRef) {
-          try! Remark.Proximity.rx
+          Remark.Proximity.rx
         } transform: {
           .init(rawValue: String($0))
         }
@@ -32,9 +31,8 @@ final class ObservedPrecipitationParser: RemarkParser, @unchecked Sendable {
       Anchor.wordBoundary
     }
   )
-  // swiftlint:enable force_try
 
-  func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
+  func parse(remarks: inout String, date _: DateComponents) throws(Error) -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }
 
     let precip = result[precipRef]

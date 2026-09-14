@@ -12,7 +12,7 @@ final class AircraftMishapParser: RemarkParser, @unchecked Sendable {
 
   var urgency = Remark.Urgency.urgent
 
-  func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
+  func parse(remarks: inout String, date _: DateComponents) throws(Error) -> Remark? {
     guard let match = try Self.rx.firstMatch(in: remarks) else { return nil }
 
     remarks.removeSubrange(match.range)

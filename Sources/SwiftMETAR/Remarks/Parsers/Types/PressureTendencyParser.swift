@@ -7,13 +7,12 @@ final class PressureTendencyParser: RemarkParser, @unchecked Sendable {
   private let characterRef = Reference<Remark.PressureCharacter>()
   private let amountRef = Reference<Float>()
 
-  // swiftlint:disable force_try
   private lazy var rx = LockedRegex(
     Regex {
       Anchor.wordBoundary
       "5"
       Capture(as: characterRef) {
-        try! Remark.PressureCharacter.rx
+        Remark.PressureCharacter.rx
       } transform: {
         .init(rawValue: String($0))!
       }
@@ -25,9 +24,8 @@ final class PressureTendencyParser: RemarkParser, @unchecked Sendable {
       Anchor.wordBoundary
     }
   )
-  // swiftlint:enable force_try
 
-  func parse(remarks: inout String, date _: DateComponents) throws -> Remark? {
+  func parse(remarks: inout String, date _: DateComponents) throws(Error) -> Remark? {
     guard let result = try rx.firstMatch(in: remarks) else { return nil }
 
     let character = result[characterRef]

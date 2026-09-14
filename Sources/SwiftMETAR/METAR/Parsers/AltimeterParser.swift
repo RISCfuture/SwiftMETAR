@@ -36,7 +36,7 @@ final class AltimeterParser: WarmableParser, @unchecked Sendable {
     }
   )
 
-  func parseMETAR(_ parts: inout [String.SubSequence]) throws -> Altimeter? {
+  func parseMETAR(_ parts: inout [String.SubSequence]) throws(Error) -> Altimeter? {
     guard !parts.isEmpty else { return nil }
 
     let altStr = String(parts[0])
@@ -52,7 +52,7 @@ final class AltimeterParser: WarmableParser, @unchecked Sendable {
     }
   }
 
-  func parseTAF(_ parts: inout [String.SubSequence]) throws -> Altimeter? {
+  func parseTAF(_ parts: inout [String.SubSequence]) throws(Error) -> Altimeter? {
     guard !parts.isEmpty else { return nil }
 
     let altStr = String(parts[0])

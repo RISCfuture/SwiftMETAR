@@ -29,7 +29,7 @@ final class IcingParser: WarmableParser, @unchecked Sendable {
     }
   )
 
-  func parse(_ parts: inout [String.SubSequence]) throws -> Icing? {
+  func parse(_ parts: inout [String.SubSequence]) throws(Error) -> Icing? {
     guard !parts.isEmpty else { return nil }
     let icingStr = String(parts[0])
     guard let result = try Self.rx.wholeMatch(in: icingStr) else { return nil }

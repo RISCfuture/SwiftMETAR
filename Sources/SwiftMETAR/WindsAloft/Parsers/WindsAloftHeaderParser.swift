@@ -69,7 +69,7 @@ final class WindsAloftHeaderParser: WarmableParser, @unchecked Sendable {
   func parse(
     _ lines: inout [String],
     referenceDate: Date?
-  ) throws -> (
+  ) throws(Error) -> (
     header: WindsAloft.Header,
     basedOn: DateComponents,
     validAt: DateComponents,

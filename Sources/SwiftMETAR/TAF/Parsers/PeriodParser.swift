@@ -18,7 +18,8 @@ final class PeriodParser: WarmableParser, @unchecked Sendable {
     for subparser in subparsers { subparser.warmUp() }
   }
 
-  func parse(_ parts: inout [String.SubSequence], referenceDate: Date? = nil) throws -> TAF.Group
+  func parse(_ parts: inout [String.SubSequence], referenceDate: Date? = nil) throws(Error) -> TAF
+    .Group
     .Period?
   {
     for subparser in subparsers {
@@ -32,7 +33,8 @@ final class PeriodParser: WarmableParser, @unchecked Sendable {
 
   private protocol Subparser: AnyObject {
     func warmUp()
-    func parse(_ parts: inout [String.SubSequence], referenceDate: Date) throws -> TAF.Group.Period?
+    func parse(_ parts: inout [String.SubSequence], referenceDate: Date) throws(Error) -> TAF.Group
+      .Period?
   }
 
   private final class FromPeriodParser: Subparser {
@@ -50,7 +52,8 @@ final class PeriodParser: WarmableParser, @unchecked Sendable {
       _ = try? rx.wholeMatch(in: "")
     }
 
-    func parse(_ parts: inout [String.SubSequence], referenceDate: Date) throws -> TAF.Group.Period?
+    func parse(_ parts: inout [String.SubSequence], referenceDate: Date) throws(Error) -> TAF.Group
+      .Period?
     {
       guard !parts.isEmpty else { return nil }
 
@@ -85,7 +88,8 @@ final class PeriodParser: WarmableParser, @unchecked Sendable {
       _ = try? rx.wholeMatch(in: "")
     }
 
-    func parse(_ parts: inout [String.SubSequence], referenceDate: Date) throws -> TAF.Group.Period?
+    func parse(_ parts: inout [String.SubSequence], referenceDate: Date) throws(Error) -> TAF.Group
+      .Period?
     {
       guard let period = try parseRange(&parts, referenceDate: referenceDate) else {
         return nil
@@ -93,7 +97,7 @@ final class PeriodParser: WarmableParser, @unchecked Sendable {
       return .range(period)
     }
 
-    func parseRange(_ parts: inout [String.SubSequence], referenceDate: Date) throws
+    func parseRange(_ parts: inout [String.SubSequence], referenceDate: Date) throws(Error)
       -> DateComponentsInterval?
     {
       guard !parts.isEmpty else { return nil }
@@ -133,7 +137,8 @@ final class PeriodParser: WarmableParser, @unchecked Sendable {
 
     func warmUp() {}
 
-    func parse(_ parts: inout [String.SubSequence], referenceDate: Date) throws -> TAF.Group.Period?
+    func parse(_ parts: inout [String.SubSequence], referenceDate: Date) throws(Error) -> TAF.Group
+      .Period?
     {
       guard !parts.isEmpty else { return nil }
       guard parts[0] == "TEMPO" else { return nil }
@@ -156,7 +161,8 @@ final class PeriodParser: WarmableParser, @unchecked Sendable {
 
     func warmUp() {}
 
-    func parse(_ parts: inout [String.SubSequence], referenceDate: Date) throws -> TAF.Group.Period?
+    func parse(_ parts: inout [String.SubSequence], referenceDate: Date) throws(Error) -> TAF.Group
+      .Period?
     {
       guard !parts.isEmpty else { return nil }
       guard parts[0] == "BECMG" else { return nil }
@@ -194,7 +200,8 @@ final class PeriodParser: WarmableParser, @unchecked Sendable {
       _ = try? rx.wholeMatch(in: "")
     }
 
-    func parse(_ parts: inout [String.SubSequence], referenceDate: Date) throws -> TAF.Group.Period?
+    func parse(_ parts: inout [String.SubSequence], referenceDate: Date) throws(Error) -> TAF.Group
+      .Period?
     {
       guard !parts.isEmpty else { return nil }
 

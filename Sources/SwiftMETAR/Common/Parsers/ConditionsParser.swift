@@ -5,12 +5,11 @@ final class ConditionsParser: WarmableParser, @unchecked Sendable {
   private static let coverageRef = Reference<Coverage>()
   private static let heightRef = Reference<UInt>()
   private static let ceilingTypeRef = Reference<Condition.CeilingType?>()
-  // swiftlint:disable force_try
   private static let rx = LockedRegex(
     Regex {
       Anchor.startOfSubject
       Capture(as: coverageRef) {
-        try! Coverage.rx
+        Coverage.rx
       } transform: {
         .init(rawValue: String($0))!
       }
@@ -20,16 +19,15 @@ final class ConditionsParser: WarmableParser, @unchecked Sendable {
         .init($0)! * 100
       }
       Capture(as: ceilingTypeRef) {
-        Optionally(try! Condition.CeilingType.rx)
+        Optionally(Condition.CeilingType.rx)
       } transform: {
         .init(rawValue: String($0))
       }
       Anchor.endOfSubject
     }
   )
-  // swiftlint:enable force_try
 
-  func parse(_ parts: inout [String.SubSequence]) throws -> [Condition] {
+  func parse(_ parts: inout [String.SubSequence]) throws(Error) -> [Condition] {
     if parts.isEmpty { return [] }
 
     var conditions = [Condition]()

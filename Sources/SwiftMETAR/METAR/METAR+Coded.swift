@@ -49,7 +49,7 @@ extension METAR: CodedRepresentable {
    - Parameter coded: The coded METAR string.
    - Throws: An ``Error`` if `coded` is not a valid METAR.
    */
-  public init(coded: String) throws {
+  public init(coded: String) throws(Error) {
     self = try METARParser.parseSynchronously(coded)
   }
 

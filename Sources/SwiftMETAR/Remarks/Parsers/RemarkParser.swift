@@ -6,7 +6,7 @@ protocol RemarkParser: Sendable {
   var urgency: Remark.Urgency { get }
 
   init()
-  func parse(remarks: inout String, date: DateComponents) throws -> Remark?
+  func parse(remarks: inout String, date: DateComponents) throws(Error) -> Remark?
 }
 
 extension RemarkParser {

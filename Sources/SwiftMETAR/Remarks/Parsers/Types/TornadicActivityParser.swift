@@ -11,18 +11,17 @@ final class TornadicActivityParser: RemarkParser, @unchecked Sendable {
   private let directionParser = RemarkDirectionParser()
   private let movingDirectionParser = RemarkDirectionParser()
 
-  // swiftlint:disable force_try
   private lazy var rx = LockedRegex(
     Regex {
       Anchor.wordBoundary
       Capture(as: typeRef) {
-        try! Remark.TornadicActivityType.rx
+        Remark.TornadicActivityType.rx
       } transform: {
         .init(rawValue: String($0))!
       }
       " "
       Capture(as: eventTypeRef) {
-        try! Remark.EventType.rx
+        Remark.EventType.rx
       } transform: {
         .init(rawValue: String($0))!
       }
@@ -45,9 +44,8 @@ final class TornadicActivityParser: RemarkParser, @unchecked Sendable {
       Anchor.wordBoundary
     }
   )
-  // swiftlint:enable force_try
 
-  func parse(remarks: inout String, date: DateComponents) throws -> Remark? {
+  func parse(remarks: inout String, date: DateComponents) throws(Error) -> Remark? {
     guard let result = try rx.firstMatch(in: remarks),
       let direction = directionParser.parse(result)
     else { return nil }

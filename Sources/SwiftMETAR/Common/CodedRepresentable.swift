@@ -22,7 +22,7 @@ public protocol CodedRepresentable: Codable {
    - Parameter coded: The coded string, e.g. `"03015KT"`.
    - Throws: An ``Error`` if `coded` is not a valid representation.
    */
-  init(coded: String) throws
+  init(coded: String) throws(Error)
 }
 
 extension CodedRepresentable {

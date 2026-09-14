@@ -29,7 +29,7 @@ final class TurbulenceParser: WarmableParser, @unchecked Sendable {
     }
   )
 
-  func parse(_ parts: inout [String.SubSequence]) throws -> Turbulence? {
+  func parse(_ parts: inout [String.SubSequence]) throws(Error) -> Turbulence? {
     guard !parts.isEmpty else { return nil }
     let turbStr = String(parts[0])
     guard let result = try Self.rx.wholeMatch(in: turbStr) else { return nil }
