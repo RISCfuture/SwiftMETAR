@@ -25,7 +25,7 @@ extension Remark {
   }
 
   static func coded(sunshineDuration duration: UInt) -> String {
-    "98\(String(format: "%03d", duration))"
+    "98\(unsafe String(format: "%03d", duration))"
   }
 
   static func coded(navalForecasterCenter center: NavalWeatherCenter, ID: UInt) -> String {

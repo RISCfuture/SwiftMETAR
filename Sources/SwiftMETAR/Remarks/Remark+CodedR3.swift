@@ -15,7 +15,7 @@ extension Remark {
   }
 
   static func coded(variableWindDirection heading1: UInt16, _ heading2: UInt16) -> String {
-    "WND \(String(format: "%03d", heading1))V\(String(format: "%03d", heading2))"
+    "WND \(unsafe String(format: "%03d", heading1))V\(unsafe String(format: "%03d", heading2))"
   }
 
   static func coded(windDataEstimated _: Void) -> String {
@@ -33,14 +33,14 @@ extension Remark {
   /// Encodes an hour/minute time as the `HHMM` group used by wind remarks,
   /// falling back to a bare `MM` group when no hour is present.
   private static func hourMinute(_ time: DateComponents) -> String {
-    let minute = String(format: "%02d", time.minute ?? 0)
+    let minute = unsafe String(format: "%02d", time.minute ?? 0)
     guard let hour = time.hour else { return minute }
-    return "\(String(format: "%02d", hour))\(minute)"
+    return "\(unsafe String(format: "%02d", hour))\(minute)"
   }
 
   /// Encodes a day/hour time as the `ddhh` group used by TAF wind-change
   /// remarks, e.g. day 26 hour 14 → `"2614"`.
   private static func dayHour(_ time: DateComponents) -> String {
-    String(format: "%02d%02d", time.day ?? 0, time.hour ?? 0)
+    unsafe String(format: "%02d%02d", time.day ?? 0, time.hour ?? 0)
   }
 }

@@ -86,7 +86,9 @@ actor METARXMLParser {
   func parse(data: Data) -> [XMLParseResult<METAR>] {
     let delegate = XMLDelegate()
     let xmlParser = XMLParser(data: data)
-    xmlParser.delegate = delegate
+    // `XMLParser.delegate` is `unowned(unsafe)`; `delegate` is held strongly by this
+    // frame for the whole parse and is read again afterwards, so it outlives the parser.
+    unsafe xmlParser.delegate = delegate
     xmlParser.parse()
 
     return delegate.entries.map { entry in

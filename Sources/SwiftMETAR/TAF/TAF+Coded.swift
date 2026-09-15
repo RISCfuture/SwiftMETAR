@@ -85,8 +85,8 @@ extension TAF.Group: CodedRepresentable {
   /// form rather than the METAR `A####`/`Q####` form.
   private static func tafAltimeter(_ altimeter: Altimeter) -> String {
     switch altimeter {
-      case .inHg(let value): "QNH\(String(format: "%04d", value))INS"
-      case .hPa(let value): "QNH\(String(format: "%04d", value))HPA"
+      case .inHg(let value): "QNH\(unsafe String(format: "%04d", value))INS"
+      case .hPa(let value): "QNH\(unsafe String(format: "%04d", value))HPA"
     }
   }
 }
@@ -97,9 +97,9 @@ extension TAF.Temperature {
   /// `"TX17/2419Z"` (maximum) or `"TNM04/2509Z"` (minimum).
   public var codedString: String {
     let letter = type == .minimum ? "N" : "X"
-    let magnitude = String(format: "%02d", abs(value))
+    let magnitude = unsafe String(format: "%02d", abs(value))
     let coded = value < 0 ? "M\(magnitude)" : magnitude
-    let dayHour = String(format: "%02d%02d", time.day ?? 0, time.hour ?? 0)
+    let dayHour = unsafe String(format: "%02d%02d", time.day ?? 0, time.hour ?? 0)
     return "T\(letter)\(coded)/\(dayHour)Z"
   }
 }

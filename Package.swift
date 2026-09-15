@@ -8,7 +8,8 @@ let upcomingFeatures: [SwiftSetting] = [
   .enableUpcomingFeature("ImmutableWeakCaptures"),
   .enableUpcomingFeature("MemberImportVisibility"),
   .enableUpcomingFeature("ExistentialAny"),
-  .enableUpcomingFeature("InternalImportsByDefault")
+  .enableUpcomingFeature("InternalImportsByDefault"),
+  .strictMemorySafety()
 ]
 
 // METARFormatting (and DecodeMETAR/DecodeTAF, which depend on it) format `Measurement`

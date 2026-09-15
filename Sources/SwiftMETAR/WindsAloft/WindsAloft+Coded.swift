@@ -76,7 +76,7 @@ extension WindsAloft: CodedRepresentable {
   }
 
   private static func dayHourMinute(_ components: DateComponents) -> String {
-    String(
+    unsafe String(
       format: "%02d%02d%02d",
       components.day ?? 0,
       components.hour ?? 0,
@@ -85,7 +85,7 @@ extension WindsAloft: CodedRepresentable {
   }
 
   private static func usePeriodString(_ interval: DateComponentsInterval) -> String {
-    String(
+    unsafe String(
       format: "%02d%02d-%02d%02dZ",
       interval.start.hour ?? 0,
       interval.start.minute ?? 0,

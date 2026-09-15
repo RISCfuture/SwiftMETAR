@@ -28,8 +28,8 @@ public enum Altimeter: CodedRepresentable, Comparable, Sendable {
    */
   public var codedString: String {
     switch self {
-      case .inHg(let value): "A\(String(format: "%04d", value))"
-      case .hPa(let value): "Q\(String(format: "%04d", value))"
+      case .inHg(let value): "A\(unsafe String(format: "%04d", value))"
+      case .hPa(let value): "Q\(unsafe String(format: "%04d", value))"
     }
   }
 
