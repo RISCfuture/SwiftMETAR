@@ -1,5 +1,33 @@
 # Change Log
 
+## [4.1.0] - 2026-09-14
+
+### Changed
+
+- Swift 6.3 is now the minimum toolchain; the manifest declares
+  `swift-tools-version: 6.3`, so Swift 6.0 through 6.2 can no longer resolve the
+  package. The supported language modes are unchanged, so consumers can still
+  build in Swift 5 or Swift 6 mode.
+- Raised dependency floors: swift-numberkit 2.6.1, swift-argument-parser 1.8.2,
+  swift-docc-plugin 1.5.0, and BuildableMacro 1.1.0.
+
+### Fixed
+
+- Compass directions in remarks were mis-parsed, intermittently, and differently
+  in every process. The direction pattern was built by joining the keys of a
+  `Dictionary`, whose order is unspecified and which Swift seeds per process, and
+  regex alternation matches leftmost-first — so wherever a one-letter
+  abbreviation landed ahead of a two-letter one it prefixes, the longer
+  abbreviation could never match its second letter: `SE` parsed as `.south`, `NE`
+  as `.north`. Sampling that join across processes found every run producing a
+  different order and every order containing at least one such shadowing pair, so
+  some direction was always being read wrong — only which one varied from run to
+  run. Alternatives are now ordered longest-first, which both removes the
+  shadowing and makes the pattern deterministic. This affected every remark that
+  carries a direction, including lightning (`LTG DSNT NE`), thunderstorm
+  location, sector visibility, observed precipitation, significant clouds, and
+  tornadic activity.
+
 ## [4.0.0] - 2026-08-19
 
 ### Changed
