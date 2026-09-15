@@ -1,0 +1,79 @@
+name: Release
+
+# Pushing a version tag cuts the GitHub release for it. Nothing here builds or tests: tag a commit
+# CI has already passed.
+#
+# Notes come from CHANGELOG.md rather than `--generate-notes`. Work in these repositories lands as
+# direct commits as often as pull requests, so generated notes would describe a fraction of the
+# release.
+#
+# Tags carry no "v" prefix — "1.2.0" is the tag for version 1.2.0 — which is also what SwiftPM
+# expects when resolving a version requirement.
+on:
+  push:
+    tags: ["[0-9]+.[0-9]+*"]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Version to release. Its tag must already exist.
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ inputs.version || github.ref_name }}
+  cancel-in-progress: false
+
+jobs:
+  release:
+    name: Cut the GitHub release
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ inputs.version || github.ref_name }}
+
+      - name: Render release notes
+        env:
+          VERSION: ${{ inputs.version || github.ref_name }}
+        run: |
+          # This version's section only. The heading itself is dropped — the release page already
+          # carries the version — and the next `## ` heading ends the section, so an `[Unreleased]`
+          # block above it is never picked up. Matching is exact rather than a regex, so 1.2.0
+          # cannot match 1.2.01.
+          awk -v v="$VERSION" '
+            /^## / {
+              if (inside) exit
+              h = $0
+              sub(/^## +/, "", h); sub(/^\[/, "", h); sub(/\].*$/, "", h); sub(/ +-.*$/, "", h)
+              if (h == v) { inside = 1 }
+              next
+            }
+            inside { print }
+          ' CHANGELOG.md > release-notes.md
+
+          if [ ! -s release-notes.md ]; then
+            echo "::error::CHANGELOG.md has no section for $VERSION. Add one before tagging."
+            exit 1
+          fi
+
+      - name: Create or update the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ inputs.version || github.ref_name }}
+        run: |
+          # A release for the tag can already exist — this job re-run, or one cut by hand. Updating
+          # it keeps a re-run idempotent instead of failing on the duplicate.
+          if gh release view "$VERSION" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release edit "$VERSION" \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "$VERSION" \
+              --notes-file release-notes.md
+          else
+            gh release create "$VERSION" \
+              --repo "$GITHUB_REPOSITORY" \
+              --title "$VERSION" \
+              --notes-file release-notes.md
+          fi
