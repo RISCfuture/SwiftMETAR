@@ -17,7 +17,7 @@ extension Remark {
   /// Codes a ceiling/cloud height (in feet) as the parser's three-digit
   /// hundreds-of-feet token, e.g. `500` → `"005"`.
   static func codedHundredsOfFeet(_ height: UInt) -> String {
-    String(format: "%03d", Int(height / 100))
+    unsafe String(format: "%03d", Int(height / 100))
   }
 
   static func coded(observedVisibility source: VisibilitySource, distance: Ratio) -> String {

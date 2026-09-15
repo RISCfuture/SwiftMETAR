@@ -123,7 +123,7 @@ public enum Condition: CodedRepresentable, Equatable, Sendable {
   }
 
   private static func heightGroup(_ feet: UInt) -> String {
-    String(format: "%03d", feet / 100)
+    unsafe String(format: "%03d", feet / 100)
   }
 
   private static func suffix(_ type: CeilingType?) -> String {

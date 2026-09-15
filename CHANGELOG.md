@@ -13,9 +13,6 @@
 - Case-set regexes (`Weather.Phenomenon`, `Remark.Coverage`, and the other
   `RawRepresentable` code sets) are built with RegexBuilder and cached per type
   instead of being assembled as a pattern string and recompiled on every access.
-- Remark direction abbreviations are matched longest-first, so `ALQDS` and the
-  two-letter quadrants can no longer be shadowed by a shorter abbreviation they
-  start with.
 - ISO 8601 timestamps in aviationweather.gov XML are parsed with
   `Date.ISO8601FormatStyle` rather than `ISO8601DateFormatter`.
 

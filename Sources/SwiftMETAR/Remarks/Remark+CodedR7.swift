@@ -5,7 +5,7 @@ extension Remark {
   /// The coded form of a ``correction(time:)`` remark, e.g. `"COR 1547"`
   /// (the correction hour and minute, `HHMM`).
   static func coded(correctionTime time: DateComponents) -> String {
-    "COR " + String(format: "%02d%02d", time.hour ?? 0, time.minute ?? 0)
+    "COR " + (unsafe String(format: "%02d%02d", time.hour ?? 0, time.minute ?? 0))
   }
 
   /// The coded form of a ``next(_:)`` remark, e.g. `"NEXT 1518"` (the next
@@ -21,6 +21,6 @@ extension Remark {
   }
 
   private static func codedDayHour(_ date: DateComponents) -> String {
-    String(format: "%02d%02d", date.day ?? 0, date.hour ?? 0)
+    unsafe String(format: "%02d%02d", date.day ?? 0, date.hour ?? 0)
   }
 }
