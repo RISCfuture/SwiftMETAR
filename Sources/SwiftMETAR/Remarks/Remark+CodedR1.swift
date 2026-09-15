@@ -5,12 +5,12 @@ extension Remark {
   static func coded(seaLevelPressure pressure: Float?) -> String {
     guard let pressure else { return "SLPNO" }
     let digits = Int(((pressure - 900) * 10).rounded())
-    return "SLP\(String(format: "%03d", digits))"
+    return "SLP\(unsafe String(format: "%03d", digits))"
   }
 
   static func coded(pressureTendency character: PressureCharacter, change: Float) -> String {
     let magnitude = Int((abs(change) * 10).rounded())
-    return "5\(character.rawValue)\(String(format: "%03d", magnitude))"
+    return "5\(character.rawValue)\(unsafe String(format: "%03d", magnitude))"
   }
 
   static func coded(rapidPressureChange change: RapidPressureChange) -> String {
@@ -40,6 +40,6 @@ extension Remark {
   private static func codedTenths(_ value: Float) -> String {
     let sign = value < 0 ? "1" : "0"
     let magnitude = Int((abs(value) * 10).rounded())
-    return "\(sign)\(String(format: "%03d", magnitude))"
+    return "\(sign)\(unsafe String(format: "%03d", magnitude))"
   }
 }

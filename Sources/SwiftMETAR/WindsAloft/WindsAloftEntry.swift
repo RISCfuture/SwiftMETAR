@@ -82,7 +82,7 @@ public enum WindsAloftEntry: CodedRepresentable, Equatable, Sendable {
           dd += 50
           ff -= 100
         }
-        return String(format: "%02d%02d", Int(dd), Int(ff))
+        return unsafe String(format: "%02d%02d", Int(dd), Int(ff))
           + Self.codedTemperature(temperature)
     }
   }
@@ -105,6 +105,6 @@ public enum WindsAloftEntry: CodedRepresentable, Equatable, Sendable {
   /// string when no temperature is reported.
   private static func codedTemperature(_ temperature: Int8?) -> String {
     guard let temperature else { return "" }
-    return String(format: "%+03d", Int(temperature))
+    return unsafe String(format: "%+03d", Int(temperature))
   }
 }

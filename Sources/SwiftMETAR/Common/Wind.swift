@@ -72,7 +72,7 @@ public enum Wind: CodedRepresentable, Equatable, Sendable {
   }
 
   private static func heading(_ value: UInt16) -> String {
-    String(format: "%03d", value)
+    unsafe String(format: "%03d", value)
   }
 
   private static func speedGroup(_ speed: Speed, gust: Speed?) -> String {
@@ -150,7 +150,7 @@ public enum Wind: CodedRepresentable, Equatable, Sendable {
         switch self {
           case .knots(let quantity), .kph(let quantity), .mps(let quantity): quantity
         }
-      return String(format: "%02d", quantity)
+      return unsafe String(format: "%02d", quantity)
     }
 
     /// The coded representation of this speed, e.g. `"15KT"`.

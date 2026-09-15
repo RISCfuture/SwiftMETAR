@@ -303,7 +303,7 @@ public struct TAF: Sendable {
           case .temporary(let period): "TEMPO \(Self.coded(period))"
           case .becoming(let period): "BECMG \(Self.coded(period))"
           case let .probability(probability, period):
-            "PROB\(String(format: "%02d", probability)) \(Self.coded(period))"
+            "PROB\(unsafe String(format: "%02d", probability)) \(Self.coded(period))"
         }
       }
 
@@ -330,11 +330,11 @@ public struct TAF: Sendable {
       }
 
       private static func dayHour(_ components: DateComponents) -> String {
-        String(format: "%02d%02d", components.day ?? 0, components.hour ?? 0)
+        unsafe String(format: "%02d%02d", components.day ?? 0, components.hour ?? 0)
       }
 
       private static func dayHourMinute(_ components: DateComponents) -> String {
-        String(
+        unsafe String(
           format: "%02d%02d%02d",
           components.day ?? 0,
           components.hour ?? 0,

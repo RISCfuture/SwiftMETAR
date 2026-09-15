@@ -19,6 +19,10 @@
 - ISO 8601 timestamps in aviationweather.gov XML are parsed with
   `Date.ISO8601FormatStyle` rather than `ISO8601DateFormatter`.
 
+### Security
+
+- Strict memory safety (SE-0458) is enabled across every target.
+
 ## [4.1.0] - 2026-09-14
 
 ### Changed

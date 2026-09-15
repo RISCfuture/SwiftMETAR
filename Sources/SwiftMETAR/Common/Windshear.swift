@@ -20,7 +20,7 @@ public struct Windshear: CodedRepresentable, Equatable, Sendable {
    by the wind's ``Wind/codedString``.
    */
   public var codedString: String {
-    "WS\(String(format: "%03d", height / 100))/\(wind.codedString)"
+    "WS\(unsafe String(format: "%03d", height / 100))/\(wind.codedString)"
   }
 
   /**

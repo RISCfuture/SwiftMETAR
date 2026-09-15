@@ -31,7 +31,7 @@ struct WindsAloftTests {
 
   /// Formats date components the way a bulletin writes them: `DDHHMM`.
   private static func dayHourMinute(_ components: DateComponents) -> String {
-    String(
+    unsafe String(
       format: "%02d%02d%02d",
       components.day ?? 0,
       components.hour ?? 0,

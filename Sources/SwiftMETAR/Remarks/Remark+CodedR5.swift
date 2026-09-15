@@ -87,9 +87,9 @@ extension Remark {
   /// Formats an event time as `HHMM` (or `MM` when the hour is unknown).
   private static func codedHourMinute(_ components: DateComponents) -> String {
     if let hour = components.hour {
-      return String(format: "%02d%02d", hour, components.minute ?? 0)
+      return unsafe String(format: "%02d%02d", hour, components.minute ?? 0)
     }
-    return String(format: "%02d", components.minute ?? 0)
+    return unsafe String(format: "%02d", components.minute ?? 0)
   }
 
   /// Concatenates lightning types in canonical order (`CG`, `IC`, `CC`, `CA`).

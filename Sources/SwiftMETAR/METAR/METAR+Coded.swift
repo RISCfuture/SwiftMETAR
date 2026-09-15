@@ -54,7 +54,7 @@ extension METAR: CodedRepresentable {
   }
 
   static func zuluTimestamp(_ components: DateComponents) -> String {
-    String(
+    unsafe String(
       format: "%02d%02d%02dZ",
       components.day ?? 0,
       components.hour ?? 0,
@@ -68,7 +68,7 @@ extension METAR: CodedRepresentable {
 
   private static func codedTemperature(_ value: Int8?) -> String {
     guard let value else { return "" }
-    let magnitude = String(format: "%02d", abs(Int(value)))
+    let magnitude = unsafe String(format: "%02d", abs(Int(value)))
     return value < 0 ? "M\(magnitude)" : magnitude
   }
 }

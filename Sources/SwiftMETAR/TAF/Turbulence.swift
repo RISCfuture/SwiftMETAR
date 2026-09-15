@@ -88,7 +88,7 @@ extension Turbulence: CodedRepresentable {
    three digits) and the ``depth`` in thousands of feet (a single digit).
    */
   public var codedString: String {
-    "5\(typeFigure)\(String(format: "%03d", base / 100))\(depth / 1000)"
+    "5\(typeFigure)\(unsafe String(format: "%03d", base / 100))\(depth / 1000)"
   }
 
   private var typeFigure: Character {

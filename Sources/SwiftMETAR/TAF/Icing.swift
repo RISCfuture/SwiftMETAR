@@ -78,7 +78,7 @@ extension Icing: CodedRepresentable {
    feet are truncated by integer division and do not round-trip.
    */
   public var codedString: String {
-    "6\(type.rawValue)\(String(format: "%03d", base / 100))\(depth / 1000)"
+    "6\(type.rawValue)\(unsafe String(format: "%03d", base / 100))\(depth / 1000)"
   }
 
   /**
