@@ -42,9 +42,9 @@ jobs:
             swift: "6.3"
           - os: macos-26
             swift: "6.4"
-          - os: ubuntu-latest
+          - os: ubuntu-24.04
             swift: "6.3"
-          - os: ubuntu-latest
+          - os: ubuntu-26.04
             swift: "6.4"
     runs-on: ${{ matrix.os }}
     steps:
