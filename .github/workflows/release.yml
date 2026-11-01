@@ -31,7 +31,7 @@ jobs:
     name: Cut the GitHub release
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7.0.1
         with:
           ref: ${{ inputs.version || github.ref_name }}
 
