@@ -30,6 +30,10 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  route:
+    uses: RISCfuture/ci-workflows/.github/workflows/minerva-route.yml@1.1.0
+    permissions:
+      contents: read
   tests:
     name: Build and Test
     strategy:
@@ -46,7 +50,11 @@ jobs:
             swift: "6.3"
           - os: ubuntu-26.04
             swift: "6.4"
-    runs-on: ${{ matrix.os }}
+    needs: route
+    # setup-swift needs sudo for Swift versions other than 6.4, so those legs stay hosted
+    runs-on: >-
+      ${{ (matrix.os == 'macos-26' || matrix.os == 'macos-latest') && matrix.swift == '6.4'
+      && fromJSON(needs.route.outputs[matrix.os]) || matrix.os }}
     steps:
       - uses: actions/checkout@v7.0.1
       - uses: SwiftyLab/setup-swift@v1.14.2
@@ -66,7 +74,8 @@ jobs:
         run: swift test -v
   documentation:
     name: Build Documentation
-    runs-on: macos-latest
+    needs: route
+    runs-on: ${{ fromJSON(needs.route.outputs.macos-latest) }}
     steps:
       - uses: actions/checkout@v7.0.1
       - uses: SwiftyLab/setup-swift@v1.14.2
